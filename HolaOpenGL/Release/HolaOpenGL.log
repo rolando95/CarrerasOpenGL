@@ -1,0 +1,31 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Release\) contains files shared from another project (HolaOpenGL.vcxproj, Proyecto.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  main.cpp
+c:\mingw\gl\include\utilidades.h(29): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
+c:\mingw\gl\include\utilidades.h(30): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
+c:\mingw\gl\include\utilidades.h(35): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
+c:\mingw\gl\include\utilidades.h(36): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
+c:\mingw\gl\include\utilidades.h(38): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
+c:\mingw\gl\include\utilidades.h(252): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(102): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(139): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(148): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(149): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(150): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(151): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(162): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(229): warning C4244: '+=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(230): warning C4244: '-=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(306): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(347): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(350): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(349): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(348): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(364): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(458): warning C4326: return type of 'main' should be 'int' instead of 'void'
+c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(469): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Generating code
+  0 of 61 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  HolaOpenGL.vcxproj -> C:\Users\rarj1\Documents\Trabajos\Universidad\2018\UPV\SGI\Proyecto Final\HolaOpenGL\Carreras.exe
