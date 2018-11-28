@@ -2,6 +2,7 @@
 	ProyectoFinal
 
 	Juego de carreras con mucho drift!!
+
 	@author: Rolando A. Rosales J.
 	@version: v1.0 x/dic/2018
 	@require: freeglut
@@ -11,9 +12,6 @@
 #include <iostream>
 #include "gl/freeglut.h"
 #include <utilidades.h>
-#include <map>
-//#include <stdio.h>
-//#include <iostream>
 #include <ctime>
 #define ASCII 256
 #define MAX 100000
@@ -68,9 +66,13 @@ public:
 	float distX() {
 		return 0;
 	}
+
+	//Devuelve la distancia absoluta entre las coordenadas y de las q
 	float distY() {
 		return 0;
 	}
+
+	//Devuelve la distancia absoluta entre las coordenadas z de las q
 	float distZ() {
 		return 0;
 	}
@@ -85,13 +87,13 @@ class Pista {
 class Escenario {
 public:
 	Quad base = {
-		{ -14,0,0 },
-		{ 11,0,0 },
-		{ 11,0,-30 },
-		{ -14,0,-30 }
+		{ -70,0,0 },
+		{ 55,0,0 },
+		{ 55,0,-150 },
+		{ -70,0,-150 }
 	};
 
-	/*Cuadricula base*/
+	/*Dbuja una cuadricula base*/
 	void dibujarCuadricula() {
 		//Cuadricula base
 		ejes();
@@ -133,10 +135,10 @@ public:
 
 }global;
 
-class Jugador{
+class Automovil{
 private:
 	GLint automovil;
-	Vec3 pos = { 0, 0.01, -0.25 };
+	Vec3 pos = {0, 0.01, 0};
 	float v = 0; //velocidad
 	/*
 	//Trabajar mecanicas de drift/derrape
@@ -159,29 +161,34 @@ public:
 		glNewList(automovil, GL_COMPILE);
 		glPushMatrix();
 		glColor3f(0.5, 0.5, 0.5);
+		/*
 		glScalef(0.5, 0.01, 0.5);
 		glutSolidCube(0.5);
 		glTranslatef(0.25, 0, 0);
 		glColor3f(1, 0, 0);
 		glutSolidSphere(0.25,5,5);
+		*/
+
+		glScalef(5, 1.25, 2);
+		glTranslatef(0, 0.5, 0);
+		glutSolidCube(1);
 		glPopMatrix();
 		glEndList();
 	}
 
+	/*Configurar localizacion absoluta del objeto*/
 	void posicionarYOrientar(Vec3 lPos, float r) {
-		/*Posicion absoluta del objeto*/
 		pos = lPos; rot = r;
 	}
 
-	void girar(int direccion) {
-	/*1 = derecha
-	 -1 = izquierda
+	/*1 = izquierda
+	-1 = derecha
 	*/
-		if(v!=0){
-			rot += direccion * vRot;
-			if (rot > 360) rot -= 360;
-			else if (rot < 0) rot += 360;
-		}
+	void girar(int direccion) {
+	
+		rot += direccion * vRot;
+		if (rot > 360) rot -= 360;
+		else if (rot < 0) rot += 360;
 	}
 	void acelerar() {
 		v += a;
@@ -215,12 +222,12 @@ public:
 		}
 	}
 
-	Vec3 obtenerPosicion() {
-		return pos;
+	Vec3 *obtenerRefPosicion() {
+		return &pos;
 	}
 
-	float obtenerRotacion() {
-		return rot;
+	float *obtenerRefRotacion() {
+		return &rot;
 	}
 
 	void actualizar() {
@@ -256,19 +263,22 @@ public:
 		glCallList(automovil);
 	}
 
-}jugador;
+}automovil;
 
 class Camara {
 private:
-
-	double lejos = 100;
-	double offsetA = .3;
-	double offsetD = 1.25;  //distancia con respecto al objeto parentado
+	double offsetA = 2.5; //Distancia en eje Y local con respecto al objeto parentado
+	double offsetD = 11;  //Distancia en eje X local con respecto al objeto parentado
+	double offsetAngulo = 5; //Inclinacion de la camara con respecto al eje Z local con respecto al objeto parentado
 
 	double radio = 1; //Radio de esfera unidad
 	double angulo = 35;
 	double distancia = 1 / sin(angulo / 2 * PI / 180);
-	int tipoCamara = 2; //1: Vista Planta, 2:3ra Persona
+	double lejos = 1000; //distancia maxima que dibuja la camara
+	int tipoCamara = 2; //1: Vista Planta, 2: 3ra Persona
+
+	Vec3 *parentPos; //Posicion de referencia del objeto al que sigue (automovil)
+	float *parentRot; //Rotacion de referencia del objeto al que sigue (automovil)
 
 public:
 	Vec3 pos = {0,0,5};
@@ -279,18 +289,18 @@ public:
 
 
 	void configurarTipoDeCamara(int tipo) {
-		tipoCamara = tipo;
+		if (tipo>=1 & tipo<=2) tipoCamara = tipo;
 	}
 
+	/*Establece punto de posicion de la camara
+	(No usar este metodo si se trabaja con parentarPosObject)*/
 	void posicionar(Vec3 lPos) {
-		/*Establece punto de posicion de la camara
-		(es necesario llamar localicar para actualizar en la escena)*/
 		pos = lPos;
 	}
 
+	/*Establece orientacion de la camara dando punto de mira
+	(No usar este metodo si se trabaja con parentarPosObject)*/
 	void orientar(Vec3 lLook) {
-		/*Establece orientacion de la camara dando punto de mira
-		(es necesario llamar localicar para actualizar en la escena)*/
 		look = lLook;
 	}
 
@@ -323,32 +333,29 @@ public:
 		*/
 		if (tipoCamara == 1) vistaPlanta();
 		else {
+			look.x = parentPos->x;
+			look.y = parentPos->y + offsetA - tan(offsetAngulo * PI / 180)*offsetA;
+			look.z = parentPos->z;
+			
+			pos.x = parentPos->x - offsetD * cos(*parentRot*PI / 180);
+			pos.y = parentPos->y + offsetA;
+			pos.z =	parentPos->z + offsetD*sin(*parentRot*PI / 180);
+			
+			up = Vec3(0, 1, 0);
+
 			gluLookAt(pos.x, pos.y, pos.z,
-				look.x, look.y, look.z,
-				up.x, up.y, up.z
+					look.x, look.y, look.z,
+						up.x, up.y, up.z
 			);
 		}
 	}
 
-	void actualizar(Vec3 posAuto, float rot) {
-		/*Actualiza la posicion y orientacion de la camara 
-		segun la localizacion del jugador
-		*/
-		if (tipoCamara == 1) vistaPlanta();
-		else {
-			parentarLocalizacion(posAuto, rot);
-			actualizar();
-		}
-	}
-	void parentarLocalizacion(Vec3 posAuto, float rot) {
-		/*
-		Situa la camara detras el auto dado valores iniciales
-		*/
-		look = Vec3( posAuto.x, posAuto.y + offsetA, look.z = posAuto.z);
-		pos = Vec3(posAuto.x-(offsetD)*cos(rot*PI/180),
-				   posAuto.y + offsetA,
-				   posAuto.z+(offsetD)*sin(rot*PI / 180));
-		up = Vec3(0, 1, 0);
+	/*La camara guarda por referencia la posicion
+	y rotacion del objeto a seguir
+	*/
+	void parentarPosObjeto(Vec3 *posAuto, float *rot) { 
+		parentPos = posAuto;
+		parentRot = rot; //Rotacion de referencia del objeto al que sigue (automovil)
 	}
 
 	void vistaPlanta() {
@@ -374,27 +381,28 @@ public:
 
 double alpha=0;
 
-void init() {
+void start() {
 	//Fijar color de borrado
 	glClearColor(1,1,1,1);
 	glEnable(GL_DEPTH_TEST);
 
-	jugador.cargarAutomovil();
-	camara.actualizar(jugador.obtenerPosicion(), jugador.obtenerRotacion());
+	automovil.cargarAutomovil();
+	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
 }
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	
 	//Camara
-	camara.actualizar(jugador.obtenerPosicion(), jugador.obtenerRotacion());
-
+	camara.actualizar();
+	
 	//Escenario
 	escenario.dibujarCuadricula();
 	
 	//Objetos
-	jugador.dibujarAutomovil();
+	automovil.dibujarAutomovil();
 
 	glutSwapBuffers();
 }
@@ -404,29 +412,29 @@ void reshape(int w, int h) {
 	glutPostRedisplay();
 }
 
-void fixedUpdate() {
-	if (global.obtenerEstadoTecla('w')) jugador.acelerar(); 
-	if (global.obtenerEstadoTecla('s')) jugador.frenar();
-	if (global.obtenerEstadoTecla('r')) jugador.retroceder();
-	if (global.obtenerEstadoTecla('a')) jugador.girar(1);
-	if (global.obtenerEstadoTecla('d')) jugador.girar(-1);
-	if (global.obtenerEstadoTecla(' ')) jugador.derrapar();
-	jugador.actualizar();
+void update() {
+	if (global.obtenerEstadoTecla('w')) automovil.acelerar(); 
+	if (global.obtenerEstadoTecla('s')) automovil.frenar();
+	if (global.obtenerEstadoTecla('r')) automovil.retroceder();
+	if (global.obtenerEstadoTecla('a')) automovil.girar(1);
+	if (global.obtenerEstadoTecla('d')) automovil.girar(-1);
+	if (global.obtenerEstadoTecla(' ')) automovil.derrapar();
+	automovil.actualizar();
 	glutPostRedisplay();
 }
 
 void onTimer(int frame) {
-	fixedUpdate();
-	//jugador.imprimirStats();
-
+	update();
+	//automovil.imprimirStats();
 	glutTimerFunc(frame, onTimer, frame);
 }
 
 void onKey(unsigned char tecla, int x, int y) {
 	global.asignarTecla(tecla, true);
-	if (tecla == '1' || tecla == '2') {
+	if (tecla-48 >= 0 && tecla-48 <= 9) {
 		camara.configurarTipoDeCamara(tecla - 48);
 	}
+	if (tecla == 27) exit(0); //27: Esc
 }
 void onUpKey(unsigned char tecla, int x, int y) {
 	global.asignarTecla(tecla, false);
@@ -470,7 +478,7 @@ void main(int argc, char **argv) {
 
 	//Crear la ventana
 	glutCreateWindow(PROYECTO);
-	init();
+	start();
 	//Registrar las callbacks
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
@@ -484,5 +492,4 @@ void main(int argc, char **argv) {
 	glutTimerFunc(1000/FPS, onTimer, 1000/FPS);
 	//Poner en march el bucle de atencion a eventos
 	glutMainLoop();
-
 }
