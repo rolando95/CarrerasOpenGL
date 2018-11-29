@@ -28,8 +28,8 @@ public:
 		x = X; y = Y;
 	}
 
-	GLfloat *glVec3() {
-		GLfloat vector[3];
+	GLfloat *glVec2() {
+		GLfloat vector[2];
 		vector[0] = x;
 		vector[1] = y;
 		return vector;
@@ -51,52 +51,244 @@ public:
 	}
 };
 
-class Quad {
-public:
-	Vec3 q1, q2, q3, q4;
-	Quad(Vec3 Q1 = { 0,0,0 }, 
-		 Vec3 Q2 = { 0,0,0 }, 
-		 Vec3 Q3 = { 0,0,0 }, 
-		 Vec3 Q4 = { 0,0,0 })
-	{
-		q1 = Q1; q2 = Q2; q3 = Q3; q4 = Q4;
-	}
-
-	//Devuelve la distancia absoluta entre las coordenadas x de las q
-	float distX() {
-		return 0;
-	}
-
-	//Devuelve la distancia absoluta entre las coordenadas y de las q
-	float distY() {
-		return 0;
-	}
-
-	//Devuelve la distancia absoluta entre las coordenadas z de las q
-	float distZ() {
-		return 0;
-	}
-
-};
-
 
 class Pista {
-	Quad quads[MAX];
+private:
+	int defaultIter = 10;
+	int tipo = 1; //0: sprint, 1: circuito
+public:
+	Vec3 puntos[MAX][2];
+	float s = 20; //Escala de la cuadricula
+	float d = 8; //Distancia desde el centro de la calle a la arista
+	int i;
+
+	/*Calcula el modulo de un vector 
+	Si es dado por un punto inicial y final,  asignar in e fi.
+	Si solo es un valor vectorial, asignar in.
+	*/
+	float modulo(Vec3 in, Vec3 fi = {0,0,0}) {
+		return sqrt(
+			pow(fi.x - in.x, 2) +
+			pow(fi.y - in.y, 2) +
+			pow(fi.z - in.z, 2)
+		);
+	}
+
+	Vec3 vectorUnidad(Vec3 in, Vec3 fi) {
+		float mod = modulo(in, fi);
+
+		return Vec3(
+			(fi.x-in.x)/mod,
+			(fi.y-in.y)/mod,
+			(fi.z-in.z)/mod
+		);
+	}
+
+	/*Agrega una recta dado dos puntos de origen y final.
+	pushFirst es un argumento especial que indica si el punto inicial se toma en cuenta
+	Al hacer la llamada, la instruccion anterior de agregar fue
+	Agregar curva cerrada, se recomienda asignar pushFirst=false o
+	dar un el inicial con un offset en direccion a la tangente
+	*/
+	void agregarRecta(Vec3 in, Vec3 fi, bool pushFirst=true, bool pushLast=false, int iter = -1) {
+		in = { in.x*s, in.y*s, in.z*s };
+		fi = { fi.x*s, fi.y*s, fi.z*s };
+
+		if (iter < 1) iter = modulo(in, fi)/defaultIter;
+		if (iter < 2) iter = 2;
+
+		float cambio = modulo(in,fi) / iter;
+		Vec3 unidad = vectorUnidad(in, fi);
+		Vec3 inf(
+			in.x + unidad.z*d,
+			in.y,
+			in.z - unidad.x*d
+		);
+
+		Vec3 sup(
+			in.x - unidad.z*d,
+			in.y,
+			in.z + unidad.x*d
+		);
+		
+		if (pushLast) iter++;
+
+		for (auto j = 0; j < iter; j++) {
+			if(pushFirst || j>0){
+				puntos[i][0] = inf;
+				puntos[i++][1] = sup;
+			}
+			
+			sup.x += unidad.x*cambio;
+			sup.z += unidad.z*cambio;
+
+			inf.x += unidad.x*cambio;
+			inf.z += unidad.z*cambio;
+		}
+	}
+	
+	/*Agrega un semicirculo en la pista
+	Si el semicirculo se dibuja en el sentido contrario a las manecillas del reloj, anguloF>anguloI
+	Si el semicirculo se dibujo en el sentido de las manecillas del reloj, anguloI>AnguloF
+	*/
+	void agregarCurvaAbierta(Vec3 centro, float anguloI, float anguloF, float radio, int iter=-1, bool autoScale = true) {
+		if (autoScale) {
+			centro = { centro.x*s, centro.y*s, centro.z*s };
+			radio *= s;
+		}
+
+		if (iter < 1) iter = abs(anguloF - anguloI) / defaultIter;
+
+		float cambio = (anguloF - anguloI)*PI/180 / iter;
+
+		
+		float angulo = anguloI * PI / 180;
+		int n = 0;
+		if (anguloF > anguloI) n = 1;
+
+		for (auto j = 0; j < iter; j++) {
+			puntos[i][n] = {
+				centro.x + radio * cos(angulo) + d * cos(angulo),
+				centro.y,
+				centro.z - radio * sin(angulo) - d * sin(angulo),
+			};
+			puntos[i++][1-n] = {
+				centro.x + radio * cos(angulo) - d * cos(angulo),
+				centro.y,
+				centro.z - radio * sin(angulo) + d * sin(angulo),
+			};
+			angulo += cambio;
+		}
+	}
+
+	void agregarCurvaCerrada(Vec3 vertice, float anguloI, float anguloF, float extraRadio=0, int iter = -1) {
+		vertice = { vertice.x*s, vertice.y*s, vertice.z*s };
+		extraRadio *= s;
+		float anguloM = (anguloF + anguloI)/2+180;
+		cout << anguloM << endl;
+		float sig = 1;
+		if (anguloF < anguloI) sig = -1;
+		Vec3 centro(
+			vertice.x + (d + extraRadio) * cos(anguloM*PI / 180),
+			vertice.y,
+			vertice.z - (d + extraRadio) * sin(anguloM*PI / 180)
+		);		
+		agregarCurvaAbierta(centro, sig*90+ anguloI, anguloF - sig*90, d + extraRadio, iter, false);
+	}
+	
+
+	void cargarYoshi() {
+		i = 0;
+		float j;
+		//Planta del pie
+		agregarRecta(Vec3(4, 0, 0), Vec3(-4, 0, 0));
+
+		//Punta del pie
+		agregarCurvaAbierta(Vec3(-4, 0, -2.5), 270, 90, 2.5);
+
+		//Tobillo
+		agregarCurvaAbierta(Vec3(-4, 0, -6), -90, 75, 1);
+
+		//Barriga
+		agregarCurvaCerrada(Vec3(-4, 0, -7), 0, -225);
+		agregarRecta(Vec3(-4,0,-7), Vec3(-5,0,-8),/*pushFirst*/false);
+		agregarCurvaCerrada(Vec3(-6, 0, -9), -45, 180);
+
+		//Brazo
+		agregarRecta(Vec3(-6, 0, -9), Vec3(-8, 0, -9),/*pushFirst*/false);
+		agregarCurvaAbierta(Vec3(-8, 0, -10.5), 270,90, 1.5);
+		agregarRecta(Vec3(-8, 0, -12), Vec3(-7.5, 0, -12));
+		agregarCurvaCerrada(Vec3(-7, 0, -12), -180, atan(4 / 1) * 180 / PI);
+
+		//Cuello (adelante)
+		agregarRecta(Vec3(-7, 0, -12), Vec3(-6.5, 0, -14), /*pushFirst*/false);
+
+		//Nariz
+		agregarCurvaCerrada(Vec3(-5.5, 0, -16), atan(4 / 1) * 180 / PI-180, 180);
+		agregarRecta(Vec3(-6, 0, -16), Vec3(-10, 0, -16), /*pushFirst*/false);
+		agregarCurvaAbierta(Vec3(-10, 0, -19), 270, 90, 3);
+		agregarRecta(Vec3(-10, 0, -22), Vec3(-8, 0, -22));
+		agregarCurvaCerrada(Vec3(-7, 0, -22), -180, 90);
+
+		//Ojos
+		agregarCurvaAbierta(Vec3(-4.5, 0, -24), 180, 0, 2.5);
+		agregarRecta(Vec3(-2, 0, -24), Vec3(-2, 0, -23.5));
+		agregarCurvaCerrada(Vec3(-2, 0, -23), 90, 360);
+		agregarRecta(Vec3(-2, 0, -23), Vec3(-0.5, 0, -23),/*pushFirst*/false);
+		agregarCurvaCerrada(Vec3(0, 0, -23), -180, 45);
+
+		//Nuca
+		agregarCurvaAbierta(Vec3(1, 0, -22), 135, -45, sqrt(2));
+		agregarCurvaCerrada(Vec3(1, 0, -20.5),45, 315);
+		agregarCurvaAbierta(Vec3(1, 0, -19), 60, -45, sqrt(2));
+		agregarCurvaCerrada(Vec3(1, 0, -17.5), 45, 270);
+		agregarCurvaAbierta(Vec3(0, 0, -16.5), 30, -90, sqrt(1));
+		//agregarRecta(Vec3(0.1, 0, -15), Vec3(-0.1, 0, -15));
+		agregarCurvaAbierta(Vec3(0, 0, -14.5), 90, 270, 1);
+
+		//Espalda
+		agregarRecta(Vec3(1.25, 0, -13), Vec3(2, 0, -13));
+		agregarCurvaCerrada(Vec3(3, 0, -13), 180, atan(-1 / 3));
+		agregarRecta(Vec3(4, 0, -12.67), Vec3(5, 0, -12.33));
+		//Falta retocar con curva de gran radio
+
+		//Cola
+		agregarCurvaAbierta(Vec3(9,0,-12),90,-45,1);
+		agregarRecta(Vec3(7, 0, -9), Vec3(5, 0, -6));
+		agregarCurvaCerrada(Vec3(4, 0, -5), 45, 360);
+
+		//Talon
+		agregarCurvaAbierta(Vec3(4, 0, -2.5), 75, -75, 2.5);
+
+
+	}
+
+	void dibujarPista() {
+		glPushMatrix();
+		glPushAttrib(GL_FRONT_AND_BACK);
+		glColor3f(0.7, 0.7, 0.7);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		for (auto j = 0; j < i - 1; j++) {
+			quad(
+				puntos[j][0].glVec3(),
+				puntos[j][1].glVec3(),
+				puntos[j + 1][1].glVec3(),
+				puntos[j + 1][0].glVec3(),
+				3,1
+			);
+		}
+		if(tipo==1)
+		quad(
+			puntos[i-1][0].glVec3(),
+			puntos[i-1][1].glVec3(),
+			puntos[0][1].glVec3(),
+			puntos[0][0].glVec3(),
+			3,1
+		);
+		glPopAttrib();
+		glPopMatrix();
+	}
 }pista;
 
 class Escenario {
 public:
-	Quad base = {
-		{ -70,0,0 },
-		{ 55,0,0 },
-		{ 55,0,-150 },
-		{ -70,0,-150 }
+	GLfloat n = 4;
+	Vec3 base[4] = {
+		{ -70*n,-0.1,0 },
+		{ 55*n,-0.1,0 },
+		{ 55*n,-0.1,-150*n },
+		{ -70*n,-0.1,-150*n }
 	};
 
-	/*Dbuja una cuadricula base*/
+	/*Dibuja una cuadricula base*/
 	void dibujarCuadricula() {
-		//Cuadricula base
+		//cuadricula base
+		glPushMatrix();
+		glScalef(10, 10, 10);
 		ejes();
+		glPopMatrix();
 		glPushAttrib(GL_FRONT_AND_BACK);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
@@ -104,10 +296,10 @@ public:
 		glColor3f(0.9, 0.9, 0.9);
 		
 		//utilidades.h
-		quad(base.q1.glVec3(),
-			base.q2.glVec3(),
-			base.q3.glVec3(),
-			base.q4.glVec3(), 
+		quad(base[0].glVec3(),
+			base[1].glVec3(),
+			base[2].glVec3(),
+			base[3].glVec3(), 
 			25, 
 			30
 		);
@@ -147,12 +339,12 @@ private:
 	*/ 
 
 	float vMax = 0.5; //velocidad maxima
-	float rVMax = 0.05; //velocidad maxima en reversa
+	float rVMax = 0.05; //velocidad maxima en marcha atras
 	float a = 0.002; //Variacion de la velocidad pisando acelerador
 	float aN = 0.001; //Variacion de la velociadd sin pisar el acelerador
 	float aF = 0.005; //Variacion de la velocidad pisando el freno
 	float rot = 180; //Rotacion alrededor del eje y
-	float vRot = 1; //Velocidad de rotacion en angulos
+	float vRot = 2.5; //Velocidad de rotacion en angulos
 public:
 
 
@@ -161,14 +353,6 @@ public:
 		glNewList(automovil, GL_COMPILE);
 		glPushMatrix();
 		glColor3f(0.5, 0.5, 0.5);
-		/*
-		glScalef(0.5, 0.01, 0.5);
-		glutSolidCube(0.5);
-		glTranslatef(0.25, 0, 0);
-		glColor3f(1, 0, 0);
-		glutSolidSphere(0.25,5,5);
-		*/
-
 		glScalef(5, 1.25, 2);
 		glTranslatef(0, 0.5, 0);
 		glutSolidCube(1);
@@ -275,7 +459,7 @@ private:
 	double angulo = 35;
 	double distancia = 1 / sin(angulo / 2 * PI / 180);
 	double lejos = 1000; //distancia maxima que dibuja la camara
-	int tipoCamara = 2; //1: Vista Planta, 2: 3ra Persona
+	int tipoCamara = 1; //1: Vista Planta, 2: 3ra Persona
 
 	Vec3 *parentPos; //Posicion de referencia del objeto al que sigue (automovil)
 	float *parentRot; //Rotacion de referencia del objeto al que sigue (automovil)
@@ -333,13 +517,15 @@ public:
 		*/
 		if (tipoCamara == 1) vistaPlanta();
 		else {
+
+			pos.x = parentPos->x - offsetD * cos(*parentRot*PI / 180);
+			pos.y = parentPos->y + offsetA;
+			pos.z = parentPos->z + offsetD * sin(*parentRot*PI / 180);
+
 			look.x = parentPos->x;
 			look.y = parentPos->y + offsetA - tan(offsetAngulo * PI / 180)*offsetA;
 			look.z = parentPos->z;
 			
-			pos.x = parentPos->x - offsetD * cos(*parentRot*PI / 180);
-			pos.y = parentPos->y + offsetA;
-			pos.z =	parentPos->z + offsetD*sin(*parentRot*PI / 180);
 			
 			up = Vec3(0, 1, 0);
 
@@ -365,8 +551,8 @@ public:
 		*/
 		radio = 14;
 		lejos = 100;
-		float x = escenario.base.q4.x - escenario.base.q1.x;
-		float y = abs(escenario.base.q3.z - escenario.base.q2.z)/2;
+		float x = escenario.base[3].x - escenario.base[0].x;
+		float y = abs(escenario.base[2].z - escenario.base[1].z)/2;
 		float z = -y;
 		posicionar(Vec3(x, y/sin(angulo/2*PI/180), z));
 		orientar(Vec3(0, 0, z));
@@ -381,11 +567,12 @@ public:
 
 double alpha=0;
 
-void start() {
+void init() {
 	//Fijar color de borrado
 	glClearColor(1,1,1,1);
 	glEnable(GL_DEPTH_TEST);
 
+	pista.cargarYoshi();
 	automovil.cargarAutomovil();
 	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
 }
@@ -400,6 +587,7 @@ void display() {
 	
 	//Escenario
 	escenario.dibujarCuadricula();
+	pista.dibujarPista();
 	
 	//Objetos
 	automovil.dibujarAutomovil();
@@ -478,7 +666,7 @@ void main(int argc, char **argv) {
 
 	//Crear la ventana
 	glutCreateWindow(PROYECTO);
-	start();
+	init();
 	//Registrar las callbacks
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);

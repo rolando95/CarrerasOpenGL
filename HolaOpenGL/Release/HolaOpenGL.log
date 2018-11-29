@@ -6,26 +6,42 @@ c:\mingw\gl\include\utilidades.h(35): warning C4305: 'initializing': truncation 
 c:\mingw\gl\include\utilidades.h(36): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
 c:\mingw\gl\include\utilidades.h(38): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
 c:\mingw\gl\include\utilidades.h(252): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(102): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(139): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(148): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(149): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(150): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(151): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(162): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(229): warning C4244: '+=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(230): warning C4244: '-=': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(306): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(347): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(350): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(349): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(348): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(364): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(458): warning C4326: return type of 'main' should be 'int' instead of 'void'
-c:\users\rarj1\documents\trabajos\universidad\2018\upv\sgi\proyecto final\holaopengl\main.cpp(469): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(97): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(140): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(142): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(145): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(174): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(172): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(201): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(207): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(221): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(223): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(225): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(231): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(232): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(182): warning C4101: 'j': unreferenced local variable
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(249): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(283): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(296): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(333): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(342): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(343): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(344): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(345): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(420): warning C4244: '+=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(421): warning C4244: '-=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(476): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(500): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(521): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(522): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(523): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(526): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(557): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(654): warning C4326: return type of 'main' should be 'int' instead of 'void'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\main.cpp(665): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   Generating code
-  0 of 61 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  3 of 83 functions ( 3.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  HolaOpenGL.vcxproj -> C:\Users\rarj1\Documents\Trabajos\Universidad\2018\UPV\SGI\Proyecto Final\HolaOpenGL\Carreras.exe
+  HolaOpenGL.vcxproj -> C:\Users\rarj1\Documents\Trabajos\Yo\Carreras\HolaOpenGL\Carreras.exe
