@@ -54,12 +54,12 @@ public:
 
 class Pista {
 private:
-	int defaultIter = 10;
+	int defaultIter = 30;
 	int tipo = 1; //0: sprint, 1: circuito
 public:
 	Vec3 puntos[MAX][2];
 	float s = 20; //Escala de la cuadricula
-	float d = 8; //Distancia desde el centro de la calle a la arista
+	float d = 7.5; //Distancia desde el centro de la calle a la arista
 	int i;
 
 	/*Calcula el modulo de un vector 
@@ -137,7 +137,7 @@ public:
 			radio *= s;
 		}
 
-		if (iter < 1) iter = abs(anguloF - anguloI) / defaultIter;
+		if (iter < 1) iter = abs(anguloF - anguloI) / defaultIter* 2 *((radio/s < 1) ? 1 : radio / s);
 
 		float cambio = (anguloF - anguloI)*PI/180 / iter;
 
@@ -161,22 +161,6 @@ public:
 		}
 	}
 
-	void agregarCurvaCerrada(Vec3 vertice, float anguloI, float anguloF, float extraRadio=0, int iter = -1) {
-		vertice = { vertice.x*s, vertice.y*s, vertice.z*s };
-		extraRadio *= s;
-		float anguloM = (anguloF + anguloI)/2+180;
-		cout << anguloM << endl;
-		float sig = 1;
-		if (anguloF < anguloI) sig = -1;
-		Vec3 centro(
-			vertice.x + (d + extraRadio) * cos(anguloM*PI / 180),
-			vertice.y,
-			vertice.z - (d + extraRadio) * sin(anguloM*PI / 180)
-		);		
-		agregarCurvaAbierta(centro, sig*90+ anguloI, anguloF - sig*90, d + extraRadio, iter, false);
-	}
-	
-
 	void cargarYoshi() {
 		i = 0;
 		float j;
@@ -187,55 +171,51 @@ public:
 		agregarCurvaAbierta(Vec3(-4, 0, -2.5), 270, 90, 2.5);
 
 		//Tobillo
-		agregarCurvaAbierta(Vec3(-4, 0, -6), -90, 75, 1);
+		agregarCurvaAbierta(Vec3(-4, 0, -6), -90, 60, 1);
 
 		//Barriga
-		agregarCurvaCerrada(Vec3(-4, 0, -7), 0, -225);
-		agregarRecta(Vec3(-4,0,-7), Vec3(-5,0,-8),/*pushFirst*/false);
-		agregarCurvaCerrada(Vec3(-6, 0, -9), -45, 180);
+		//agregarRecta(Vec3(-4, 0, -7), Vec3(-5, 0, -8));
+		agregarCurvaAbierta(Vec3(-6, 0, -7), 60, 90, 2);
 
 		//Brazo
-		agregarRecta(Vec3(-6, 0, -9), Vec3(-8, 0, -9),/*pushFirst*/false);
+		agregarRecta(Vec3(-6, 0, -9), Vec3(-8, 0, -9));
 		agregarCurvaAbierta(Vec3(-8, 0, -10.5), 270,90, 1.5);
-		agregarRecta(Vec3(-8, 0, -12), Vec3(-7.5, 0, -12));
-		agregarCurvaCerrada(Vec3(-7, 0, -12), -180, atan(4 / 1) * 180 / PI);
-
+		agregarCurvaAbierta(Vec3(-8, 0, -13), -90, -15, 1);
+		
 		//Cuello (adelante)
-		agregarRecta(Vec3(-7, 0, -12), Vec3(-6.5, 0, -14), /*pushFirst*/false);
+		agregarRecta(Vec3(-7, 0, -13), Vec3(-6.5, 0, -14.9));
 
 		//Nariz
-		agregarCurvaCerrada(Vec3(-5.5, 0, -16), atan(4 / 1) * 180 / PI-180, 180);
-		agregarRecta(Vec3(-6, 0, -16), Vec3(-10, 0, -16), /*pushFirst*/false);
+		agregarCurvaAbierta(Vec3(-7.5, 0, -15), -15, 90, 1);
+		agregarRecta(Vec3(-7.5, 0, -16), Vec3(-10, 0, -16));
 		agregarCurvaAbierta(Vec3(-10, 0, -19), 270, 90, 3);
-		agregarRecta(Vec3(-10, 0, -22), Vec3(-8, 0, -22));
-		agregarCurvaCerrada(Vec3(-7, 0, -22), -180, 90);
+		agregarRecta(Vec3(-10, 0, -22), Vec3(-9, 0, -22));
+		agregarCurvaAbierta(Vec3(-9, 0, -24), -90, 0, 2);
 
 		//Ojos
 		agregarCurvaAbierta(Vec3(-4.5, 0, -24), 180, 0, 2.5);
-		agregarRecta(Vec3(-2, 0, -24), Vec3(-2, 0, -23.5));
-		agregarCurvaCerrada(Vec3(-2, 0, -23), 90, 360);
-		agregarRecta(Vec3(-2, 0, -23), Vec3(-0.5, 0, -23),/*pushFirst*/false);
-		agregarCurvaCerrada(Vec3(0, 0, -23), -180, 45);
+		agregarCurvaAbierta(Vec3(-1, 0, -24), 180, 270, 1);
+		agregarCurvaAbierta(Vec3(-1, 0, -27), 270, 285, 4);
 
 		//Nuca
-		agregarCurvaAbierta(Vec3(1, 0, -22), 135, -45, sqrt(2));
-		agregarCurvaCerrada(Vec3(1, 0, -20.5),45, 315);
-		agregarCurvaAbierta(Vec3(1, 0, -19), 60, -45, sqrt(2));
-		agregarCurvaCerrada(Vec3(1, 0, -17.5), 45, 270);
-		agregarCurvaAbierta(Vec3(0, 0, -16.5), 30, -90, sqrt(1));
-		//agregarRecta(Vec3(0.1, 0, -15), Vec3(-0.1, 0, -15));
-		agregarCurvaAbierta(Vec3(0, 0, -14.5), 90, 270, 1);
+		agregarCurvaAbierta(Vec3(1, 0, -22), 115, -45, sqrt(2));
+		agregarCurvaAbierta(Vec3(2.25, 0, -20.5), 135, 225, 0.5);
+		agregarCurvaAbierta(Vec3(1, 0, -19), 45, -45, sqrt(2));
+		agregarCurvaAbierta(Vec3(2.25, 0, -17.5), 135, 225, 0.5);
+		agregarCurvaAbierta(Vec3(1, 0, -16), 45, -45, sqrt(2));
+		agregarRecta(Vec3(1.925, 0, -15), Vec3(-0.25, 0, -14));
+		agregarCurvaAbierta(Vec3(0, 0, -13.5), 135, 270, 0.5);
 
 		//Espalda
-		agregarRecta(Vec3(1.25, 0, -13), Vec3(2, 0, -13));
-		agregarCurvaCerrada(Vec3(3, 0, -13), 180, atan(-1 / 3));
-		agregarRecta(Vec3(4, 0, -12.67), Vec3(5, 0, -12.33));
-		//Falta retocar con curva de gran radio
+		agregarRecta(Vec3(0, 0, -13), Vec3(3, 0, -13));
+		agregarCurvaAbierta(Vec3(3, 0, -10), 90, 75, 3);
+		agregarCurvaAbierta(Vec3(6, 0, -15), -120, -60, 3);
+		agregarCurvaAbierta(Vec3(9, 0, -10), 105, 90, 3);
 
 		//Cola
 		agregarCurvaAbierta(Vec3(9,0,-12),90,-45,1);
 		agregarRecta(Vec3(7, 0, -9), Vec3(5, 0, -6));
-		agregarCurvaCerrada(Vec3(4, 0, -5), 45, 360);
+		agregarCurvaAbierta(Vec3(4.5, 0, -5.5), 135, 270, 0.5);
 
 		//Talon
 		agregarCurvaAbierta(Vec3(4, 0, -2.5), 75, -75, 2.5);
@@ -250,36 +230,41 @@ public:
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		float mod;
 		for (auto j = 0; j < i - 1; j++) {
+			mod = modulo(puntos[j][0], puntos[j + 1][0]);
+			if (mod < 1) mod = 1;
 			quad(
 				puntos[j][0].glVec3(),
 				puntos[j][1].glVec3(),
 				puntos[j + 1][1].glVec3(),
 				puntos[j + 1][0].glVec3(),
-				3,1
+				15 , mod
 			);
 		}
-		if(tipo==1)
-		quad(
-			puntos[i-1][0].glVec3(),
-			puntos[i-1][1].glVec3(),
-			puntos[0][1].glVec3(),
-			puntos[0][0].glVec3(),
-			3,1
-		);
+		if (tipo == 1) {
+			mod = modulo(puntos[i-1][0], puntos[0][0]);
+			if (mod < 1) mod = 1;
+			quad(
+				puntos[i - 1][0].glVec3(),
+				puntos[i - 1][1].glVec3(),
+				puntos[0][1].glVec3(),
+				puntos[0][0].glVec3(),
+				15, mod
+			);
+		}
 		glPopAttrib();
 		glPopMatrix();
 	}
-}pista;
+};
 
-class Escenario {
+class Escenario :public Pista{
 public:
-	GLfloat n = 4;
 	Vec3 base[4] = {
-		{ -70*n,-0.1,0 },
-		{ 55*n,-0.1,0 },
-		{ 55*n,-0.1,-150*n },
-		{ -70*n,-0.1,-150*n }
+		{ -15*s,-0.1,0 },
+		{ 11*s,-0.1,0 },
+		{ 11*s,-0.1,-28*s },
+		{ -15*s,-0.1,-28*s }
 	};
 
 	/*Dibuja una cuadricula base*/
@@ -332,15 +317,16 @@ private:
 	GLint automovil;
 	Vec3 pos = {0, 0.01, 0};
 	float v = 0; //velocidad
-	/*
+	
+				 /*
 	//Trabajar mecanicas de drift/derrape
 	float vA = 0; //velocidad angular
 	float vAMax = 0;
 	*/ 
-
-	float vMax = 0.5; //velocidad maxima
-	float rVMax = 0.05; //velocidad maxima en marcha atras
-	float a = 0.002; //Variacion de la velocidad pisando acelerador
+	float n = 0.5; //Escala de las unidades
+	float vMax = 70.833/FPS*n; //velocidad maxima
+	float rVMax = 27.778/FPS*n; //velocidad maxima en marcha atras
+	float a = 5.005/FPS*n; //Variacion de la velocidad pisando acelerador
 	float aN = 0.001; //Variacion de la velociadd sin pisar el acelerador
 	float aF = 0.005; //Variacion de la velocidad pisando el freno
 	float rot = 180; //Rotacion alrededor del eje y
@@ -451,9 +437,9 @@ public:
 
 class Camara {
 private:
-	double offsetA = 2.5; //Distancia en eje Y local con respecto al objeto parentado
-	double offsetD = 11;  //Distancia en eje X local con respecto al objeto parentado
-	double offsetAngulo = 5; //Inclinacion de la camara con respecto al eje Z local con respecto al objeto parentado
+	double offsetA = 4; //Distancia en eje Y local con respecto al objeto parentado
+	double offsetD = 13;  //Distancia en eje X local con respecto al objeto parentado
+	double offsetAngulo = 15; //Inclinacion de la camara con respecto al eje Z local con respecto al objeto parentado
 
 	double radio = 1; //Radio de esfera unidad
 	double angulo = 35;
@@ -572,7 +558,7 @@ void init() {
 	glClearColor(1,1,1,1);
 	glEnable(GL_DEPTH_TEST);
 
-	pista.cargarYoshi();
+	escenario.cargarYoshi();
 	automovil.cargarAutomovil();
 	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
 }
@@ -587,7 +573,7 @@ void display() {
 	
 	//Escenario
 	escenario.dibujarCuadricula();
-	pista.dibujarPista();
+	escenario.dibujarPista();
 	
 	//Objetos
 	automovil.dibujarAutomovil();
