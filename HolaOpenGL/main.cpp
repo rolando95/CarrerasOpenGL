@@ -13,10 +13,10 @@
 #include "gl/freeglut.h"
 #include <utilidades.h>
 #include <ctime>
+#include <math.h>
 #define ASCII 256
 #define MAX 100000
 #define FPS 60
-
 #define PROYECTO "- Drift Racing -"
 
 using namespace std;
@@ -51,6 +51,45 @@ public:
 	}
 };
 
+class Vec4 : public Vec3 {
+public:
+	GLfloat w;
+	Vec4(GLfloat X = 0, GLfloat Y = 0, GLfloat Z = 0, GLfloat W = 0) {
+		x = X; y = Y; z = Z; w = W;
+	}
+	GLfloat *glVec4() {
+		GLfloat vector[4];
+		vector[0] = x;
+		vector[1] = y;
+		vector[2] = z;
+		vector[3] = w;
+		return vector;
+	}
+};
+
+class Lampara {
+	Vec3 direccion;
+	Vec3 color;
+	Vec3 ambiente;
+	Vec3 difuso;
+	Vec3 especular;
+	Lampara(
+		Vec3 Idireccion = { 0,0,0 },
+		Vec3 Icolor = {0,0,0},
+		Vec3 Iambiente = {0,0,0},
+		Vec3 Idifuso = { 0, 0, 0 },
+		Vec3 Iespecular = { 0, 0, 0 }) {
+		direccion = Idireccion;
+		color = Icolor;
+		ambiente = Iambiente;
+		difuso = Idifuso;
+		especular = Iespecular;
+	}
+};
+
+class Material {
+
+};
 
 class Pista {
 private:
@@ -58,8 +97,8 @@ private:
 	int tipo = 1; //0: sprint, 1: circuito
 public:
 	Vec3 puntos[MAX][2];
-	float s = 20; //Escala de la cuadricula
-	float d = 7.5; //Distancia desde el centro de la calle a la arista
+	float s = 30; //Escala de la cuadricula
+	float d = 8; //Distancia desde el centro de la calle a la arista
 	int i;
 
 	/*Calcula el modulo de un vector 
@@ -76,7 +115,6 @@ public:
 
 	Vec3 vectorUnidad(Vec3 in, Vec3 fi) {
 		float mod = modulo(in, fi);
-
 		return Vec3(
 			(fi.x-in.x)/mod,
 			(fi.y-in.y)/mod,
@@ -310,30 +348,51 @@ public:
 		return tecla[pos];
 	}
 
+	bool *obtenerPosTecla(char pos) {
+		return &tecla[pos];
+	}
 }global;
 
 class Automovil{
 private:
 	GLint automovil;
-	Vec3 pos = {0, 0.01, 0};
-	float v = 0; //velocidad
+	float n = 1; //Escala de las unidades
+
+	//Movimiento Lineal
+	Vec3 pos = {0, 0.01, 0}; //Posicion (m)
+	float vL = 0; //velocidad lineal (m/s)
+	float vLMax = 70.833; //velocidad maxima lineal (m/s)
+	float vLMaxR = 27.778; //velocidad maxima en marcha atras (m/s)
+
+	float aL1 = 15.001; //Variacion de la velocidad lineal pisando el acelerador en primera(m/s^2)
+	float aL2 = 5.001; //Variacion de la velocidad lineal pisando el acelerador en los demas cambios (m/s^2)
+	float cambio = 27.778; //Velocidad donde se realiza el cambio de primera a segunda (m/s^2)
+	float aNL = 0.008; //Variacion de la velociad lineal sin pisar el acelerador (m/s^2)
+	float aFL = 50; //Variacion de la velocidad lineal pisando el freno (m/s^2)
+
+	//Movimiento Radial
+	float rot = 180; //Rotacion alrededor del eje y (alpha)
+	float vRot = 10; //Velocidad de rotacion en angulos (alpha/s)
+
+	//Derrape (No se considera la aceleracion radial en los calculos por simplicidad)
+	float rotD = 0; //Rotacion extra por derrape (alpha/s)
+	float vR = 60; //Velocidad de rotacion del derrape en angulos (alpha/s)
+	float vAR = 90; //Velocidad de amortiguacion de rotacion del derrape en angulos  (alpha/s)
+	float rotDMax = 45; //Angulo maximo de derrape  (alpha)
+
+	float vMinD = 27.778; //Velocidad minima para poder derrapar (m/s)
 	
-				 /*
-	//Trabajar mecanicas de drift/derrape
-	float vA = 0; //velocidad angular
-	float vAMax = 0;
-	*/ 
-	float n = 0.5; //Escala de las unidades
-	float vMax = 70.833/FPS*n; //velocidad maxima
-	float rVMax = 27.778/FPS*n; //velocidad maxima en marcha atras
-	float a = 5.005/FPS*n; //Variacion de la velocidad pisando acelerador
-	float aN = 0.001; //Variacion de la velociadd sin pisar el acelerador
-	float aF = 0.005; //Variacion de la velocidad pisando el freno
-	float rot = 180; //Rotacion alrededor del eje y
-	float vRot = 2.5; //Velocidad de rotacion en angulos
+	//Puntero que guarda por referencia el estado de la pulsacion de la tecla correspondiente
+	bool *parentAcelerar; 
+	bool *parentFreno;
+	bool *parentFrenoDeMano;
+	bool *parentRetroceder;
+	bool *parentGiroIzquierda;
+	bool *parentGiroDerecha;
+	
 public:
 
-
+	//Carga la lista del modelo 3D del automovil
 	void cargarAutomovil() {
 		automovil = glGenLists(1);
 		glNewList(automovil, GL_COMPILE);
@@ -351,85 +410,197 @@ public:
 		pos = lPos; rot = r;
 	}
 
-	/*1 = izquierda
-	-1 = derecha
+	/*Obtener por referencia 
+	los valores de entrada de los controles del automovil
 	*/
-	void girar(int direccion) {
-	
-		rot += direccion * vRot;
-		if (rot > 360) rot -= 360;
-		else if (rot < 0) rot += 360;
-	}
-	void acelerar() {
-		v += a;
-		if (v > vMax) v = vMax;
+	void parentarControles(bool *acelerar, bool *retroceder, bool *freno, bool *frenoDeMano, bool *izquierda, bool *derecha) {
+		parentAcelerar = acelerar;
+		parentFreno = freno;
+		parentFrenoDeMano = frenoDeMano;
+		parentGiroIzquierda = izquierda;
+		parentGiroDerecha = derecha;
+		parentRetroceder = retroceder;
 	}
 
-	void frenar() {
-		desacelerar(aF);
-	}
-
-	void derrapar() {
-
-	}
-
-	void retroceder() {
-		if (v > 0) desacelerar(aF);
-		else{
-			v -= a;
-			if (v < -rVMax) v = -rVMax;
-		}
-	}
-
-	void desacelerar(float aceleracion) {
-		if (v > 0) {
-			v -= aceleracion;
-			if (v < 0) v = 0;
-		}
-		else if (v < 0) {
-			v += aceleracion;
-			if (v > 0) v = 0;
-		}
-	}
-
+	//Retorna la posicion del automovil por referencia
 	Vec3 *obtenerRefPosicion() {
 		return &pos;
 	}
 
+	/*
+	Retorna la rotacion del automovil por referencia
+	La rotacion extra por derrape no se toma en cuenta
+	*/
 	float *obtenerRefRotacion() {
 		return &rot;
 	}
 
-	void actualizar() {
-		//Si nada esta ocurriendo, el auto se esta deteniendo.
-		desacelerar(aN);
-		pos.x +=v*cos(rot*PI/180);
-		pos.z -=v*sin(rot*PI/180);
+	/*
+	Rota el auto segun la direccion (-1,1)
+	*/
+	void girar(float direccion) {
+		if(vL != 0){
+			//En velocidad negativa se invierte la transmision 
+			//del giro acorde a los autos reales
+			if (vL < 0) direccion *= -1; 
+			float val = 1 / cosh((abs(vL) - cambio)*PI / 180);
+			rot += direccion * vRot / FPS / 2 * val;
+			if (rot > 360) rot -= 360;
+			else if (rot < 0) rot += 360;
+		}
 	}
 
+	/*
+	Aumenta la velocidad segun una aceleracion dada
+	*/
+	void acelerar(float valor) {
+		//abs(valor);
+		vL += valor/FPS;
+		if (vL > vLMax) vL = vLMax;
+	}
 
-	void imprimirStats(bool inicio=true) {
-		char txt[]= "hola mundo";
-		glPushMatrix();
-		glRotatef(90, 0, 0, 1);
-		cout << "Stats"<<endl;
-		cout << "x: " << pos.x << "\t\t"<<endl;
-		cout << "y: " << pos.y << "\t\t"<<endl;
-		cout << "z: " << pos.z << "\t\t"<<endl;
-		cout << "r: " << rot << "\t\t" << endl;
-		cout << "v: " << v << "\t\t" << endl;
+	/*
+	Realiza la operacion inversa al metodo de aceleracion
+	El argumento debe ser necesariamente de valor positivo
+	*/
+	void retroceder(float valor) {
+		//abs(valor);
+		vL -= valor/FPS;
+		if (vL < -vLMaxR) vL = -vLMaxR;
+	}
+
+	/*
+	Desacelera el automovil
+	Toma en consideracion si su velocidad es positiva o negativa
+	y automaticamente la incrementa o decrementa.
+	Es necesario dar como argumento un valor de desaceleracion positivo
+	*/
+	void desacelerar(float valor) {
+		//abs(valor);
+		if (vL > 0) {
+			vL -= valor/FPS;
+			if (vL < 0) vL = 0;
+		}
+		else if (vL < 0) {
+			vL += valor/FPS;
+			if (vL > 0) vL = 0;
+		}
+	}
+
+	/*
+	Dado un valor (positivo/negativo) aumenta o disminuye la
+	rotacion extra por derrape.
+	*/
+	void derrapar(float valor) {
+		if (abs(vL) > vMinD)
+			rotD += valor/FPS;
+		else
+			rotD += valor/FPS * abs(vL) / vMinD;
+		if (rotD > rotDMax) rotD = rotDMax;
+		else if (rotD < -rotDMax) rotD = -rotDMax;
+
+	}
+
+	/*
+	Realiza la operacion inversa del metodo derrapar
+	y adicional transmite el valor de rotacion extra
+	sustraido al de la rotacion del vehiculo
+	*/
+	void amortiguarDerrape(float valor) {
+		if (rotD != 0) {
+			float reduccion = 0;
+			if (rotD > 0) {
+				rotD -= valor/FPS;
+				if (rotD < 0) {
+					reduccion = valor/FPS - abs(rotD);
+					rotD = 0;
+				}
+				else reduccion = valor/FPS;
+			}
+			else if (rotD < 0) {
+				rotD += valor/FPS;
+				if (rotD > 0) {
+					reduccion = -valor/FPS + rotD;
+					rotD = 0;
+				}
+				else reduccion = -valor/FPS;
+			}
+
+			//El valor de rotacion extra reducido se
+			//transmite a rot
+			rot += reduccion/2;
+		}
+	}
+
+	//Actualizar estado del automovil
+	void actualizar() {
+
+		//Velocidad Lineal
+		if (*parentFreno) desacelerar(aFL);
+		else if (*parentAcelerar) {
+			if(vL > cambio)acelerar(aL2);
+			else acelerar(aL1);
+			if (*parentFrenoDeMano) desacelerar(aNL);
+		}
+		else if (*parentRetroceder && !*parentFrenoDeMano) retroceder(aL2);
+		else desacelerar(aNL);
+
+		//Velocidad Angular
+		if (!*parentGiroIzquierda && *parentGiroDerecha) {
+			if (*parentFrenoDeMano) derrapar(-vR);
+			girar(-vRot);
+		}
+		if (*parentGiroIzquierda && !*parentGiroDerecha) {
+			if (*parentFrenoDeMano) derrapar(vR);
+			girar(vRot);
+		}
+
+		if (!*parentFrenoDeMano) amortiguarDerrape(vAR);
+		else amortiguarDerrape(vAR/25);
+
+		//Actualizacion de posicion
+		pos.x += vL * cos((rot-rotD/2)*PI / 180)/FPS;
+		pos.z -= vL * sin((rot-rotD/2)*PI / 180)/FPS;
+	}
+
+	void imprimirStats(bool inicio = true) {
+		int i = 0;
+
+		static int anterior = 0;
+		int ahora = time(0);
+		static int conteo = 0;
+		static int fps = 0;
+		conteo += 1;
+		if (ahora - anterior > 1) {
+			fps = conteo;
+			conteo = 0;
+			anterior = ahora-1;
+		}
+		cout << "Estado del Automovil" << endl; i++;
+		cout << "______________________\n" << endl; i+=2;
+		cout << "Pos x: " << round(pos.x*100)/100 << " m\t\t" << endl; i++;
+		cout << "Pos y: " << round(pos.y*100)/100 << " m\t\t" << endl; i++;
+		cout << "Pos z: " << round(pos.z*100)/100 << " m\t\t" << endl; i++;
+		cout << "Velocidad: " << vL << " m/s \t\t" << endl; i++;
+		cout << "Rotacion : " << rot << " grados\t\t" << endl; i++;
+		cout << "Rot derrape: " << rotD << " grados\t\t" << endl; i++;
+		cout << "Acelerar: " << *parentAcelerar << "\t\t" << endl; i++;
+		cout << "Giro iz : " << *parentGiroIzquierda << "\t\t" << endl; i++;
+		cout << "Giro der: " << *parentGiroDerecha << "\t\t" << endl; i++;
+		cout << "Freno   : " << *parentFreno<< "\t\t" << endl; i++;
+		cout << "Retroceder : " << *parentRetroceder << "\t\t" << endl; i++;
+		cout << "FrenoMano  : " << *parentFrenoDeMano<< "\t\t" << endl; i++;
+		cout << "FPS: " << fps << "\t\t" << endl; i++;
 		static CONSOLE_SCREEN_BUFFER_INFO coninfo;
 		static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		GetConsoleScreenBufferInfo(hConsole, &coninfo);
-		coninfo.dwCursorPosition.Y -= 6;    // move up one line
+		coninfo.dwCursorPosition.Y -= i;    // move up one line
 		coninfo.dwCursorPosition.X =0;    // move to the right the length of the word
 		SetConsoleCursorPosition(hConsole, coninfo.dwCursorPosition);
-		glPopMatrix();
-
 	}
 	void dibujarAutomovil() {
 		glTranslatef(pos.x, pos.y, pos.z);
-		glRotatef(rot, 0, 1, 0);
+		glRotatef(rot+rotD, 0, 1, 0);
 		glCallList(automovil);
 	}
 
@@ -437,8 +608,8 @@ public:
 
 class Camara {
 private:
-	double offsetA = 4; //Distancia en eje Y local con respecto al objeto parentado
-	double offsetD = 13;  //Distancia en eje X local con respecto al objeto parentado
+	double offsetA = 3; //Distancia en eje Y local con respecto al objeto parentado
+	double offsetD = 10;  //Distancia en eje X local con respecto al objeto parentado
 	double offsetAngulo = 15; //Inclinacion de la camara con respecto al eje Z local con respecto al objeto parentado
 
 	double radio = 1; //Radio de esfera unidad
@@ -487,12 +658,11 @@ public:
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		actualizarPerspectiva();
+		glutPostRedisplay();
 	}
 
 	void actualizarPerspectiva() {
 		float ra = float(w) / float(h);
-		//float d = asin(radio / sqrt(pow(x - lX, 2) + pow(y - lY, 2) + pow(z - lZ, 2)));
-		//float a = 2.0 * d * 180 / PI;
 		gluPerspective(angulo, ra, 0.2, lejos);
 	}
 
@@ -504,6 +674,17 @@ public:
 		if (tipoCamara == 1) vistaPlanta();
 		else {
 
+			/*
+			Se posiciona la camara antes de hacer 
+			de hacer el calculo del frame actual.
+			Crea un ligero retraso que mejorar la jugabilidad
+			*/
+			gluLookAt(pos.x, pos.y, pos.z,
+				look.x, look.y, look.z,
+				up.x, up.y, up.z
+			);
+
+			//Calculo de la nueva posicion de camara
 			pos.x = parentPos->x - offsetD * cos(*parentRot*PI / 180);
 			pos.y = parentPos->y + offsetA;
 			pos.z = parentPos->z + offsetD * sin(*parentRot*PI / 180);
@@ -514,11 +695,12 @@ public:
 			
 			
 			up = Vec3(0, 1, 0);
-
+			
+			/*
 			gluLookAt(pos.x, pos.y, pos.z,
-					look.x, look.y, look.z,
-						up.x, up.y, up.z
-			);
+				look.x, look.y, look.z,
+				up.x, up.y, up.z
+			); */
 		}
 	}
 
@@ -536,7 +718,7 @@ public:
 		(Solo para uso de testing)
 		*/
 		radio = 14;
-		lejos = 100;
+		lejos = 10000;
 		float x = escenario.base[3].x - escenario.base[0].x;
 		float y = abs(escenario.base[2].z - escenario.base[1].z)/2;
 		float z = -y;
@@ -559,15 +741,24 @@ void init() {
 	glEnable(GL_DEPTH_TEST);
 
 	escenario.cargarYoshi();
+
+	bool *acelerar = global.obtenerPosTecla('w');
+	bool *retroceder = global.obtenerPosTecla('r');
+	bool *freno = global.obtenerPosTecla('s');
+	bool *frenoDeMano = global.obtenerPosTecla(' ');
+	bool *izquierda = global.obtenerPosTecla('a');
+	bool *derecha = global.obtenerPosTecla('d');
+	automovil.parentarControles(acelerar, retroceder, freno, frenoDeMano, izquierda, derecha);
 	automovil.cargarAutomovil();
+
 	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
+	camara.actualizar();
 }
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
 	//Camara
 	camara.actualizar();
 	
@@ -577,29 +768,22 @@ void display() {
 	
 	//Objetos
 	automovil.dibujarAutomovil();
-
 	glutSwapBuffers();
+	automovil.imprimirStats();
 }
 
 void reshape(int w, int h) {
 	camara.reescalar(w,h);
-	glutPostRedisplay();
 }
 
 void update() {
-	if (global.obtenerEstadoTecla('w')) automovil.acelerar(); 
-	if (global.obtenerEstadoTecla('s')) automovil.frenar();
-	if (global.obtenerEstadoTecla('r')) automovil.retroceder();
-	if (global.obtenerEstadoTecla('a')) automovil.girar(1);
-	if (global.obtenerEstadoTecla('d')) automovil.girar(-1);
-	if (global.obtenerEstadoTecla(' ')) automovil.derrapar();
 	automovil.actualizar();
 	glutPostRedisplay();
+	
 }
 
 void onTimer(int frame) {
 	update();
-	//automovil.imprimirStats();
 	glutTimerFunc(frame, onTimer, frame);
 }
 
