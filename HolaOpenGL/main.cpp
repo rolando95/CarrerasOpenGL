@@ -77,19 +77,21 @@ public:
 	Vec4 brillo;
 
 	Material(
-		Vec4 Iambiente = { 0, 0, 0, 1 },
+		Vec4 Iambiente = { 0.2, 0.2, 0.2, 1 },
 		Vec4 Idifuso = { 0.8, 0.8, 0.8, 1 },
 		Vec4 Iespecular = { 0.2, 0.2, 0.2, 1 },
-		Vec4 Ibrillo = {0.5, 0.5, 0.5, 1}) {
+		Vec4 Ibrillo = {1, 1, 1, 1},
+		Vec4 Iemision = { 0,0,0,1 }) {
 		ambiente = Iambiente;
 		difuso = Idifuso;
 		especular = Iespecular;
 		brillo = Ibrillo;
+		emision = Iemision;
 	}
 	void actualizarGlMaterialfv() {
 		glMaterialfv(GL_FRONT, GL_AMBIENT, ambiente.glVec4());
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, difuso.glVec4());
-
+		glMaterialfv(GL_FRONT, GL_EMISSION, emision.glVec4());
 		glMaterialfv(GL_FRONT, GL_SHININESS, brillo.glVec4());
 		glMaterialfv(GL_FRONT, GL_SPECULAR, especular.glVec4());
 	}
@@ -105,7 +107,7 @@ public:
 	Vec3 atenuacion = { 0.0001,0.0001,1};
 	GLfloat *tipo;
 
-	float spotCutOff = 100;
+	float spotCutOff = 25;
 	float spotExponent = 100;
 	bool spot = false;
 	Lampara(
@@ -125,9 +127,14 @@ public:
 		numLamparas++;
 	}
 
+	//(1:puntual, 0:direccional)
+	void asignarTipo(int valor) {
+		*tipo = valor;
+	}
+
 
 	void actualizarGlLightfv() {
-		glLightfv(GL_LIGHT0 + num, GL_AMBIENT, ambiente.glVec3());
+		glLightfv(GL_LIGHT0 + num, GL_AMBIENT, ambiente.glVec4());
 		glLightfv(GL_LIGHT0 + num, GL_DIFFUSE, difuso.glVec4());
 		glLightfv(GL_LIGHT0 + num, GL_SPECULAR, especular.glVec4());
 		glLightfv(GL_LIGHT0 + num, GL_POSITION, posicion.glVec4());
@@ -147,12 +154,13 @@ public:
 };
 //Inicializa el conteo de lamparas
 int Lampara::numLamparas = 0;
-Lampara luzMinero;
+Lampara luzAmbiente;
 
 class Pista {
 private:
-	int defaultIter = 30;
+	float defaultIter = 30.0;
 	int tipo = 1; //0: sprint, 1: circuito
+	Material materialPista;
 public:
 	Vec3 puntos[MAX][2];
 	float s = 30; //Escala de la cuadricula
@@ -258,6 +266,9 @@ public:
 	}
 
 	void cargarYoshi() {
+
+		materialPista.difuso = Vec4(0.3, 0.3, 0.3, 1);
+
 		i = 0;
 		float j;
 		//Planta del pie
@@ -322,7 +333,7 @@ public:
 	void dibujarPista() {
 		glPushMatrix();
 		glPushAttrib(GL_FRONT_AND_BACK);
-		glColor3f(0.7, 0.7, 0.7);
+		materialPista.actualizarGlMaterialfv();
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -335,7 +346,7 @@ public:
 				puntos[j][1].glVec3(),
 				puntos[j + 1][1].glVec3(),
 				puntos[j + 1][0].glVec3(),
-				15 , mod
+				15 , (int)mod
 			);
 		}
 		if (tipo == 1) {
@@ -346,7 +357,7 @@ public:
 				puntos[i - 1][1].glVec3(),
 				puntos[0][1].glVec3(),
 				puntos[0][0].glVec3(),
-				15, mod
+				15, (int)mod
 			);
 		}
 		glPopAttrib();
@@ -367,6 +378,7 @@ public:
 	void dibujarCuadricula() {
 		//cuadricula base
 		glPushMatrix();
+		glTranslatef(0, 0.1, 0);
 		glScalef(10, 10, 10);
 		ejes();
 		glPopMatrix();
@@ -413,8 +425,11 @@ public:
 
 class Automovil{
 private:
-	GLint automovil;
-	Material automovilMaterial;
+	GLint mesh;
+	GLint lucesTraseras;
+	Material pintura;
+	Material lucesTraserasMaterial;
+	Lampara lucesDelanteras;
 	float n = 1; //Escala de las unidades
 
 	//Movimiento Lineal
@@ -453,19 +468,38 @@ public:
 
 	//Carga la lista del modelo 3D del automovil
 	void cargarAutomovil() {
-		automovilMaterial.difuso = Vec4(1,0,0,1);
-		//automovilMaterial.ambiente = Vec4(0.2, 0.2, 0.2);
-		automovilMaterial.especular = Vec4(1, 1, 1, 1);
-		automovilMaterial.brillo = Vec4(75, 75, 75, 1);
-		automovil = glGenLists(1);
-		glNewList(automovil, GL_COMPILE);
+		pintura.difuso = Vec4(1,0,0,1);
+		pintura.especular = Vec4(1, 1, 1, 1);
+		pintura.brillo = Vec4(75, 75, 75, 1);
+
+		mesh = glGenLists(1);
+		glNewList(mesh, GL_COMPILE);
 		glPushMatrix();
-		glColor3f(0.5, 0.5, 0.5);
 		glScalef(5, 1.75, 2);
 		glTranslatef(0, 0.5, 0);
 		glutSolidCube(1);
 		glPopMatrix();
 		glEndList();
+
+		lucesTraserasMaterial.difuso = Vec4(0.1, 0, 0, 1);
+		lucesTraserasMaterial.especular = Vec4(.5, .25, .25, 1);
+		lucesTraseras = glGenLists(1);
+		glNewList(lucesTraseras, GL_COMPILE);
+		glPushMatrix();
+		glTranslatef(-2.5, 0.85, -0.5);
+		glScalef(0.1, 0.18, 0.35);
+		glutSolidCube(1);
+		glPopMatrix();
+		glEndList();
+
+		lucesDelanteras.difuso = Vec4(1, 1, 1, 1);
+		lucesDelanteras.ambiente = Vec4(1, 1, 1, 1);
+		lucesDelanteras.posicion = Vec4(-3.5, 1, 0, 1);
+		lucesDelanteras.especular = Vec4(1, 1, 1, 1);
+		lucesDelanteras.asignarTipo(1);
+		lucesDelanteras.spot = true;
+		lucesDelanteras.direccion = Vec3(1, 0, 0);
+		lucesDelanteras.habilitar();
 	}
 
 	/*Configurar localizacion absoluta del objeto*/
@@ -630,7 +664,8 @@ public:
 		int i = 0;
 
 		static int anterior = 0;
-		int ahora = time(0);
+
+		int ahora = (int)time(0);
 		static int conteo = 0;
 		static int fps = 0;
 		conteo += 1;
@@ -644,7 +679,7 @@ public:
 		cout << "Pos x: " << round(pos.x*100)/100 << " m\t\t" << endl; i++;
 		cout << "Pos y: " << round(pos.y*100)/100 << " m\t\t" << endl; i++;
 		cout << "Pos z: " << round(pos.z*100)/100 << " m\t\t" << endl; i++;
-		cout << "Velocidad: " << vL << " m/s \t\t" << endl; i++;
+		cout << "Velocidad: " << vL *3600/1000 << " km/h \t\t" << endl; i++;
 		cout << "Rotacion : " << rot << " grados\t\t" << endl; i++;
 		cout << "Rot derrape: " << rotD << " grados\t\t" << endl; i++;
 		cout << "Acelerar: " << *parentAcelerar << "\t\t" << endl; i++;
@@ -664,10 +699,27 @@ public:
 	void dibujarAutomovil() {
 		glPushMatrix();
 		glPushAttrib(GL_FRONT);
-		automovilMaterial.actualizarGlMaterialfv();
+		
 		glTranslatef(pos.x, pos.y, pos.z);
 		glRotatef(rot+rotD, 0, 1, 0);
-		glCallList(automovil);
+		
+		pintura.actualizarGlMaterialfv();
+		glCallList(mesh);
+
+		glPushMatrix();
+		if (*parentFrenoDeMano || *parentFreno || *parentRetroceder){
+			lucesTraserasMaterial.emision = Vec4(1, 0, 0, 1);
+		}
+		else
+			lucesTraserasMaterial.emision = Vec4(0.1, 0, 0, 1);
+		lucesTraserasMaterial.actualizarGlMaterialfv();
+		glCallList(lucesTraseras);
+		glScalef(1, 1, -1);
+		glCallList(lucesTraseras);
+		glPopMatrix();
+
+		lucesDelanteras.actualizarGlLightfv();
+
 		glPopAttrib();
 		glPopMatrix();
 	}
@@ -676,15 +728,15 @@ public:
 
 class Camara {
 private:
-	double offsetA = 3; //Distancia en eje Y local con respecto al objeto parentado
-	double offsetD = 10.5;  //Distancia en eje X local con respecto al objeto parentado
-	double offsetAngulo = 15; //Inclinacion de la camara con respecto al eje Z local con respecto al objeto parentado
+	double offsetA = 4; //Distancia en eje Y local con respecto al objeto parentado
+	double offsetD = 11.5;  //Distancia en eje X local con respecto al objeto parentado
+	double offsetAngulo = 20; //Inclinacion de la camara con respecto al eje Z local con respecto al objeto parentado
 
 	double radio = 1; //Radio de esfera unidad
 	double angulo = 35;
 	double distancia = 1 / sin(angulo / 2 * PI / 180);
 	double lejos = 1000; //distancia maxima que dibuja la camara
-	int tipoCamara = 1; //1: Vista Planta, 2: 3ra Persona
+	int tipoCamara = 2; //1: Vista Planta, 2: 3ra Persona
 
 	Vec3 *parentPos; //Posicion de referencia del objeto al que sigue (automovil)
 	float *parentRot; //Rotacion de referencia del objeto al que sigue (automovil)
@@ -694,11 +746,11 @@ public:
 	Vec3 look = {0,0,0};
 	Vec3 up = { 0,1,0 };
 
-	double w = 1280/2, h = 720/2;
+	double w = 1280, h = 720;
 
 
 	void configurarTipoDeCamara(int tipo) {
-		if (tipo>=1 & tipo<=2) tipoCamara = tipo;
+		if (tipo>=1 && tipo<=2) tipoCamara = tipo;
 	}
 
 	/*Establece punto de posicion de la camara
@@ -803,9 +855,6 @@ public:
 
 double alpha=0;
 
-//Lampara extra??
-Lampara prueba;
-
 void init() {
 	//Fijar color de borrado
 	glClearColor(0,0,0.2,1);
@@ -815,14 +864,13 @@ void init() {
 	//Iluminacion
 	glEnable(GL_LIGHTING);
 
-	prueba.posicion = Vec4(0, 4, 0, 1);
-	prueba.difuso = Vec4(1, 1, 0, 1);
-	prueba.habilitar();
-
-	luzMinero.difuso = Vec4(0.5, 0.5, 0.5, 1);
-	luzMinero.posicion = Vec4(0, 3, 6, 1);
-	luzMinero.especular = Vec4(0.5, 0.5, 0.5, 1);
-	luzMinero.habilitar();
+	luzAmbiente.posicion = Vec4(1, 1, 0,0);
+	luzAmbiente.direccion = Vec3(0, -1, 0);
+	luzAmbiente.ambiente = Vec4(0.1,0.1,0.1, 1);
+	luzAmbiente.asignarTipo(0);
+	luzAmbiente.difuso = Vec4(.2, .2, .2, 1);
+	luzAmbiente.especular = Vec4(0, 0, 0, 1);
+	luzAmbiente.habilitar();
 
 	escenario.cargarYoshi();
 
@@ -844,8 +892,6 @@ void display() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	luzMinero.actualizarGlLightfv();
-
 	//Camara
 	camara.actualizar();
 
@@ -855,7 +901,8 @@ void display() {
 	
 	{
 
-		prueba.actualizarGlLightfv();
+		luzAmbiente.actualizarGlLightfv();
+		
 		//Material base
 		baseMaterial.actualizarGlMaterialfv();
 
@@ -932,10 +979,10 @@ void main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
 	//Posicionar la ventana de dibujo en la pantalla
-	glutInitWindowPosition(50, 200);
+	glutInitWindowPosition(0, 0);
 
 	//Tamanio de la pantalla
-	glutInitWindowSize(camara.w, camara.h);
+	glutInitWindowSize((int)camara.w,(int)camara.h);
 
 	//Crear la ventana
 	glutCreateWindow(PROYECTO);
@@ -951,6 +998,5 @@ void main(int argc, char **argv) {
 	glutMotionFunc(onDrag); //Movimiento del mouse con algun boton presionado
 	glutPassiveMotionFunc(onMove); //Movimiento del mouse sin necesidad de boton presionado
 	glutTimerFunc(1000/FPS, onTimer, 1000/FPS);
-	//Poner en march el bucle de atencion a eventos
 	glutMainLoop();
 }
