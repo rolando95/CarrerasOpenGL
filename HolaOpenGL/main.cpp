@@ -10,8 +10,10 @@
 */
 
 #include <iostream>
+#include <conio.h>
 #include "gl/freeglut.h"
-#include <utilidades.h>
+//#include "Tools.h"
+#include "Vectores.h"
 #include <ctime>
 #include <math.h>
 #define ASCII 256
@@ -21,51 +23,6 @@
 
 using namespace std;
 
-class Vec2 {
-public:
-	GLfloat x, y;
-	Vec2(GLfloat X = 0, GLfloat Y = 0) {
-		x = X; y = Y;
-	}
-
-	GLfloat *glVec2() {
-		GLfloat vector[2];
-		vector[0] = x;
-		vector[1] = y;
-		return vector;
-	}
-};
-
-class Vec3: public Vec2 {
-public:
-	GLfloat z;
-	Vec3(GLfloat X=0, GLfloat Y=0, GLfloat Z=0) {
-		x = X; y = Y; z = Z;
-	}
-	GLfloat *glVec3() {
-		GLfloat vector[3];
-		vector[0] = x;
-		vector[1] = y;
-		vector[2] = z;
-		return vector;
-	}
-};
-
-class Vec4 : public Vec3 {
-public:
-	GLfloat w;
-	Vec4(GLfloat X = 0, GLfloat Y = 0, GLfloat Z = 0, GLfloat W = 0) {
-		x = X; y = Y; z = Z; w = W;
-	}
-	GLfloat *glVec4() {
-		GLfloat vector[4];
-		vector[0] = x;
-		vector[1] = y;
-		vector[2] = z;
-		vector[3] = w;
-		return vector;
-	}
-};
 
 
 class Material {
@@ -243,8 +200,8 @@ public:
 
 		if (iter < 1) iter = abs(anguloF - anguloI) / defaultIter* 2 *((radio/s < 1) ? 1 : radio / s);
 
-		float cambio = (anguloF - anguloI)*PI/180 / iter;
 
+		float cambio = (anguloF - anguloI)*PI/180 / iter;
 		
 		float angulo = anguloI * PI / 180;
 		int n = 0;
@@ -660,6 +617,17 @@ public:
 		pos.z -= vL * sin((rot-rotD/2)*PI / 180)/FPS;
 	}
 
+	void imprimirControles() {
+		cout << "\nControles" << endl;
+		cout << "______________________\n" << endl;
+		cout << "Acelerar      -> [W]" << endl;
+		cout << "Izquierda     -> [A]" << endl;
+		cout << "Derecha       -> [D]" << endl;
+		cout << "Freno         -> [S]" << endl;
+		cout << "Retroceder    -> [R]" << endl;
+		cout << "Freno de Mano -> [Espacio]\n\n" << endl;
+		_getch();
+	}
 	void imprimirStats(bool inicio = true) {
 		int i = 0;
 
@@ -677,17 +645,17 @@ public:
 		cout << "Estado del Automovil" << endl; i++;
 		cout << "______________________\n" << endl; i+=2;
 		cout << "Pos x: " << round(pos.x*100)/100 << " m\t\t" << endl; i++;
-		cout << "Pos y: " << round(pos.y*100)/100 << " m\t\t" << endl; i++;
+		//cout << "Pos y: " << round(pos.y*100)/100 << " m\t\t" << endl; i++;
 		cout << "Pos z: " << round(pos.z*100)/100 << " m\t\t" << endl; i++;
 		cout << "Velocidad: " << vL *3600/1000 << " km/h \t\t" << endl; i++;
 		cout << "Rotacion : " << rot << " grados\t\t" << endl; i++;
-		cout << "Rot derrape: " << rotD << " grados\t\t" << endl; i++;
-		cout << "Acelerar: " << *parentAcelerar << "\t\t" << endl; i++;
-		cout << "Giro iz : " << *parentGiroIzquierda << "\t\t" << endl; i++;
-		cout << "Giro der: " << *parentGiroDerecha << "\t\t" << endl; i++;
-		cout << "Freno   : " << *parentFreno<< "\t\t" << endl; i++;
-		cout << "Retroceder : " << *parentRetroceder << "\t\t" << endl; i++;
-		cout << "FrenoMano  : " << *parentFrenoDeMano<< "\t\t" << endl; i++;
+		//cout << "Rot derrape: " << rotD << " grados\t\t" << endl; i++;
+		//cout << "Acelerar: " << *parentAcelerar << "\t\t" << endl; i++;
+		//cout << "Giro iz : " << *parentGiroIzquierda << "\t\t" << endl; i++;
+		//cout << "Giro der: " << *parentGiroDerecha << "\t\t" << endl; i++;
+		//cout << "Freno   : " << *parentFreno<< "\t\t" << endl; i++;
+		//cout << "Retroceder : " << *parentRetroceder << "\t\t" << endl; i++;
+		//cout << "FrenoMano  : " << *parentFrenoDeMano<< "\t\t" << endl; i++;
 		cout << "FPS: " << fps << "\t\t" << endl; i++;
 		static CONSOLE_SCREEN_BUFFER_INFO coninfo;
 		static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -882,7 +850,6 @@ void init() {
 	bool *derecha = global.obtenerPosTecla('d');
 	automovil.parentarControles(acelerar, retroceder, freno, frenoDeMano, izquierda, derecha);
 	automovil.cargarAutomovil();
-
 	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
 	camara.actualizar();
 }
@@ -971,7 +938,7 @@ void onMove(int x, int y) {
 
 
 void main(int argc, char **argv) {
-
+	automovil.imprimirControles();
 
 	glutInit(&argc, argv);
 	
@@ -980,7 +947,6 @@ void main(int argc, char **argv) {
 
 	//Posicionar la ventana de dibujo en la pantalla
 	glutInitWindowPosition(0, 0);
-
 	//Tamanio de la pantalla
 	glutInitWindowSize((int)camara.w,(int)camara.h);
 
