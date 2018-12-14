@@ -116,11 +116,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Automovil.cpp" />
+    <ClCompile Include="Camara.cpp" />
+    <ClCompile Include="Escena.cpp" />
+    <ClCompile Include="Global.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Propiedades.cpp" />
     <ClCompile Include="Tools.cpp" />
     <ClCompile Include="Vectores.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Juego.h" />
+    <ClInclude Include="Propiedades.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="Vectores.h" />
   </ItemGroup>

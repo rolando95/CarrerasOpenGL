@@ -26,3 +26,22 @@ GLfloat *Vec4::glVec4() {
 	vector[3] = w;
 	return vector;
 }
+
+float modulo(Vec3 in, Vec3 fi) {
+	return sqrt(
+		pow(fi.x - in.x, 2) +
+		pow(fi.y - in.y, 2) +
+		pow(fi.z - in.z, 2)
+	);
+}
+
+Vec3 normalizar(Vec3 in, Vec3 fi) {
+	float mod = modulo(in, fi);
+	return Vec3(
+		(fi.x - in.x) / mod,
+		(fi.y - in.y) / mod,
+		(fi.z - in.z) / mod
+	);
+}
+
+

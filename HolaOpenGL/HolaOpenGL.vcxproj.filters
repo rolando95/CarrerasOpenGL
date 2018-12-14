@@ -24,12 +24,33 @@
     <ClCompile Include="Vectores.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Propiedades.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Escena.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Automovil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camara.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vectores.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Juego.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Propiedades.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

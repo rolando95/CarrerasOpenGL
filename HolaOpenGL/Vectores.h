@@ -22,4 +22,13 @@ public:
 	GLfloat *glVec4();
 };
 
+/*Calcula el modulo de un vector de 3 dimensiones
+Si es dado por un punto inicial y final,  asignar in e fi.
+Si solo es un valor vectorial, asignar in.
+*/
+float modulo(Vec3 in, Vec3 fi = { 0,0,0 });
+
+//Normaliza un vector dado un vector de 3 dimensiones o dos puntos {x,y,z}
+Vec3 normalizar(Vec3 in, Vec3 fi);
+
 
