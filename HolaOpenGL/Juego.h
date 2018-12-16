@@ -14,12 +14,15 @@ private:
 	float defaultIter = 30.0;
 	int tipo = 1; //0: sprint, 1: circuito
 	Material materialPista;
+	Textura texturaPista;
 public:
 	Vec3 puntos[MAX][2];
 	float s = 30; //Escala de la cuadricula
 	float d = 8; //Distancia desde el centro de la calle a la arista
 	int i;
 
+	//Carga todo el circuito con forma de Yoshi
+	void cargarYoshi();
 
 	//Agrega una recta dado dos puntos de origen y final.
 	void agregarRecta(Vec3 in, Vec3 fi, bool pushFirst = true, int iter = -1);
@@ -30,8 +33,6 @@ public:
 	*/
 	void agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio, int iter = -1, bool autoScale = true);
 
-	//Carga todo el circuito con forma de Yoshi
-	void cargarYoshi();
 
 	//Dibujar la pista en la escena
 	void dibujarPista();

@@ -17,6 +17,7 @@ void Automovil::cargarAutomovil() {
 	lucesTraserasMaterial.difuso = Vec4(0.1, 0, 0, 1);
 	lucesTraserasMaterial.especular = Vec4(.5, .25, .25, 1);
 	lucesTraseras = glGenLists(1);
+
 	glNewList(lucesTraseras, GL_COMPILE);
 	glPushMatrix();
 	glTranslatef(-2.5, 0.85, -0.5);
@@ -27,7 +28,7 @@ void Automovil::cargarAutomovil() {
 
 	lucesDelanteras.difuso = Vec4(1, 1, 1, 1);
 	lucesDelanteras.ambiente = Vec4(1, 1, 1, 1);
-	lucesDelanteras.posicion = Vec4(-3.5, 1, 0, 1);
+	lucesDelanteras.posicion = Vec4(3, 1, 0, 1);
 	lucesDelanteras.especular = Vec4(1, 1, 1, 1);
 	lucesDelanteras.asignarTipo(1);
 	lucesDelanteras.spot = true;

@@ -1,73 +1,9 @@
 #include "Juego.h"
 
-void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
-	in = { in.x*s, in.y*s, in.z*s };
-	fi = { fi.x*s, fi.y*s, fi.z*s };
-
-	if (iter < 1) iter = modulo(in, fi) / defaultIter;
-	if (iter < 2) iter = 2;
-
-	float cambio = modulo(in, fi) / iter;
-	Vec3 unidad = normalizar(in, fi);
-	Vec3 inf(
-		in.x + unidad.z*d,
-		in.y,
-		in.z - unidad.x*d
-	);
-
-	Vec3 sup(
-		in.x - unidad.z*d,
-		in.y,
-		in.z + unidad.x*d
-	);
-
-	for (auto j = 0; j < iter; j++) {
-		if (pushFirst || j > 0) {
-			puntos[i][0] = inf;
-			puntos[i++][1] = sup;
-		}
-
-		sup.x += unidad.x*cambio;
-		sup.z += unidad.z*cambio;
-
-		inf.x += unidad.x*cambio;
-		inf.z += unidad.z*cambio;
-	}
-}
-
-void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio, int iter, bool autoScale) {
-	if (autoScale) {
-		centro = { centro.x*s, centro.y*s, centro.z*s };
-		radio *= s;
-	}
-
-	if (iter < 1) iter = abs(anguloF - anguloI) / defaultIter * 2 * ((radio / s < 1) ? 0.5 : radio / s);
-
-
-	float cambio = (anguloF - anguloI)*PI / 180 / iter;
-
-	float angulo = anguloI * PI / 180;
-	int n = 0;
-	if (anguloF > anguloI) n = 1;
-
-	for (auto j = 0; j < iter; j++) {
-		puntos[i][n] = {
-			centro.x + radio * cos(angulo) + d * cos(angulo),
-			centro.y,
-			centro.z - radio * sin(angulo) - d * sin(angulo),
-		};
-		puntos[i++][1 - n] = {
-			centro.x + radio * cos(angulo) - d * cos(angulo),
-			centro.y,
-			centro.z - radio * sin(angulo) + d * sin(angulo),
-		};
-		angulo += cambio;
-	}
-}
-
 void Pista::cargarYoshi() {
 
 	materialPista.difuso = Vec4(0.3, 0.3, 0.3, 1);
+	texturaPista.cargarTextura((char *)"Resources/carretera.jpg");
 
 	i = 0;
 	float j;
@@ -130,10 +66,78 @@ void Pista::cargarYoshi() {
 
 }
 
+void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
+	in = { in.x*s, in.y*s, in.z*s };
+	fi = { fi.x*s, fi.y*s, fi.z*s };
+
+	if (iter < 1) iter = modulo(in, fi) / defaultIter;
+	if (iter < 2) iter = 2;
+
+	float cambio = modulo(in, fi) / iter;
+	Vec3 unidad = normalizar(in, fi);
+	Vec3 inf(
+		in.x + unidad.z*d,
+		in.y,
+		in.z - unidad.x*d
+	);
+
+	Vec3 sup(
+		in.x - unidad.z*d,
+		in.y,
+		in.z + unidad.x*d
+	);
+
+	for (auto j = 0; j < iter; j++) {
+		if (pushFirst || j > 0) {
+			puntos[i][0] = inf;
+			puntos[i++][1] = sup;
+		}
+
+		sup.x += unidad.x*cambio;
+		sup.z += unidad.z*cambio;
+
+		inf.x += unidad.x*cambio;
+		inf.z += unidad.z*cambio;
+	}
+}
+
+void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio, int iter, bool autoScale) {
+	if (autoScale) {
+		centro = { centro.x*s, centro.y*s, centro.z*s };
+		radio *= s;
+	}
+
+	if (iter < 1) iter = abs(anguloF - anguloI) / defaultIter * 2 * ((radio / s < 2) ? 2 : radio / s);
+
+
+	float cambio = (anguloF - anguloI)*PI / 180 / iter;
+
+	float angulo = anguloI * PI / 180;
+	int n = 0;
+	if (anguloF > anguloI) n = 1;
+
+	for (auto j = 0; j < iter; j++) {
+		puntos[i][n] = {
+			centro.x + radio * cos(angulo) + d * cos(angulo),
+			centro.y,
+			centro.z - radio * sin(angulo) - d * sin(angulo),
+		};
+		puntos[i++][1 - n] = {
+			centro.x + radio * cos(angulo) - d * cos(angulo),
+			centro.y,
+			centro.z - radio * sin(angulo) + d * sin(angulo),
+		};
+		angulo += cambio;
+	}
+}
+
 void Pista::dibujarPista() {
 	glPushMatrix();
 	glPushAttrib(GL_FRONT_AND_BACK);
+
 	materialPista.actualizarGlMaterialfv();
+	texturaPista.actualizar();
+
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -141,6 +145,7 @@ void Pista::dibujarPista() {
 	for (auto j = 0; j < i - 1; j++) {
 		mod = modulo(puntos[j][0], puntos[j + 1][0]);
 		if (mod < 1) mod = 1;
+		/*
 		quad(
 			puntos[j][0].glVec3(),
 			puntos[j][1].glVec3(),
@@ -148,6 +153,17 @@ void Pista::dibujarPista() {
 			puntos[j + 1][0].glVec3(),
 			15, (int)mod
 		);
+		*/
+		quadtex(
+			puntos[j][0].glVec3(),
+			puntos[j][1].glVec3(),
+			puntos[j + 1][1].glVec3(),
+			puntos[j + 1][0].glVec3(),
+			0,1,
+			0,1,
+			15, (int)mod
+		);
+		
 	}
 	if (tipo == 1) {
 		mod = modulo(puntos[i - 1][0], puntos[0][0]);

@@ -63,3 +63,31 @@ void Lampara::habilitar() {
 
 //Inicializa el conteo de lamparas
 int Lampara::numLamparas = 0;
+
+void Textura::cargarTextura(char * ruta)
+{
+	glGenTextures(1, &textura);
+	glBindTexture(GL_TEXTURE_2D, textura);
+	loadImageFile(ruta);
+}
+
+void Textura::asignarTipoUV(int tipo)
+{
+	uv = tipo;
+}
+
+void Textura::actualizar()
+{
+	glBindTexture(GL_TEXTURE_2D, textura);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	
+	if (uv == 2) {
+		glEnable(GL_TEXTURE_GEN_S);
+		glEnable(GL_TEXTURE_GEN_T);
+		glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+		glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	}
+}

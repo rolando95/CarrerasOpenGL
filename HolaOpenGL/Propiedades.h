@@ -28,8 +28,10 @@ public:
 	Vec4 posicion; //{x,y,z,tipo} (1:puntual, 0:direccional)
 	Vec3 direccion; //Se aplica para las de tipo direccional
 	Vec3 atenuacion = { 0.0001,0.0001,1 };
-	float spotCutOff = 25;
-	float spotExponent = 100;
+
+	float spotCutOff = 45; //Angulo de dispersión. Valores entre [0,90] o 128.
+	float spotExponent = 15; //Distribución de intensidad cerca de los bordes. Valores entre [0,128]
+
 	bool spot = false;
 
 	//Constructor
@@ -44,4 +46,19 @@ public:
 	void asignarTipo(int valor);
 	void actualizarGlLightfv();
 	void habilitar();
+};
+
+class Textura {
+private:
+	GLuint textura;
+	int uv = 1; //1:Normal, 2:Reflexion
+public:
+	/*Carga la textura dada la ruta de ubicacion*/
+	void cargarTextura(char *ruta);
+
+
+	void asignarTipoUV(int tipo);
+
+	/*Actualiza textura*/
+	void actualizar();
 };

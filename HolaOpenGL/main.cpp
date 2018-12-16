@@ -34,6 +34,9 @@ void init() {
 	//Iluminacion
 	glEnable(GL_LIGHTING);
 
+	//Texturas
+	glEnable(GL_TEXTURE_2D);
+
 	luzAmbiente.posicion = Vec4(1, 1, 0,0);
 	luzAmbiente.direccion = Vec3(0, -1, 0);
 	luzAmbiente.ambiente = Vec4(0.1,0.1,0.1, 1);
@@ -143,7 +146,11 @@ void onMove(int x, int y) {
 int main(int argc, char **argv) {
 	automovil.imprimirControles();
 
+	//Inicializar
 	glutInit(&argc, argv);
+
+	//Inicializar FreeImage
+	FreeImage_Initialise();
 	
 	//Buffers a usar
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
