@@ -9,6 +9,10 @@ constexpr auto MAX = 100000;
 constexpr auto FPS = 60;
 constexpr auto PROYECTO = "- Drift Racing -";
 
+constexpr auto urlFondoDia = "Resources/fondoDia.jpg";
+constexpr auto urlFondoNoche = "Resources/fondoNoche.jpg";
+constexpr auto urlCarretera = "Resources/carretera.jpg";
+
 class Pista {
 private:
 	float defaultIter = 30.0;
@@ -16,9 +20,11 @@ private:
 	Material materialPista;
 	Textura texturaPista;
 public:
+
 	Vec3 puntos[MAX][2];
 	float s = 30; //Escala de la cuadricula
 	float d = 8; //Distancia desde el centro de la calle a la arista
+
 	int i;
 
 	//Carga todo el circuito con forma de Yoshi
@@ -38,7 +44,13 @@ public:
 	void dibujarPista();
 };
 
-class Escenario :public Pista {
+class Escenario :public Pista{
+private:
+	Textura texturaFondo;
+	Material materialFondo;
+	GLint meshFondo;
+	Vec3 *parentPos = new Vec3;
+
 public:
 	Vec3 base[4] = {
 		{ -15 * s,-0.1,0 },
@@ -47,8 +59,16 @@ public:
 		{ -15 * s,-0.1,-28 * s }
 	};
 
+	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
+	void parentarPosFondo(Vec3 *posObj);
+
 	/*Dibuja una cuadricula base*/
 	void dibujarCuadricula();
+
+	void cargarFondo();
+
+	/*Dibuja el fondo base*/
+	void dibujarFondo();
 };
 
 class Global {
@@ -75,6 +95,7 @@ private:
 	Material pintura;
 	Material lucesTraserasMaterial;
 	Lampara lucesDelanteras;
+	Textura reflejo;
 	float n = 1; //Escala de las unidades
 
 	//Movimiento Lineal
@@ -108,8 +129,8 @@ private:
 	bool *parentRetroceder;
 	bool *parentGiroIzquierda;
 	bool *parentGiroDerecha;
-public:
 
+public:
 	//Carga la lista del modelo 3D del automovil
 	void cargarAutomovil();
 
@@ -190,18 +211,17 @@ private:
 	double lejos = 2000; //distancia maxima que dibuja la camara
 	int tipoCamara = 2; //1: Vista Planta, 2: 3ra Persona
 
-	Vec3 *parentPos; //Posicion de referencia del objeto al que sigue (automovil)
-	float *parentRot; //Rotacion de referencia del objeto al que sigue (automovil)
+	Vec3 *parentPos = new Vec3; //Posicion de referencia del objeto al que sigue (automovil)
+	float *parentRot = 0; //Rotacion de referencia del objeto al que sigue (automovil)
 
 	Vec2 dimEscenario; //Dimensiones en ancho y alto del escenario para la camara en planta
-public:
+	
 	Vec3 pos = { 0,0,5 };
 	Vec3 look = { 0,0,0 };
 	Vec3 up = { 0,1,0 };
+public:
 
 	double w = 1280, h = 720;
-
-
 	void configurarTipoDeCamara(int tipo);
 
 	/*Establece el up de la camara*/

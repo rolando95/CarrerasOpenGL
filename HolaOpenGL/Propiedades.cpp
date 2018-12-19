@@ -64,11 +64,11 @@ void Lampara::habilitar() {
 //Inicializa el conteo de lamparas
 int Lampara::numLamparas = 0;
 
-void Textura::cargarTextura(char * ruta)
+void Textura::cargarTextura(const char * ruta)
 {
 	glGenTextures(1, &textura);
 	glBindTexture(GL_TEXTURE_2D, textura);
-	loadImageFile(ruta);
+	loadImageFile((char *)ruta);
 }
 
 void Textura::asignarTipoUV(int tipo)

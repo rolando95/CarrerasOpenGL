@@ -2,8 +2,12 @@
 
 void Automovil::cargarAutomovil() {
 	pintura.difuso = Vec4(1, 0, 0, 1);
+	pintura.ambiente = Vec4(1.25, 0.1, 0.1, 1);
 	pintura.especular = Vec4(1, 1, 1, 1);
 	pintura.brillo = Vec4(75, 75, 75, 1);
+	
+	reflejo.cargarTextura(urlFondoNoche);
+	reflejo.asignarTipoUV(2);
 
 	mesh = glGenLists(1);
 	glNewList(mesh, GL_COMPILE);
@@ -26,7 +30,7 @@ void Automovil::cargarAutomovil() {
 	glPopMatrix();
 	glEndList();
 
-	lucesDelanteras.difuso = Vec4(1, 1, 1, 1);
+	lucesDelanteras.difuso = Vec4(25, 25, 25, 1);
 	lucesDelanteras.ambiente = Vec4(1, 1, 1, 1);
 	lucesDelanteras.posicion = Vec4(3, 1, 0, 1);
 	lucesDelanteras.especular = Vec4(1, 1, 1, 1);
@@ -215,15 +219,18 @@ void Automovil::dibujarAutomovil() {
 	glTranslatef(pos.x, pos.y, pos.z);
 	glRotatef(rot + rotD, 0, 1, 0);
 
-	pintura.actualizarGlMaterialfv();
-	glCallList(mesh);
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+		pintura.actualizarGlMaterialfv();
+		reflejo.actualizar();
+		glCallList(mesh);
+	glPopAttrib();
 
 	glPushMatrix();
 	if (*parentFrenoDeMano || *parentFreno || *parentRetroceder) {
 		lucesTraserasMaterial.emision = Vec4(1, 0, 0, 1);
 	}
 	else
-		lucesTraserasMaterial.emision = Vec4(0.1, 0, 0, 1);
+		lucesTraserasMaterial.emision = Vec4(0, 0, 0, 1);
 	lucesTraserasMaterial.actualizarGlMaterialfv();
 	glCallList(lucesTraseras);
 	glScalef(1, 1, -1);

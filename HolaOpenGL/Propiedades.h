@@ -10,7 +10,7 @@ public:
 	Vec4 brillo;
 
 	Material(
-		Vec4 Iambiente = { 0.2, 0.2, 0.2, 1 },
+		Vec4 Iambiente = { 0.8, 0.8, 0.8, 1 },
 		Vec4 Idifuso = { 0.8, 0.8, 0.8, 1 },
 		Vec4 Iespecular = { 0.2, 0.2, 0.2, 1 },
 		Vec4 Ibrillo = { 1, 1, 1, 1 },
@@ -54,9 +54,9 @@ private:
 	int uv = 1; //1:Normal, 2:Reflexion
 public:
 	/*Carga la textura dada la ruta de ubicacion*/
-	void cargarTextura(char *ruta);
+	void cargarTextura(const char *ruta);
 
-
+	//1:Normal, 2:Reflexion
 	void asignarTipoUV(int tipo);
 
 	/*Actualiza textura*/

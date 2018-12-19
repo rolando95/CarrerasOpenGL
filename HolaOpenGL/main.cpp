@@ -39,13 +39,15 @@ void init() {
 
 	luzAmbiente.posicion = Vec4(1, 1, 0,0);
 	luzAmbiente.direccion = Vec3(0, -1, 0);
-	luzAmbiente.ambiente = Vec4(0.1,0.1,0.1, 1);
+	luzAmbiente.ambiente = Vec4(0.05,0.05,0.05, 1);
 	luzAmbiente.asignarTipo(0);
-	luzAmbiente.difuso = Vec4(.2, .2, .2, 1);
+	luzAmbiente.difuso = Vec4(.3, .3, .3, 1);
 	luzAmbiente.especular = Vec4(0, 0, 0, 1);
 	luzAmbiente.habilitar();
 
 	escenario.cargarYoshi();
+	escenario.cargarFondo();
+	escenario.parentarPosFondo(automovil.obtenerRefPosicion());
 
 	bool *acelerar = global.obtenerPosTecla('w');
 	bool *retroceder = global.obtenerPosTecla('r');
@@ -80,8 +82,9 @@ void display() {
 		baseMaterial.actualizarGlMaterialfv();
 
 		//Escenario
-		escenario.dibujarCuadricula();
+		//escenario.dibujarCuadricula();
 		escenario.dibujarPista();
+		escenario.dibujarFondo();
 
 		//Objetos
 		automovil.dibujarAutomovil();

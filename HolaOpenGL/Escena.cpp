@@ -3,7 +3,7 @@
 void Pista::cargarYoshi() {
 
 	materialPista.difuso = Vec4(0.3, 0.3, 0.3, 1);
-	texturaPista.cargarTextura((char *)"Resources/carretera.jpg");
+	texturaPista.cargarTextura(urlCarretera);
 
 	i = 0;
 	float j;
@@ -133,7 +133,7 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 
 void Pista::dibujarPista() {
 	glPushMatrix();
-	glPushAttrib(GL_FRONT_AND_BACK);
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
 	materialPista.actualizarGlMaterialfv();
 	texturaPista.actualizar();
@@ -180,6 +180,12 @@ void Pista::dibujarPista() {
 	glPopMatrix();
 }
 
+void Escenario::parentarPosFondo(Vec3 * posObj)
+{
+	free(parentPos);
+	parentPos = posObj;
+}
+
 void Escenario::dibujarCuadricula() {
 	//cuadricula base
 	glPushMatrix();
@@ -191,7 +197,6 @@ void Escenario::dibujarCuadricula() {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glColor3f(0.9, 0.9, 0.9);
 
 	//utilidades.h
 	quad(base[0].glVec3(),
@@ -203,4 +208,52 @@ void Escenario::dibujarCuadricula() {
 	);
 
 	glPopAttrib();
+}
+
+void Escenario::cargarFondo()
+{
+	float nLados = 8;
+
+	float apotema = 1000;
+	float lado = apotema*tan(PI/nLados);
+	
+	float alto = 500;
+
+	GLfloat pts[4][3] = {
+	{-lado, -alto, 0},
+	{ lado, -alto, 0},
+	{ lado,  alto, 0},
+	{-lado,  alto, 0}
+	};
+
+	materialFondo.emision = Vec4(0.5, 0.5, 0.5, 1);
+	materialFondo.difuso = Vec4(0, 0, 0, 1);
+	materialFondo.ambiente = Vec4(0, 0, 0, 1);
+	materialFondo.especular = Vec4(0, 0, 0, 1);
+
+	texturaFondo.cargarTextura(urlFondoNoche);
+
+	meshFondo = glGenLists(1);
+	glNewList(meshFondo, GL_COMPILE);
+	for (auto i = 0; i < nLados; i += 1) {
+		glPushMatrix();
+		glRotatef(-i*360/nLados, 0, 1, 0);
+		glTranslatef(0, 0, -apotema);
+		cout << i / nLados << " " <<(i + 1) / nLados << endl;
+		quadtex(pts[0], pts[1], pts[2], pts[3], i / nLados, (i + 1) / nLados, 0, 1,1,1);
+		glPopMatrix();
+	}
+	glEndList();
+}
+
+void Escenario::dibujarFondo()
+{
+	glPushMatrix();
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	materialFondo.actualizarGlMaterialfv();
+	texturaFondo.actualizar();
+	glTranslatef(parentPos->x, parentPos->y, parentPos->z);
+	glCallList(meshFondo);
+	glPopAttrib();
+	glPopMatrix();
 }
