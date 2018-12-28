@@ -16,7 +16,7 @@ void Camara::obtenerDimensionesEscenario(float ancho, float largo)
 
 void Camara::reescalar(int lW, int lH) {
 	w = lW; h = lH;
-	glViewport(0, 0, w, h);
+	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	actualizarPerspectiva();

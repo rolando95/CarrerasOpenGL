@@ -7,11 +7,15 @@ using namespace std;
 constexpr auto ASCII = 256;
 constexpr auto MAX = 100000;
 constexpr auto FPS = 60;
-constexpr auto PROYECTO = "- Drift Racing -";
+constexpr auto PROYECTO = "- Maestro del derrape -";
 
 constexpr auto urlFondoDia = "Resources/fondoDia.jpg";
 constexpr auto urlFondoNoche = "Resources/fondoNoche.jpg";
+constexpr auto urlReflejoFondoDia = "Resources/fondoReflejoDia.jpg";
+constexpr auto urlReflejoFondoNoche = "Resources/fondoReflejoNoche.jpg";
 constexpr auto urlCarretera = "Resources/carretera.jpg";
+constexpr auto urlOceano = "Resources/oceano.jpg";
+constexpr auto urlTerreno = "Resources/terreno.jpg";
 
 class Pista {
 private:
@@ -19,6 +23,13 @@ private:
 	int tipo = 1; //0: sprint, 1: circuito
 	Material materialPista;
 	Textura texturaPista;
+
+	/*
+	Matriz que almacena el valor de la altura de cada punto de la matriz
+	Se necesita en la clase Pista para hacer los calculos necesarios
+	*/
+	int terreno[25][30];
+
 public:
 
 	Vec3 puntos[MAX][2];
@@ -27,8 +38,14 @@ public:
 
 	int i;
 
+	Pista();
+
+	void imprimirMatrizTerreno();
+
 	//Carga todo el circuito con forma de Yoshi
 	void cargarYoshi();
+
+	void agregarTerreno(Vec3 posicion, int valor=1);
 
 	//Agrega una recta dado dos puntos de origen y final.
 	void agregarRecta(Vec3 in, Vec3 fi, bool pushFirst = true, int iter = -1);
@@ -49,14 +66,25 @@ private:
 	Textura texturaFondo;
 	Material materialFondo;
 	GLint meshFondo;
+
+	GLfloat costa = 10; //Distancia de la region de la cuadricula del escenario al exterior
+	Textura texturaOceano;
+	Material materialOceano;
+	GLfloat oceanoPts[4][3] = {
+		{(-14 - costa)*s,-1, costa*s},
+		{ (11 + costa)*s,-1, costa*s},
+		{ (11 + costa)*s,-1,(-30 - costa)*s},
+		{(-14 - costa)*s,-1,(-30 - costa)*s}
+	};
+
 	Vec3 *parentPos = new Vec3;
 
 public:
 	Vec3 base[4] = {
-		{ -15 * s,-0.1,0 },
+		{ -14 * s,-0.1,0 },
 		{ 11 * s,-0.1,0 },
-		{ 11 * s,-0.1,-28 * s },
-		{ -15 * s,-0.1,-28 * s }
+		{ 11 * s,-0.1,-30* s },
+		{ -14 * s,-0.1,-30* s }
 	};
 
 	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
@@ -69,6 +97,8 @@ public:
 
 	/*Dibuja el fondo base*/
 	void dibujarFondo();
+
+	void dibujarTerreno();
 };
 
 class Global {

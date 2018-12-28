@@ -1,5 +1,26 @@
 #include "Juego.h"
 
+Pista::Pista()
+{
+	//Inicialmente, todo el terreno estará bajo el agua
+	int i,j;
+	for (i = 0; i < 25; i++) {
+		for (j = 0; j < 30; j++)
+			terreno[i][j] = 0;
+	}
+}
+
+void Pista::imprimirMatrizTerreno()
+{
+	for (auto j = 30-1; j>= 0; j--) {
+		for (auto i = 0; i < 25; i++) {
+			cout << terreno[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+
 void Pista::cargarYoshi() {
 
 	materialPista.difuso = Vec4(0.3, 0.3, 0.3, 1);
@@ -17,7 +38,6 @@ void Pista::cargarYoshi() {
 	agregarCurva(Vec3(-4, 0, -6), -90, 60, 1);
 
 	//Barriga
-	//agregarRecta(Vec3(-4, 0, -7), Vec3(-5, 0, -8));
 	agregarCurva(Vec3(-6, 0, -7), 60, 90, 2);
 
 	//Brazo
@@ -25,7 +45,7 @@ void Pista::cargarYoshi() {
 	agregarCurva(Vec3(-8, 0, -10.5), 270, 90, 1.5);
 	agregarCurva(Vec3(-8, 0, -13), -90, -15, 1);
 
-	//Cuello (adelante)
+	//Cuello
 	agregarRecta(Vec3(-7, 0, -13), Vec3(-6.5, 0, -14.9));
 
 	//Nariz
@@ -62,8 +82,25 @@ void Pista::cargarYoshi() {
 
 	//Talon
 	agregarCurva(Vec3(4, 0, -2.5), 75, -75, 2.5);
+}
 
-
+void Pista::agregarTerreno(Vec3 pos,int valor)
+{
+	int x = pos.x / s + 14;
+	int y = -pos.z / s;
+	terreno[x][y] = valor;
+	
+	if (x +1< 25 && y + 1 < 30) {
+		terreno[x + 1][y] = valor;
+		terreno[x][y + 1] = valor;
+		terreno[x + 1][y + 1] = valor;
+	}
+	if (x - 1 < 25 && y - 1 < 30) {
+		terreno[x -1][y] = valor;
+		terreno[x][y - 1] = valor;
+		terreno[x - 1][y -1] = valor;
+	}
+	
 }
 
 void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
@@ -89,9 +126,19 @@ void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
 
 	for (auto j = 0; j < iter; j++) {
 		if (pushFirst || j > 0) {
+			//Pista
 			puntos[i][0] = inf;
 			puntos[i++][1] = sup;
 		}
+
+		//Terreno
+		agregarTerreno(
+			Vec3(
+			   (inf.x + sup.x) / 2,
+				0,
+			   (inf.z + sup.z) / 2
+			)
+		);
 
 		sup.x += unidad.x*cambio;
 		sup.z += unidad.z*cambio;
@@ -127,6 +174,17 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 			centro.y,
 			centro.z - radio * sin(angulo) + d * sin(angulo),
 		};
+
+		//Terreno
+		agregarTerreno(
+			Vec3(
+				centro.x + radio * cos(angulo),
+				0,
+				centro.z - radio * sin(angulo)
+			)
+		);
+
+
 		angulo += cambio;
 	}
 }
@@ -190,7 +248,7 @@ void Escenario::dibujarCuadricula() {
 	//cuadricula base
 	glPushMatrix();
 	glTranslatef(0, 0.1, 0);
-	glScalef(10, 10, 10);
+	glScalef(s, s, s);
 	ejes();
 	glPopMatrix();
 	glPushAttrib(GL_FRONT_AND_BACK);
@@ -212,19 +270,13 @@ void Escenario::dibujarCuadricula() {
 
 void Escenario::cargarFondo()
 {
-	float nLados = 8;
+	//Imagen de fondo
+	float nLados = 10;
 
 	float apotema = 1000;
 	float lado = apotema*tan(PI/nLados);
 	
 	float alto = 500;
-
-	GLfloat pts[4][3] = {
-	{-lado, -alto, 0},
-	{ lado, -alto, 0},
-	{ lado,  alto, 0},
-	{-lado,  alto, 0}
-	};
 
 	materialFondo.emision = Vec4(0.5, 0.5, 0.5, 1);
 	materialFondo.difuso = Vec4(0, 0, 0, 1);
@@ -233,27 +285,50 @@ void Escenario::cargarFondo()
 
 	texturaFondo.cargarTextura(urlFondoNoche);
 
+	GLfloat pts[4][3] = {
+	{-lado, -alto, 0},
+	{ lado, -alto, 0},
+	{ lado,  alto, 0},
+	{-lado,  alto, 0}
+	};
+
 	meshFondo = glGenLists(1);
 	glNewList(meshFondo, GL_COMPILE);
 	for (auto i = 0; i < nLados; i += 1) {
 		glPushMatrix();
 		glRotatef(-i*360/nLados, 0, 1, 0);
 		glTranslatef(0, 0, -apotema);
-		cout << i / nLados << " " <<(i + 1) / nLados << endl;
 		quadtex(pts[0], pts[1], pts[2], pts[3], i / nLados, (i + 1) / nLados, 0, 1,1,1);
 		glPopMatrix();
 	}
 	glEndList();
+
+	//Mar
+	texturaOceano.cargarTextura(urlOceano);
 }
 
 void Escenario::dibujarFondo()
 {
 	glPushMatrix();
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+	//Imagen de fondo
 	materialFondo.actualizarGlMaterialfv();
 	texturaFondo.actualizar();
 	glTranslatef(parentPos->x, parentPos->y, parentPos->z);
 	glCallList(meshFondo);
-	glPopAttrib();
 	glPopMatrix();
+
+	//Mar
+	materialOceano.actualizarGlMaterialfv();
+	texturaOceano.actualizar();
+	quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6,1,1);
+	glPopAttrib();
+}
+
+void Escenario::dibujarTerreno()
+{
+	for (auto i = 1; i < 25; i++) {
+
+	}
 }

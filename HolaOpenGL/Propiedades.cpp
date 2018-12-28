@@ -91,3 +91,16 @@ void Textura::actualizar()
 		glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 	}
 }
+
+void conecta4(int *matriz, int N, int M, int x, int y, int viejo, int  nuevo)
+{
+	if (x >= 0 && y >= 0 && x < N && y < M) {
+		if (matriz[x*M+y] == viejo) {
+			matriz[x*M+y] = nuevo;
+			conecta4(matriz, N, M, x, y - 1, viejo, nuevo);
+			conecta4(matriz, N, M, x, y + 1, viejo, nuevo);
+			conecta4(matriz, N, M, x - 1, y, viejo, nuevo);
+			conecta4(matriz, N, M, x + 1, y, viejo, nuevo);
+		}
+	}
+}

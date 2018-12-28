@@ -46,6 +46,7 @@ void init() {
 	luzAmbiente.habilitar();
 
 	escenario.cargarYoshi();
+	escenario.imprimirMatrizTerreno();
 	escenario.cargarFondo();
 	escenario.parentarPosFondo(automovil.obtenerRefPosicion());
 
@@ -82,9 +83,10 @@ void display() {
 		baseMaterial.actualizarGlMaterialfv();
 
 		//Escenario
-		//escenario.dibujarCuadricula();
+		escenario.dibujarCuadricula();
 		escenario.dibujarPista();
 		escenario.dibujarFondo();
+		escenario.dibujarTerreno();
 
 		//Objetos
 		automovil.dibujarAutomovil();
@@ -92,7 +94,7 @@ void display() {
 	}
 	glPopMatrix();
 	glPopAttrib();
-	automovil.imprimirStats();
+	//automovil.imprimirStats();
 }
 
 void reshape(int w, int h) {

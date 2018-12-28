@@ -6,7 +6,7 @@ void Automovil::cargarAutomovil() {
 	pintura.especular = Vec4(1, 1, 1, 1);
 	pintura.brillo = Vec4(75, 75, 75, 1);
 	
-	reflejo.cargarTextura(urlFondoNoche);
+	reflejo.cargarTextura(urlReflejoFondoNoche);
 	reflejo.asignarTipoUV(2);
 
 	mesh = glGenLists(1);

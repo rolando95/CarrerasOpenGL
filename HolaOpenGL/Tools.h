@@ -25,6 +25,7 @@ using namespace std;
 #define deg(a) (a*180/PI)
 #define rad(a) (a*PI/180)
 
+
 const GLfloat BLANCO[] = { 1,1,1,1 };
 const GLfloat NEGRO[] = { 0,0,0,1 };
 const GLfloat GRISCLARO[] = { 0.7,0.7,0.7,1 };

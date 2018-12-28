@@ -62,3 +62,18 @@ public:
 	/*Actualiza textura*/
 	void actualizar();
 };
+
+/*
+Algoritmo de 4-conectada
+*matriz -> Matriz de N filas y M columnas
+
+Se recomienda enviar como parametro &matriz[0][0] o (int *)matriz
+
+N -> filas
+M -> columnas
+x -> fila semilla
+y -> columna semilla
+viejo -> valor viejo para sobreescribir
+nuevo -> valor nuevo
+*/
+void conecta4(int *matriz, int N, int M, int x, int y,int viejo, int  nuevo);
