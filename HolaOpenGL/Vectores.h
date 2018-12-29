@@ -6,6 +6,7 @@ public:
 	GLfloat x, y;
 	Vec2(GLfloat X=0, GLfloat Y=0);
 	GLfloat *glVec2();
+	void imprimir();
 };
 
 class Vec3 : public Vec2 {
@@ -13,6 +14,7 @@ public:
 	GLfloat z;
 	Vec3(GLfloat X=0, GLfloat Y=0, GLfloat Z=0);
 	GLfloat *glVec3();
+	void imprimir();
 };
 
 class Vec4 : public Vec3 {
@@ -20,6 +22,7 @@ public:
 	GLfloat w;
 	Vec4(GLfloat X=0, GLfloat Y=0, GLfloat Z=0, GLfloat W=0);
 	GLfloat *glVec4();
+	void imprimir();
 };
 
 /*Calcula el modulo de un vector de 3 dimensiones

@@ -46,7 +46,6 @@ void init() {
 	luzAmbiente.habilitar();
 
 	escenario.cargarYoshi();
-	escenario.imprimirMatrizTerreno();
 	escenario.cargarFondo();
 	escenario.parentarPosFondo(automovil.obtenerRefPosicion());
 
@@ -86,7 +85,6 @@ void display() {
 		escenario.dibujarCuadricula();
 		escenario.dibujarPista();
 		escenario.dibujarFondo();
-		escenario.dibujarTerreno();
 
 		//Objetos
 		automovil.dibujarAutomovil();

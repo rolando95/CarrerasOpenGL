@@ -1,32 +1,14 @@
 #include "Juego.h"
 
-Pista::Pista()
-{
-	//Inicialmente, todo el terreno estará bajo el agua
-	int i,j;
-	for (i = 0; i < 25; i++) {
-		for (j = 0; j < 30; j++)
-			terreno[i][j] = 0;
-	}
-}
-
-void Pista::imprimirMatrizTerreno()
-{
-	for (auto j = 30-1; j>= 0; j--) {
-		for (auto i = 0; i < 25; i++) {
-			cout << terreno[i][j] << " ";
-		}
-		cout << endl;
-	}
-	cout << endl;
-}
-
 void Pista::cargarYoshi() {
 
 	materialPista.difuso = Vec4(0.3, 0.3, 0.3, 1);
 	texturaPista.cargarTextura(urlCarretera);
 
+	texturaTerreno.cargarTextura(urlTerreno);
+
 	i = 0;
+	ti = 0;
 	float j;
 	//Planta del pie
 	agregarRecta(Vec3(4, 0, 0), Vec3(-4, 0, 0));
@@ -84,25 +66,6 @@ void Pista::cargarYoshi() {
 	agregarCurva(Vec3(4, 0, -2.5), 75, -75, 2.5);
 }
 
-void Pista::agregarTerreno(Vec3 pos,int valor)
-{
-	int x = pos.x / s + 14;
-	int y = -pos.z / s;
-	terreno[x][y] = valor;
-	
-	if (x +1< 25 && y + 1 < 30) {
-		terreno[x + 1][y] = valor;
-		terreno[x][y + 1] = valor;
-		terreno[x + 1][y + 1] = valor;
-	}
-	if (x - 1 < 25 && y - 1 < 30) {
-		terreno[x -1][y] = valor;
-		terreno[x][y - 1] = valor;
-		terreno[x - 1][y -1] = valor;
-	}
-	
-}
-
 void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
 	in = { in.x*s, in.y*s, in.z*s };
 	fi = { fi.x*s, fi.y*s, fi.z*s };
@@ -129,22 +92,25 @@ void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
 			//Pista
 			puntos[i][0] = inf;
 			puntos[i++][1] = sup;
+			
+			//El terreno tiene 1/3 de la resolucion de la pista
+			if (true){//i % 3 == 0) {
+				terreno[ti][0]   = Vec3(in.x + unidad.z*d * 2.00, in.y-10, in.z - unidad.x*d * 2.00);
+				terreno[ti][1]   = Vec3(in.x + unidad.z*d * 1.25, in.y-0.1, in.z - unidad.x*d * 1.25);
+				terreno[ti][2]   = Vec3(in.x - unidad.z*d * 1.25, in.y-0.1, in.z + unidad.x*d * 1.25);
+				terreno[ti++][3] = Vec3(in.x - unidad.z*d * 2.00, in.y+10, in.z + unidad.x*d * 2.00);
+			}
+			
 		}
-
-		//Terreno
-		agregarTerreno(
-			Vec3(
-			   (inf.x + sup.x) / 2,
-				0,
-			   (inf.z + sup.z) / 2
-			)
-		);
 
 		sup.x += unidad.x*cambio;
 		sup.z += unidad.z*cambio;
 
 		inf.x += unidad.x*cambio;
 		inf.z += unidad.z*cambio;
+
+		in.x += unidad.x*cambio;
+		in.z += unidad.z*cambio;
 	}
 }
 
@@ -175,15 +141,6 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 			centro.z - radio * sin(angulo) + d * sin(angulo),
 		};
 
-		//Terreno
-		agregarTerreno(
-			Vec3(
-				centro.x + radio * cos(angulo),
-				0,
-				centro.z - radio * sin(angulo)
-			)
-		);
-
 
 		angulo += cambio;
 	}
@@ -200,18 +157,11 @@ void Pista::dibujarPista() {
 	glCullFace(GL_BACK);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	float mod;
+
+	//Pista
 	for (auto j = 0; j < i - 1; j++) {
 		mod = modulo(puntos[j][0], puntos[j + 1][0]);
 		if (mod < 1) mod = 1;
-		/*
-		quad(
-			puntos[j][0].glVec3(),
-			puntos[j][1].glVec3(),
-			puntos[j + 1][1].glVec3(),
-			puntos[j + 1][0].glVec3(),
-			15, (int)mod
-		);
-		*/
 		quadtex(
 			puntos[j][0].glVec3(),
 			puntos[j][1].glVec3(),
@@ -221,8 +171,64 @@ void Pista::dibujarPista() {
 			0,1,
 			15, (int)mod
 		);
-		
 	}
+
+	materialTerreno.actualizarGlMaterialfv();
+	texturaTerreno.actualizar();
+	//Terreno
+	for (auto j = 0; j < i - 1; j++) {
+		//mod = modulo(terreno[j][0], terreno[j + 1][0]);
+		if (mod < 1) mod = 1;
+		for (auto k = 0; k < 3; k++) {
+			quadtex(
+				terreno[j][k].glVec3(),
+				terreno[j][k+1].glVec3(),
+				terreno[j + 1][k+1].glVec3(),
+				terreno[j + 1][k].glVec3(),
+				0, 1,
+				0, 1,
+				//15, (int)mod 
+				1, 1
+			);
+		}
+		/*
+		quadtex(
+			terreno[j][1].glVec3(),
+			terreno[j][2].glVec3(),
+			terreno[j + 1][2].glVec3(),
+			terreno[j + 1][1].glVec3(),
+			0, 1,
+			0, 1,
+			//15, (int)mod 
+			1, 1
+		);
+
+		quadtex(
+			terreno[j][2].glVec3(),
+			terreno[j][3].glVec3(),
+			terreno[j + 1][3].glVec3(),
+			terreno[j + 1][2].glVec3(),
+			0, 1,
+			0, 1,
+			//15, (int)mod 
+			1, 1
+		);
+		*/
+	}
+
+	static int ok = 0;
+	if (ok == 0) {
+		for (auto j = 0; j < ti; j++) {
+			for (auto k = 0; k < 4; k++) {
+				terreno[j][k].imprimir();
+				cout << " ";
+			}
+			cout <<endl;
+		}
+		cout << endl;
+		ok = 1;
+	}
+
 	if (tipo == 1) {
 		mod = modulo(puntos[i - 1][0], puntos[0][0]);
 		if (mod < 1) mod = 1;
@@ -324,11 +330,4 @@ void Escenario::dibujarFondo()
 	texturaOceano.actualizar();
 	quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6,1,1);
 	glPopAttrib();
-}
-
-void Escenario::dibujarTerreno()
-{
-	for (auto i = 1; i < 25; i++) {
-
-	}
 }

@@ -24,28 +24,28 @@ private:
 	Material materialPista;
 	Textura texturaPista;
 
-	/*
-	Matriz que almacena el valor de la altura de cada punto de la matriz
-	Se necesita en la clase Pista para hacer los calculos necesarios
-	*/
-	int terreno[25][30];
+	Material materialTerreno;
+	Textura texturaTerreno;
 
 public:
 
-	Vec3 puntos[MAX][2];
+	/*
+	Puntos del terreno 
+	terreno[n][0] = posicion colina
+	terreno[n][1] = inicio terreno
+	terreno[n][2] = fin terreno
+	terreno[n][3] = posicion mar*/
+	Vec3 terreno[MAX][4]; 
+	int ti; //numero de puntos del terreno
+
+	Vec3 puntos[MAX][2]; //Puntos de la pista
+	int i; //numero de puntos de la pista
 	float s = 30; //Escala de la cuadricula
 	float d = 8; //Distancia desde el centro de la calle a la arista
 
-	int i;
-
-	Pista();
-
-	void imprimirMatrizTerreno();
 
 	//Carga todo el circuito con forma de Yoshi
 	void cargarYoshi();
-
-	void agregarTerreno(Vec3 posicion, int valor=1);
 
 	//Agrega una recta dado dos puntos de origen y final.
 	void agregarRecta(Vec3 in, Vec3 fi, bool pushFirst = true, int iter = -1);
@@ -70,11 +70,12 @@ private:
 	GLfloat costa = 10; //Distancia de la region de la cuadricula del escenario al exterior
 	Textura texturaOceano;
 	Material materialOceano;
+
 	GLfloat oceanoPts[4][3] = {
-		{(-14 - costa)*s,-1, costa*s},
-		{ (11 + costa)*s,-1, costa*s},
-		{ (11 + costa)*s,-1,(-30 - costa)*s},
-		{(-14 - costa)*s,-1,(-30 - costa)*s}
+		{(-14 - costa)*s,-10, costa*s},
+		{ (11 + costa)*s,-10, costa*s},
+		{ (11 + costa)*s,-10,(-30 - costa)*s},
+		{(-14 - costa)*s,-10,(-30 - costa)*s}
 	};
 
 	Vec3 *parentPos = new Vec3;
@@ -97,8 +98,6 @@ public:
 
 	/*Dibuja el fondo base*/
 	void dibujarFondo();
-
-	void dibujarTerreno();
 };
 
 class Global {

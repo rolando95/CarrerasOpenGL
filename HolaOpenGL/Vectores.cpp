@@ -8,6 +8,11 @@ GLfloat *Vec2::glVec2() {
 	return vector;
 }
 
+void Vec2::imprimir()
+{
+	cout << "(" << x << ", " << y << ")";
+}
+
 Vec3::Vec3(GLfloat X, GLfloat Y, GLfloat Z) { x = X; y = Y; z = Z; }
 GLfloat *Vec3::glVec3() {
 	GLfloat vector[3];
@@ -15,6 +20,11 @@ GLfloat *Vec3::glVec3() {
 	vector[1] = y;
 	vector[2] = z;
 	return vector;
+}
+
+void Vec3::imprimir()
+{
+	cout << "(" << x << ", " << y << ", " << z << ")";
 }
 
 Vec4::Vec4(GLfloat X, GLfloat Y, GLfloat Z, GLfloat W) { x = X; y = Y; z = Z; w = W; }
@@ -25,6 +35,11 @@ GLfloat *Vec4::glVec4() {
 	vector[2] = z;
 	vector[3] = w;
 	return vector;
+}
+
+void Vec4::imprimir()
+{
+	cout << "(" << x << ", " << y << ", " << z << ", " << w << ")";
 }
 
 float modulo(Vec3 in, Vec3 fi) {
