@@ -16,7 +16,7 @@ constexpr auto urlReflejoFondoNoche = "Resources/fondoReflejoNoche.jpg";
 constexpr auto urlCarretera = "Resources/carretera.jpg";
 constexpr auto urlOceano = "Resources/oceano.jpg";
 constexpr auto urlTerreno = "Resources/terreno.jpg";
-
+constexpr auto urlAcantilado = "Resources/acantilado.jpg";
 class Pista {
 private:
 	float defaultIter = 30.0;
@@ -25,8 +25,14 @@ private:
 	Textura texturaPista;
 
 	Material materialTerreno;
-	Textura texturaTerreno;
+	Textura texturaTerreno[3];
 
+	float aT = 1.75; //Ancho del terreno
+	float aC = 3.00; //Ancho de la colina/mar (se cuenta desde la orilla de la carretera)
+	float base = 0.1;
+	float altura = 10; //Altura de la colina/ profundidad de la costa
+	int resCurva = 5; //Resolucion del terreno en curva //Menos es mas detallado
+	int resRect = 2;// Resolucion del terreno en rectas //Menos es mas detallado
 public:
 
 	/*
