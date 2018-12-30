@@ -5,7 +5,8 @@ void Pista::cargarYoshi() {
 	materialPista.difuso = Vec4(0.3, 0.3, 0.3, 1);
 	texturaPista.cargarTextura(urlCarretera);
 
-	texturaTerreno[0].cargarTextura(urlAcantilado);
+	materialTerreno.especular = Vec4(0, 0, 0, 0);
+	texturaTerreno[0].cargarTextura(urlAcantilado2);
 	texturaTerreno[1].cargarTextura(urlTerreno);
 	texturaTerreno[2].cargarTextura(urlAcantilado);
 
@@ -95,7 +96,7 @@ void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
 			puntos[i][0] = inf;
 			puntos[i++][1] = sup;
 			
-			//El terreno tiene 1/3 de la resolucion de la pista
+			//El terreno tiene 1/resRect de la resolucion de la pista
 			if (i % resRect == 0) {
 				terreno[ti][0]   = Vec3(in.x + unidad.z*d * aC, in.y-altura, in.z - unidad.x*d * aC);
 				terreno[ti][1]   = Vec3(in.x + unidad.z*d * aT, in.y-base, in.z - unidad.x*d * aT);
@@ -143,68 +144,69 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 			centro.z - radio * sin(angulo) + d * sin(angulo),
 		};
 
-		
-		if(i%resCurva==0 && n==0){
-			//Parte Baja del terreno
-			terreno[ti][0] = {
-				(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC),
-				(GLfloat)(centro.y - 10),
-				(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC)
-			};
+		if (i%resCurva == 0) {
+			if (n == 0) {
+				//Parte Baja del terreno
+				terreno[ti][0] = {
+					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC),
+					(GLfloat)(centro.y - 10),
+					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC)
+				};
 
-			//Parte Media del terreno
-			terreno[ti][1] = {
-				(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT),
-				(GLfloat)(centro.y - base),
-				(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT)
-			};
-			terreno[ti][2] = {
-				(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aT),
-				(GLfloat)(centro.y - base),
-				(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aT)
-			};
+				//Parte Media del terreno
+				terreno[ti][1] = {
+					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT),
+					(GLfloat)(centro.y - base),
+					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT)
+				};
+				terreno[ti][2] = {
+					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aT),
+					(GLfloat)(centro.y - base),
+					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aT)
+				};
 
-			//Parte Alta del terreno
-			terreno[ti++][3] = {
-				(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aC),
-				(GLfloat)(centro.y + altura),
-				(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aC)
-			};
-		}
+				//Parte Alta del terreno
+				terreno[ti++][3] = {
+					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aC),
+					(GLfloat)(centro.y + altura),
+					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aC)
+				};
+			}
 
-		if (i % resCurva== 0 && n == 1) {
-			//Parte Baja del terreno
-			terreno[ti][3] = {
-				(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC),
-				(GLfloat)(centro.y + altura),
-				(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC)
-			};
+			else {
+				//Parte Baja del terreno
+				terreno[ti][3] = {
+					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC),
+					(GLfloat)(centro.y + altura),
+					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC)
+				};
 
-			//Parte Media del terreno
-			terreno[ti][2] = {
-				(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT),
-				(GLfloat)(centro.y - base),
-				(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT)
-			};
-			terreno[ti][1] = {
-				(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aT),
-				(GLfloat)(centro.y - base),
-				(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aT)
-			};
+				//Parte Media del terreno
+				terreno[ti][2] = {
+					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT),
+					(GLfloat)(centro.y - base),
+					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT)
+				};
+				terreno[ti][1] = {
+					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aT),
+					(GLfloat)(centro.y - base),
+					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aT)
+				};
 
-			//Parte Alta del terreno
-			terreno[ti++][0] = {
-				(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aC),
-				(GLfloat)(centro.y - altura),
-				(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aC)
-			};
+				//Parte Alta del terreno
+				terreno[ti++][0] = {
+					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aC),
+					(GLfloat)(centro.y - altura),
+					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aC)
+				};
+			}
 		}
 		
 		angulo += cambio;
 	}
 }
 
-void Pista::dibujarPista() {
+void Escenario::dibujarPista() {
 	glPushMatrix();
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -230,26 +232,7 @@ void Pista::dibujarPista() {
 			15, (int)mod
 		);
 	}
-
-	materialTerreno.actualizarGlMaterialfv();
-	//Terreno
-	for (auto j = 0; j < ti - 1; j++) {
-		mod = modulo(terreno[j][0], terreno[j + 1][0]);
-		if (mod < 1) mod = 1;
-		for (auto k = 0; k < 3; k++) {
-			texturaTerreno[k].actualizar();
-			quadtex(
-				terreno[j + 1][k].glVec3(),
-				terreno[j][k].glVec3(),
-				terreno[j][k + 1].glVec3(),
-				terreno[j + 1][k + 1].glVec3(),
-				0, 1,
-				0, 1,
-				15, (int)mod 
-			);
-		}
-	}
-
+	
 	if (tipo == 1) {
 		mod = modulo(puntos[i - 1][0], puntos[0][0]);
 		if (mod < 1) mod = 1;
@@ -261,14 +244,47 @@ void Pista::dibujarPista() {
 			15, (int)mod
 		);
 
-		mod = modulo(terreno[ti-1][0], terreno[0][0]);
+	}
+	glPopAttrib();
+	glPopMatrix();
+}
+
+void Escenario::dibujarTerreno()
+{
+	glPushMatrix();
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	float mod;
+
+	materialTerreno.actualizarGlMaterialfv();
+	//Terreno
+	for (auto j = 0; j < ti - 1; j++) {
+		mod = modulo(terreno[j][0], terreno[j + 1][0]);
+		if(modulo(terreno[j][0], *parentPos) < distanciaDibujado){
+			if (mod < 1) mod = 1;
+			for (auto k = 0; k < 3; k++) {
+				texturaTerreno[k].actualizar();
+				quadtex(
+					terreno[j + 1][k].glVec3(),
+					terreno[j][k].glVec3(),
+					terreno[j][k + 1].glVec3(),
+					terreno[j + 1][k + 1].glVec3(),
+					0, 1,
+					0, 1,
+					15, (int)mod
+				);
+			}
+		}
+	}
+	
+	if(tipo==1){
+		mod = modulo(terreno[ti - 1][0], terreno[0][0]);
 		if (mod < 1) mod = 1;
 		for (auto k = 0; k < 3; k++) {
 			texturaTerreno[k].actualizar();
 			quadtex(
 				terreno[0][k].glVec3(),
-				terreno[ti-1][k].glVec3(),
-				terreno[ti-1][k + 1].glVec3(),
+				terreno[ti - 1][k].glVec3(),
+				terreno[ti - 1][k + 1].glVec3(),
 				terreno[0][k + 1].glVec3(),
 				0, 1,
 				0, 1,
@@ -276,6 +292,7 @@ void Pista::dibujarPista() {
 			);
 		}
 	}
+
 	glPopAttrib();
 	glPopMatrix();
 }
@@ -315,7 +332,7 @@ void Escenario::cargarFondo()
 	//Imagen de fondo
 	float nLados = 10;
 
-	float apotema = 1000;
+	float apotema = distanciaDibujado;
 	float lado = apotema*tan(PI/nLados);
 	
 	float alto = 500;

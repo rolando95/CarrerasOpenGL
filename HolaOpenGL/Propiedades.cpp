@@ -71,11 +71,6 @@ void Textura::cargarTextura(const char * ruta)
 	loadImageFile((char *)ruta);
 }
 
-void Textura::asignarTipoUV(int tipo)
-{
-	uv = tipo;
-}
-
 void Textura::actualizar()
 {
 	glBindTexture(GL_TEXTURE_2D, textura);
@@ -90,6 +85,11 @@ void Textura::actualizar()
 		glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 		glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 	}
+}
+
+void Textura::asignarTipoUV(int tipo)
+{
+	uv = tipo;
 }
 
 void conecta4(int *matriz, int N, int M, int x, int y, int viejo, int  nuevo)

@@ -2,7 +2,11 @@
 #include "Propiedades.h"
 #include <conio.h>
 #include <ctime>
+
+
 using namespace std;
+
+constexpr auto distanciaDibujado = 350;
 
 constexpr auto ASCII = 256;
 constexpr auto MAX = 100000;
@@ -17,15 +21,9 @@ constexpr auto urlCarretera = "Resources/carretera.jpg";
 constexpr auto urlOceano = "Resources/oceano.jpg";
 constexpr auto urlTerreno = "Resources/terreno.jpg";
 constexpr auto urlAcantilado = "Resources/acantilado.jpg";
+constexpr auto urlAcantilado2 = "Resources/acantilado2.jpg";
 class Pista {
 private:
-	float defaultIter = 30.0;
-	int tipo = 1; //0: sprint, 1: circuito
-	Material materialPista;
-	Textura texturaPista;
-
-	Material materialTerreno;
-	Textura texturaTerreno[3];
 
 	float aT = 1.75; //Ancho del terreno
 	float aC = 3.00; //Ancho de la colina/mar (se cuenta desde la orilla de la carretera)
@@ -33,7 +31,16 @@ private:
 	float altura = 10; //Altura de la colina/ profundidad de la costa
 	int resCurva = 5; //Resolucion del terreno en curva //Menos es mas detallado
 	int resRect = 2;// Resolucion del terreno en rectas //Menos es mas detallado
+
 public:
+
+	float defaultIter = 30.0;
+	int tipo = 1; //0: sprint, 1: circuito
+	Material materialPista;
+	Textura texturaPista;
+
+	Material materialTerreno;
+	Textura texturaTerreno[3];
 
 	/*
 	Puntos del terreno 
@@ -61,10 +68,6 @@ public:
 	Si el semicirculo se dibujo en el sentido de las manecillas del reloj, anguloI>AnguloF
 	*/
 	void agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio, int iter = -1, bool autoScale = true);
-
-
-	//Dibujar la pista en la escena
-	void dibujarPista();
 };
 
 class Escenario :public Pista{
@@ -104,6 +107,12 @@ public:
 
 	/*Dibuja el fondo base*/
 	void dibujarFondo();
+
+	//Dibujar la pista en la escena
+	void dibujarPista();
+
+	//Dibujar el terreno en la escena
+	void dibujarTerreno();
 };
 
 class Global {
