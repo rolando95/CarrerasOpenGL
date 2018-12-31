@@ -90,6 +90,7 @@ private:
 	Vec3 *parentPos = new Vec3;
 
 public:
+	//Limites de la cuadricula
 	Vec3 base[4] = {
 		{ -14 * s,-0.1,0 },
 		{ 11 * s,-0.1,0 },
@@ -108,20 +109,27 @@ public:
 	/*Dibuja el fondo base*/
 	void dibujarFondo();
 
-	//Dibujar la pista en la escena
-	void dibujarPista();
+	/*
+	Dibujar la pista en la escena tomando en cuenta la distancia de dibujado.
+	Se puede activar el forzarDibujarTodo para siempre mostrar toda la pista*/
+	void dibujarPista(bool forzarDibujarTodo=false);
 
-	//Dibujar el terreno en la escena
-	void dibujarTerreno();
+	/*Dibujar el terreno en la escena tomando en cuenta la distancia de dibujado
+	Se puede activar el forzarDibujarTodo para siempre mostrar toda la pista*/
+	void dibujarTerreno(bool forzarDibujarTodo=false);
 };
 
 class Global {
 private:
 	bool tecla[ASCII];
 	bool pausa = false;
+	bool modoSolido = true;
+	int horario = 2; //1->Dia, 2->Noche
 public:
 	Lampara luzAmbiente;
 	Global();
+
+	void actualizarConfiguracionesGlobales();
 
 	//Asigna el estado de una tecla [char pos='w'] [bool valor=false]
 	void asignarTecla(char pos, bool valor);

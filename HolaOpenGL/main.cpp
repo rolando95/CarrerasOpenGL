@@ -68,10 +68,13 @@ void display() {
 	//Camara
 	camara.actualizar();
 
-
-	glPushMatrix();
 	glPushAttrib(GL_FRONT);
+	glPushMatrix();
+
+	global.actualizarConfiguracionesGlobales();
+
 	
+
 	{
 
 		global.luzAmbiente.actualizarGlLightfv();

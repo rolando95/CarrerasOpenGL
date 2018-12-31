@@ -23,11 +23,13 @@ void Automovil::cargarAutomovil() {
 	lucesTraseras = glGenLists(1);
 
 	glNewList(lucesTraseras, GL_COMPILE);
-	glPushMatrix();
-	glTranslatef(-2.5, 0.85, -0.5);
-	glScalef(0.1, 0.18, 0.35);
-	glutSolidCube(1);
-	glPopMatrix();
+	for(auto n=0; n<2; n++){
+		glPushMatrix();
+		glTranslatef(-2.5, 0.85, 0.5-n);
+		glScalef(0.1, 0.18, 0.35);
+		glutSolidCube(1);
+		glPopMatrix();
+	}
 	glEndList();
 
 	lucesDelanteras.difuso = Vec4(25, 25, 25, 1);
@@ -240,8 +242,8 @@ void Automovil::dibujarAutomovil() {
 		lucesTraserasMaterial.emision = Vec4(0, 0, 0, 1);
 	lucesTraserasMaterial.actualizarGlMaterialfv();
 	glCallList(lucesTraseras);
-	glScalef(1, 1, -1);
-	glCallList(lucesTraseras);
+	//glScalef(1, 1, -1);
+	//glCallList(lucesTraseras);
 	glPopMatrix();
 
 	lucesDelanteras.actualizarGlLightfv();

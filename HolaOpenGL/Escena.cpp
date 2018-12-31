@@ -206,22 +206,18 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 	}
 }
 
-void Escenario::dibujarPista() {
+void Escenario::dibujarPista(bool forzarDibujarTodo) {
 	glPushMatrix();
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
 	materialPista.actualizarGlMaterialfv();
 	texturaPista.actualizar();
-
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	float mod;
 
 	//Pista
 	for (auto j = 0; j < i - 1; j++) {
 		mod = modulo(puntos[j][0], puntos[j + 1][0]);
-		if (modulo(puntos[j][0], *parentPos) < distanciaDibujado) {
+		if (modulo(puntos[j][0], *parentPos) < distanciaDibujado || forzarDibujarTodo) {
 			if (mod < 1) mod = 1;
 			quadtex(
 				puntos[j][0].glVec3(),
@@ -251,7 +247,7 @@ void Escenario::dibujarPista() {
 	glPopMatrix();
 }
 
-void Escenario::dibujarTerreno()
+void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 {
 	glPushMatrix();
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -261,7 +257,7 @@ void Escenario::dibujarTerreno()
 	//Terreno
 	for (auto j = 0; j < ti - 1; j++) {
 		mod = modulo(terreno[j][0], terreno[j + 1][0]);
-		if(modulo(terreno[j][0], *parentPos) < distanciaDibujado){
+		if(modulo(terreno[j][0], *parentPos) < distanciaDibujado || forzarDibujarTodo){
 			if (mod < 1) mod = 1;
 			for (auto k = 0; k < 3; k++) {
 				texturaTerreno[k].actualizar();
@@ -272,7 +268,7 @@ void Escenario::dibujarTerreno()
 					terreno[j + 1][k + 1].glVec3(),
 					0, 1,
 					0, 1,
-					15, (int)mod
+					(int)mod, 15
 				);
 			}
 		}
@@ -313,8 +309,6 @@ void Escenario::dibujarCuadricula() {
 	ejes();
 	glPopMatrix();
 	glPushAttrib(GL_FRONT_AND_BACK);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	//utilidades.h
