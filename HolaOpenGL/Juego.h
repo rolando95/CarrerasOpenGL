@@ -118,7 +118,9 @@ public:
 class Global {
 private:
 	bool tecla[ASCII];
+	bool pausa = false;
 public:
+	Lampara luzAmbiente;
 	Global();
 
 	//Asigna el estado de una tecla [char pos='w'] [bool valor=false]
@@ -126,6 +128,9 @@ public:
 
 	//Obtiene es estado de una tecla
 	bool obtenerEstadoTecla(char pos);
+
+	//Obtiene es estado de la pausa en el juego
+	bool obtenerPausa();
 
 	/*Obtiene la direccion en memoria donde se encuentra esa tecla
 	Se sugiere usar solo para lectura*/
@@ -153,6 +158,7 @@ private:
 	float cambio = 27.778; //Velocidad donde se realiza el cambio de primera a segunda (m/s^2)
 	float aNL = 1; //Variacion de la velociad lineal sin pisar el acelerador (m/s^2)
 	float aFL = 50; //Variacion de la velocidad lineal pisando el freno (m/s^2)
+	float aFDL = 15;
 
 	//Movimiento Radial
 	float rot = 180; //Rotacion alrededor del eje y (alpha)

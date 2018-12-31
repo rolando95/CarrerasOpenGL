@@ -5,7 +5,8 @@
 	Ampliacion colores .... R.Vivo',2014
 	Bugs rad() y deg() .... R.Vivo',2014
 	Texto en WCS y DCS .... R.Vivo',2015
-	Adaptacion en .cppp ... Rolando A. Rosales J. 2018
+
+	Adaptacion al proyecto de carreras... Rolando A. Rosales J., 2018
 */
 
 #include <iostream>

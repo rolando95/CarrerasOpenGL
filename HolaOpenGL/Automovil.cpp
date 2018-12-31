@@ -136,12 +136,19 @@ void Automovil::amortiguarDerrape(float valor) {
 void Automovil::actualizar() {
 
 	//Velocidad Lineal
+
+	//Freno
 	if (*parentFreno) desacelerar(aFL);
+	//Acelerar
 	else if (*parentAcelerar) {
 		if (vL > cambio)acelerar(aL2);
 		else acelerar(aL1);
 		if (*parentFrenoDeMano) desacelerar(aNL);
 	}
+	else if (*parentFrenoDeMano) {
+		desacelerar(aFDL);
+	}
+
 	else if (*parentRetroceder && !*parentFrenoDeMano) retroceder(aL2);
 	else desacelerar(aNL);
 

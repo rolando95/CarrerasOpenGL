@@ -34,7 +34,6 @@ void Camara::actualizar() {
 	*/
 	if (tipoCamara == 1) vistaPlanta();
 	else {
-
 		/*
 		Se posiciona la camara antes de hacer
 		de hacer el calculo del frame actual.

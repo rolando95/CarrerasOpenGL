@@ -30,7 +30,7 @@ public:
 	Vec3 atenuacion = { 0.0001,0.0001,1 };
 
 	float spotCutOff = 45; //Angulo de dispersión. Valores entre [0,90] o 128.
-	float spotExponent = 15; //Distribución de intensidad cerca de los bordes. Valores entre [0,128]
+	float spotExponent = 25; //Distribución de intensidad cerca de los bordes. Valores entre [0,128]
 
 	bool spot = false;
 

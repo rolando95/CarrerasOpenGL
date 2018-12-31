@@ -221,16 +221,18 @@ void Escenario::dibujarPista() {
 	//Pista
 	for (auto j = 0; j < i - 1; j++) {
 		mod = modulo(puntos[j][0], puntos[j + 1][0]);
-		if (mod < 1) mod = 1;
-		quadtex(
-			puntos[j][0].glVec3(),
-			puntos[j][1].glVec3(),
-			puntos[j + 1][1].glVec3(),
-			puntos[j + 1][0].glVec3(),
-			0,1,
-			0,1,
-			15, (int)mod
-		);
+		if (modulo(puntos[j][0], *parentPos) < distanciaDibujado) {
+			if (mod < 1) mod = 1;
+			quadtex(
+				puntos[j][0].glVec3(),
+				puntos[j][1].glVec3(),
+				puntos[j + 1][1].glVec3(),
+				puntos[j + 1][0].glVec3(),
+				0, 1,
+				0, 1,
+				15, (int)mod
+			);
+		}
 	}
 	
 	if (tipo == 1) {

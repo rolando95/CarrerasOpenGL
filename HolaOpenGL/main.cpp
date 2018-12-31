@@ -16,8 +16,6 @@
 
 Material baseMaterial;
 Escenario escenario;
-
-Lampara luzAmbiente;
 Global global;
 Automovil automovil;
 Camara camara;
@@ -37,13 +35,13 @@ void init() {
 	//Texturas
 	glEnable(GL_TEXTURE_2D);
 
-	luzAmbiente.posicion = Vec4(1, 1, 0,0);
-	luzAmbiente.direccion = Vec3(0, -1, 0);
-	luzAmbiente.ambiente = Vec4(0.05,0.05,0.05, 1);
-	luzAmbiente.asignarTipo(0);
-	luzAmbiente.difuso = Vec4(.2, .2, .2, 1);
-	luzAmbiente.especular = Vec4(0, 0, 0, 1);
-	luzAmbiente.habilitar();
+	global.luzAmbiente.posicion = Vec4(1, 1, 0,0);
+	global.luzAmbiente.direccion = Vec3(0, -1, 0);
+	global.luzAmbiente.ambiente = Vec4(0.025,0.025,0.025, 1);
+	global.luzAmbiente.asignarTipo(0);
+	global.luzAmbiente.difuso = Vec4(.2, .2, .2, 1);
+	global.luzAmbiente.especular = Vec4(0, 0, 0, 1);
+	global.luzAmbiente.habilitar();
 
 	escenario.cargarYoshi();
 	escenario.cargarFondo();
@@ -76,7 +74,7 @@ void display() {
 	
 	{
 
-		luzAmbiente.actualizarGlLightfv();
+		global.luzAmbiente.actualizarGlLightfv();
 		
 		//Material base
 		baseMaterial.actualizarGlMaterialfv();
@@ -87,6 +85,7 @@ void display() {
 		escenario.dibujarTerreno();
 		escenario.dibujarFondo();
 		//Objetos
+		if (!global.obtenerPausa())automovil.actualizar();
 		automovil.dibujarAutomovil();
 		glutSwapBuffers();
 	}
@@ -96,13 +95,12 @@ void display() {
 }
 
 void reshape(int w, int h) {
+
 	camara.reescalar(w,h);
 }
 
 void update() {
-	automovil.actualizar();
 	glutPostRedisplay();
-	
 }
 
 void onTimer(int frame) {
@@ -178,5 +176,9 @@ int main(int argc, char **argv) {
 	glutPassiveMotionFunc(onMove); //Movimiento del mouse sin necesidad de boton presionado
 	glutTimerFunc(1000/FPS, onTimer, 1000/FPS);
 	glutMainLoop();
+
+	//Liberar FreeImage
+	FreeImage_DeInitialise();
+
 	return 0;
 }

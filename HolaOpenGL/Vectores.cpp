@@ -2,9 +2,7 @@
 
 Vec2::Vec2(GLfloat X, GLfloat Y) {x = X; y = Y;}
 GLfloat *Vec2::glVec2() {
-	GLfloat vector[2];
-	vector[0] = x;
-	vector[1] = y;
+	GLfloat vector[2] = {x,y};
 	return vector;
 }
 
@@ -15,10 +13,7 @@ void Vec2::imprimir()
 
 Vec3::Vec3(GLfloat X, GLfloat Y, GLfloat Z) { x = X; y = Y; z = Z; }
 GLfloat *Vec3::glVec3() {
-	GLfloat vector[3];
-	vector[0] = x;
-	vector[1] = y;
-	vector[2] = z;
+	GLfloat vector[3] = {x,y,z};
 	return vector;
 }
 
@@ -29,11 +24,7 @@ void Vec3::imprimir()
 
 Vec4::Vec4(GLfloat X, GLfloat Y, GLfloat Z, GLfloat W) { x = X; y = Y; z = Z; w = W; }
 GLfloat *Vec4::glVec4() {
-	GLfloat vector[4];
-	vector[0] = x;
-	vector[1] = y;
-	vector[2] = z;
-	vector[3] = w;
+	GLfloat vector[4] = {x,y,z,w};
 	return vector;
 }
 
