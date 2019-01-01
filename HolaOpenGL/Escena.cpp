@@ -266,10 +266,12 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 	materialTerreno.actualizarGlMaterialfv();
 	//Terreno
 	float distancia;
-	static float coef = 1.5;
+	static float coef = 0.5;
 
 	float despIn=0, despFi=0; //Inicio y fin del dibujo de las texturas
 	static float texCoef = 0.01;
+	
+	int numX, numY;
 
 	for (auto j = 0; j < ti - 1; j++) {
 		mod = modulo(terreno[j][3], *parentPos);
@@ -277,6 +279,11 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 		despFi = despIn + modTex * texCoef;
 
 		if(mod< distanciaDibujado || forzarDibujarTodo){
+			if (mod < distanciaDibujado / 3) {
+				numX = (modTex*coef<10)? 10 : modTex*coef;
+			}else {
+				numX = 2;
+			}
 			for (auto k = 0; k < 3; k++) {
 				texturaTerreno[k].actualizar();
 				quadtex(
@@ -286,7 +293,7 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 					terreno[j + 1][k + 1].glVec3(),
 					despFi, despIn,
 					0, 1,
-					(int)(coef*distanciaDibujado/mod), (int)(coef*distanciaDibujado / mod)
+					numX,numX
 				);
 			}
 		}
@@ -303,9 +310,9 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 				terreno[ti - 1][k].glVec3(),
 				terreno[ti - 1][k + 1].glVec3(),
 				terreno[0][k + 1].glVec3(),
+				despFi, despFi+1,
 				0, 1,
-				0, 1,
-				(int)(coef*distanciaDibujado / mod), (int)(coef*distanciaDibujado / mod)
+				numX, numX
 			);
 		}
 	}
