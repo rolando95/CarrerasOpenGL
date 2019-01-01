@@ -1,6 +1,6 @@
 #include "Juego.h"
 
-void Pista::cargarYoshi() {
+void Pista::cargarPista() {
 
 	materialPista.difuso = Vec4(0.3, 0.3, 0.3, 1);
 	texturaPista.cargarTextura(urlCarretera);
@@ -14,7 +14,7 @@ void Pista::cargarYoshi() {
 	ti = 0;
 	float j;
 	//Planta del pie
-	agregarRecta(Vec3(4, 0, 0), Vec3(-4, 0, 0));
+	agregarRecta(Vec3(3, 0, 0), Vec3(-4, 0, 0));
 
 	//Punta del pie
 	agregarCurva(Vec3(-4, 0, -2.5), 270, 90, 2.5);
@@ -23,12 +23,13 @@ void Pista::cargarYoshi() {
 	agregarCurva(Vec3(-4, 0, -6), -90, 60, 1);
 
 	//Barriga
-	agregarCurva(Vec3(-6, 0, -7), 60, 90, 2);
+	agregarRecta(Vec3(-3.5, 0, -6.90), Vec3(-4.75, 0, -8.65));
+	agregarCurva(Vec3(-6, 0, -7), 45, 90, 2);
 
 	//Brazo
 	agregarRecta(Vec3(-6, 0, -9), Vec3(-8, 0, -9));
 	agregarCurva(Vec3(-8, 0, -10.5), 270, 90, 1.5);
-	agregarCurva(Vec3(-8, 0, -13), -90, -15, 1);
+	agregarCurva(Vec3(-8, 0, -13), -90, -5, 1);
 
 	//Cuello
 	agregarRecta(Vec3(-7, 0, -13), Vec3(-6.5, 0, -14.9));
@@ -55,18 +56,19 @@ void Pista::cargarYoshi() {
 	agregarCurva(Vec3(0, 0, -13.5), 135, 270, 0.5);
 
 	//Espalda
-	agregarRecta(Vec3(0, 0, -13), Vec3(3, 0, -13));
+	agregarRecta(Vec3(0, 0, -13), Vec3(2, 0, -13));
 	agregarCurva(Vec3(3, 0, -10), 90, 75, 3);
 	agregarCurva(Vec3(6, 0, -15), -120, -60, 3);
-	agregarCurva(Vec3(9, 0, -10), 105, 90, 3);
+	//agregarCurva(Vec3(9, 0, -10), 105, 90, 3);
 
 	//Cola
-	agregarCurva(Vec3(9, 0, -12), 90, -45, 1);
-	agregarRecta(Vec3(8, 0, -9), Vec3(5, 0, -6));
-	agregarCurva(Vec3(4.5, 0, -5.5), 135, 270, 0.5);
+	agregarCurva(Vec3(9, 0, -12), 115, -45, 1);
+	agregarRecta(Vec3(8, 0, -9.5), Vec3(5, 0, -6.5));
+	agregarCurva(Vec3(4.5, 0, -5.5), 135, 255, 0.5);
 
 	//Talon
-	agregarCurva(Vec3(4, 0, -2.5), 75, -75, 2.5);
+	agregarCurva(Vec3(4, 0, -2.5), 75, -90, 2.5);
+	agregarRecta(Vec3(4, 0, 0), Vec3(3, 0, 0));
 }
 
 void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
@@ -144,20 +146,23 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 			centro.z - radio * sin(angulo) + d * sin(angulo),
 		};
 
+		//Porcentaje de radio extra en las curvas (Para que el extremo del terreno no se pegue con la calle)
+		static float extra = 1.05; 
+
 		if (i%resCurva == 0) {
 			if (n == 0) {
 				//Parte Baja del terreno
 				terreno[ti][0] = {
-					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC),
+					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra),
 					(GLfloat)(centro.y - 10),
-					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC)
+					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra)
 				};
 
 				//Parte Media del terreno
 				terreno[ti][1] = {
-					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT),
+					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT*extra),
 					(GLfloat)(centro.y - base),
-					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT)
+					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT*extra)
 				};
 				terreno[ti][2] = {
 					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aT),
@@ -174,18 +179,18 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 			}
 
 			else {
-				//Parte Baja del terreno
+				//Parte Alta del terreno
 				terreno[ti][3] = {
-					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC),
+					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra),
 					(GLfloat)(centro.y + altura),
-					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC)
+					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra)
 				};
 
 				//Parte Media del terreno
 				terreno[ti][2] = {
-					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT),
+					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT*extra),
 					(GLfloat)(centro.y - base),
-					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT)
+					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT*extra)
 				};
 				terreno[ti][1] = {
 					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aT),
@@ -193,7 +198,7 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aT)
 				};
 
-				//Parte Alta del terreno
+				//Parte Baja del terreno
 				terreno[ti++][0] = {
 					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aC),
 					(GLfloat)(centro.y - altura),
@@ -214,9 +219,13 @@ void Escenario::dibujarPista(bool forzarDibujarTodo) {
 	texturaPista.actualizar();
 	float mod;
 
+	float despIn = 0, despFi; //Inicio y fin del dibujo de las texturas
+	static float texCoef = 0.0075;
+
 	//Pista
 	for (auto j = 0; j < i - 1; j++) {
 		mod = modulo(puntos[j][0], puntos[j + 1][0]);
+		despFi = despIn + mod * texCoef;
 		if (modulo(puntos[j][0], *parentPos) < distanciaDibujado || forzarDibujarTodo) {
 			if (mod < 1) mod = 1;
 			quadtex(
@@ -225,10 +234,11 @@ void Escenario::dibujarPista(bool forzarDibujarTodo) {
 				puntos[j + 1][1].glVec3(),
 				puntos[j + 1][0].glVec3(),
 				0, 1,
-				0, 1,
+				despIn, despFi,
 				15, (int)mod
 			);
 		}
+		despIn = despFi - (int)despFi;
 	}
 	
 	if (tipo == 1) {
@@ -251,14 +261,22 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 {
 	glPushMatrix();
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	float mod;
+	float mod, modTex;
 
 	materialTerreno.actualizarGlMaterialfv();
 	//Terreno
+	float distancia;
+	static float coef = 1.5;
+
+	float despIn=0, despFi=0; //Inicio y fin del dibujo de las texturas
+	static float texCoef = 0.01;
+
 	for (auto j = 0; j < ti - 1; j++) {
-		mod = modulo(terreno[j][0], terreno[j + 1][0]);
-		if(modulo(terreno[j][0], *parentPos) < distanciaDibujado || forzarDibujarTodo){
-			if (mod < 1) mod = 1;
+		mod = modulo(terreno[j][3], *parentPos);
+		modTex = modulo(terreno[j][3], terreno[j + 1][3]);
+		despFi = despIn + modTex * texCoef;
+
+		if(mod< distanciaDibujado || forzarDibujarTodo){
 			for (auto k = 0; k < 3; k++) {
 				texturaTerreno[k].actualizar();
 				quadtex(
@@ -266,16 +284,17 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 					terreno[j][k].glVec3(),
 					terreno[j][k + 1].glVec3(),
 					terreno[j + 1][k + 1].glVec3(),
+					despFi, despIn,
 					0, 1,
-					0, 1,
-					(int)mod, 15
+					(int)(coef*distanciaDibujado/mod), (int)(coef*distanciaDibujado / mod)
 				);
 			}
 		}
+		despIn = despFi - (int)despFi;
 	}
 	
 	if(tipo==1){
-		mod = modulo(terreno[ti - 1][0], terreno[0][0]);
+		mod = modulo(terreno[ti-1][3], *parentPos);
 		if (mod < 1) mod = 1;
 		for (auto k = 0; k < 3; k++) {
 			texturaTerreno[k].actualizar();
@@ -286,7 +305,7 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 				terreno[0][k + 1].glVec3(),
 				0, 1,
 				0, 1,
-				15, (int)mod
+				(int)(coef*distanciaDibujado / mod), (int)(coef*distanciaDibujado / mod)
 			);
 		}
 	}
@@ -320,63 +339,5 @@ void Escenario::dibujarCuadricula() {
 		30
 	);
 
-	glPopAttrib();
-}
-
-void Escenario::cargarFondo()
-{
-	//Imagen de fondo
-	float nLados = 10;
-
-	float apotema = distanciaDibujado;
-	float lado = apotema*tan(PI/nLados);
-	
-	float alto = 500;
-
-	materialFondo.emision = Vec4(0.5, 0.5, 0.5, 1);
-	materialFondo.difuso = Vec4(0, 0, 0, 1);
-	materialFondo.ambiente = Vec4(0, 0, 0, 1);
-	materialFondo.especular = Vec4(0, 0, 0, 1);
-
-	texturaFondo.cargarTextura(urlFondoNoche);
-
-	GLfloat pts[4][3] = {
-	{-lado, -alto, 0},
-	{ lado, -alto, 0},
-	{ lado,  alto, 0},
-	{-lado,  alto, 0}
-	};
-
-	meshFondo = glGenLists(1);
-	glNewList(meshFondo, GL_COMPILE);
-	for (auto i = 0; i < nLados; i += 1) {
-		glPushMatrix();
-		glRotatef(-i*360/nLados, 0, 1, 0);
-		glTranslatef(0, 0, -apotema);
-		quadtex(pts[0], pts[1], pts[2], pts[3], i / nLados, (i + 1) / nLados, 0, 1,1,1);
-		glPopMatrix();
-	}
-	glEndList();
-
-	//Mar
-	texturaOceano.cargarTextura(urlOceano);
-}
-
-void Escenario::dibujarFondo()
-{
-	glPushMatrix();
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
-
-	//Imagen de fondo
-	materialFondo.actualizarGlMaterialfv();
-	texturaFondo.actualizar();
-	glTranslatef(parentPos->x, parentPos->y, parentPos->z);
-	glCallList(meshFondo);
-	glPopMatrix();
-
-	//Mar
-	materialOceano.actualizarGlMaterialfv();
-	texturaOceano.actualizar();
-	quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6,1,1);
 	glPopAttrib();
 }

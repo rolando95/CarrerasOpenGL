@@ -70,6 +70,8 @@ void Automovil::girar(float direccion) {
 		if (vL < 0) direccion *= -1;
 		float val = 1 / cosh((abs(vL) - cambio)*PI / 180);
 		rot += direccion * vRot / FPS / 2 * val;
+		
+		//rot %= 360; //si rot fuese tipo entero...
 		if (rot > 360) rot -= 360;
 		else if (rot < 0) rot += 360;
 	}
@@ -78,23 +80,24 @@ void Automovil::girar(float direccion) {
 void Automovil::acelerar(float valor){
 	//abs(valor);
 	vL += valor / FPS;
+;
 	if (vL > vLMax) vL = vLMax;
 }
 
 void Automovil::retroceder(float valor) {
 	//abs(valor);
-	vL -= valor / FPS;
+	vL -= valor / FPS ;
 	if (vL < -vLMaxR) vL = -vLMaxR;
 }
 
 void Automovil::desacelerar(float valor) {
 	//abs(valor);
 	if (vL > 0) {
-		vL -= valor / FPS;
+		vL -= valor / FPS ;
 		if (vL < 0) vL = 0;
 	}
 	else if (vL < 0) {
-		vL += valor / FPS;
+		vL += valor / FPS ;
 		if (vL > 0) vL = 0;
 	}
 }
@@ -143,9 +146,9 @@ void Automovil::actualizar() {
 	if (*parentFreno) desacelerar(aFL);
 	//Acelerar
 	else if (*parentAcelerar) {
-		if (vL > cambio)acelerar(aL2);
+		if (vL > cambio) acelerar(aL2);
 		else acelerar(aL1);
-		if (*parentFrenoDeMano) desacelerar(aNL);
+		if (*parentFrenoDeMano) desacelerar(aFDL/5);
 	}
 	else if (*parentFrenoDeMano) {
 		desacelerar(aFDL);
@@ -168,8 +171,8 @@ void Automovil::actualizar() {
 	else amortiguarDerrape(vAR / 25);
 
 	//Actualizacion de posicion
-	pos.x += vL * cos((rot - rotD / 2)*PI / 180) / FPS;
-	pos.z -= vL * sin((rot - rotD / 2)*PI / 180) / FPS;
+	pos.x += vL * escalaVelocidadL * cos((rot - rotD / 2)*PI / 180) / FPS;
+	pos.z -= vL * escalaVelocidadL * sin((rot - rotD / 2)*PI / 180) / FPS;
 }
 
 void Automovil::imprimirControles() {

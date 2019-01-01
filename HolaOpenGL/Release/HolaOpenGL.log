@@ -1,5 +1,5 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Release\) contains files shared from another project (HolaOpenGL.vcxproj, Proyecto.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Global.cpp
+  Escena.cpp
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(32): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(33): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(38): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
@@ -8,18 +8,36 @@ c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(41): warning C4
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\propiedades.h(12): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\propiedades.h(30): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\propiedades.h(38): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(30): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(99): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(158): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(160): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(161): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(163): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(164): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(165): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(32): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(84): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(109): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(110): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(112): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(175): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(177): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(178): warning C4305: 'initializing': truncation from 'double' to 'float'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(180): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\global.cpp(16): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(182): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(197): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(5): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(35): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(50): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(52): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(54): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(55): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(15): warning C4101: 'j': unreferenced local variable
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(78): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(128): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(131): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(133): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(150): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(223): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(272): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(268): warning C4101: 'distancia': unreferenced local variable
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(326): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   Generating code
-  2 of 107 functions ( 1.9%) were compiled, the rest were copied from previous compilation.
+  1 of 108 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     1 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

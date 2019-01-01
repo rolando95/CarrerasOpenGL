@@ -6,7 +6,9 @@
 
 using namespace std;
 
-constexpr auto distanciaDibujado = 350;
+constexpr auto distanciaDibujado = 500;
+
+constexpr auto s = 50; //Escala de la escena y entorno
 
 constexpr auto ASCII = 256;
 constexpr auto MAX = 100000;
@@ -25,11 +27,11 @@ constexpr auto urlAcantilado2 = "Resources/acantilado2.jpg";
 class Pista {
 private:
 
-	float aT = 1.75; //Ancho del terreno
-	float aC = 3.00; //Ancho de la colina/mar (se cuenta desde la orilla de la carretera)
+	float aT = 1.5; //Ancho del terreno
+	float aC = 2.5; //Ancho de la colina/mar (se cuenta desde la orilla de la carretera)
 	float base = 0.1;
 	float altura = 10; //Altura de la colina/ profundidad de la costa
-	int resCurva = 5; //Resolucion del terreno en curva //Menos es mas detallado
+	int resCurva = 3; //Resolucion del terreno en curva //Menos es mas detallado
 	int resRect = 2;// Resolucion del terreno en rectas //Menos es mas detallado
 
 public:
@@ -53,12 +55,12 @@ public:
 
 	Vec3 puntos[MAX][2]; //Puntos de la pista
 	int i; //numero de puntos de la pista
-	float s = 30; //Escala de la cuadricula
+
 	float d = 8; //Distancia desde el centro de la calle a la arista
 
 
-	//Carga todo el circuito con forma de Yoshi
-	void cargarYoshi();
+	//Carga todo el circuito (Tiene forma similar al Yoshi Circuit de Mario Kart, aunque con gráficos de N64)
+	void cargarPista();
 
 	//Agrega una recta dado dos puntos de origen y final.
 	void agregarRecta(Vec3 in, Vec3 fi, bool pushFirst = true, int iter = -1);
@@ -71,24 +73,7 @@ public:
 };
 
 class Escenario :public Pista{
-private:
-	Textura texturaFondo;
-	Material materialFondo;
-	GLint meshFondo;
-
-	GLfloat costa = 10; //Distancia de la region de la cuadricula del escenario al exterior
-	Textura texturaOceano;
-	Material materialOceano;
-
-	GLfloat oceanoPts[4][3] = {
-		{(-14 - costa)*s,-10, costa*s},
-		{ (11 + costa)*s,-10, costa*s},
-		{ (11 + costa)*s,-10,(-30 - costa)*s},
-		{(-14 - costa)*s,-10,(-30 - costa)*s}
-	};
-
 	Vec3 *parentPos = new Vec3;
-
 public:
 	//Limites de la cuadricula
 	Vec3 base[4] = {
@@ -103,11 +88,6 @@ public:
 
 	/*Dibuja una cuadricula base*/
 	void dibujarCuadricula();
-
-	void cargarFondo();
-
-	/*Dibuja el fondo base*/
-	void dibujarFondo();
 
 	/*
 	Dibujar la pista en la escena tomando en cuenta la distancia de dibujado.
@@ -124,10 +104,36 @@ private:
 	bool tecla[ASCII];
 	bool pausa = false;
 	bool modoSolido = true;
-	int horario = 2; //1->Dia, 2->Noche
+
+	int horario = 1; //0->Dia, 1->Noche
+	Vec4 difusoColor[2] = { Vec4(.5, .5, .5, 1), Vec4(.1, .1, .1, 1) };
+	Vec4 ambienteColor[2] = { Vec4(0.3,0.3,0.3,1), Vec4(0.025, 0.025, 0.025, 1) };
+	
+	Vec4 fondoEmisionColor[2] = { Vec4(1,1,1,1), Vec4(0.3,0.3,0.3,1) };
+
+	Textura texturaFondo[2];
+
+	Material materialFondo;
+	GLint meshFondo;
+
+	GLfloat costa = 10; //Distancia de la region de la cuadricula del escenario al exterior
+	Textura texturaOceano;
+	Material materialOceano;
+
+	GLfloat oceanoPts[4][3] = {
+		{(-14 - costa)*s,-10, costa*s},
+		{ (11 + costa)*s,-10, costa*s},
+		{ (11 + costa)*s,-10,(-30 - costa)*s},
+		{(-14 - costa)*s,-10,(-30 - costa)*s}
+	};
+	Vec3 *parentPos = new Vec3;
 public:
 	Lampara luzAmbiente;
 	Global();
+
+
+	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
+	void parentarPosFondo(Vec3 *posObj);
 
 	void actualizarConfiguracionesGlobales();
 
@@ -143,6 +149,12 @@ public:
 	/*Obtiene la direccion en memoria donde se encuentra esa tecla
 	Se sugiere usar solo para lectura*/
 	bool *obtenerPosTecla(char pos);
+
+	/*Carga el fondo de la escena*/
+	void cargarFondo();
+
+	/*Dibuja el fondo base*/
+	void dibujarFondo();
 };
 
 class Automovil {
@@ -153,7 +165,11 @@ private:
 	Material lucesTraserasMaterial;
 	Lampara lucesDelanteras;
 	Textura reflejo;
-	float n = 1; //Escala de las unidades
+	
+	/*Escala de velocidad lineal 
+	Ayuda a mejorar la sensacion de velocidad en la escenas, mas no afecta en los calculos físicos
+	*/
+	float escalaVelocidadL = 2;
 
 	//Movimiento Lineal
 	Vec3 pos = { 0, 0.01, 0 }; //Posicion (m)
@@ -161,12 +177,12 @@ private:
 	float vLMax = 70.833; //velocidad maxima lineal (m/s)
 	float vLMaxR = 27.778; //velocidad maxima en marcha atras (m/s)
 
-	float aL1 = 15.001; //Variacion de la velocidad lineal pisando el acelerador en primera(m/s^2)
-	float aL2 = 5.001; //Variacion de la velocidad lineal pisando el acelerador en los demas cambios (m/s^2)
+	float aL1 = 5.001; //Variacion de la velocidad lineal pisando el acelerador en primera(m/s^2)
+	float aL2 = 3.5; //Variacion de la velocidad lineal pisando el acelerador en los demas cambios (m/s^2)
 	float cambio = 27.778; //Velocidad donde se realiza el cambio de primera a segunda (m/s^2)
 	float aNL = 1; //Variacion de la velociad lineal sin pisar el acelerador (m/s^2)
-	float aFL = 50; //Variacion de la velocidad lineal pisando el freno (m/s^2)
-	float aFDL = 15;
+	float aFL = 25; //Variacion de la velocidad lineal pisando el freno (m/s^2)
+	float aFDL = 20;
 
 	//Movimiento Radial
 	float rot = 180; //Rotacion alrededor del eje y (alpha)
@@ -266,7 +282,7 @@ private:
 	double radio = 1; //Radio de esfera unidad
 	double angulo = 35;
 	double distancia = 1 / sin(angulo / 2 * PI / 180);
-	double lejos = 2000; //distancia maxima que dibuja la camara
+	double lejos = 50*s; //distancia maxima que dibuja la camara
 	int tipoCamara = 2; //1: Vista Planta, 2: 3ra Persona
 
 	Vec3 *parentPos = new Vec3; //Posicion de referencia del objeto al que sigue (automovil)
@@ -285,11 +301,14 @@ public:
 	/*Establece el up de la camara*/
 	void asignarArriba(Vec3 lUp);
 
-	void obtenerDimensionesEscenario(float ancho, float largo);
+	void asignarDimensionesEscenario(float ancho, float largo);
 
 	void reescalar(int lW = 1280, int lH = 720);
 
 	void actualizarPerspectiva();
+
+	//Retorna la posicion de la camara por referencia
+	Vec3 *obtenerRefPosicion();
 
 	void actualizar();
 

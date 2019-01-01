@@ -35,16 +35,11 @@ void init() {
 	//Texturas
 	glEnable(GL_TEXTURE_2D);
 
-	global.luzAmbiente.posicion = Vec4(1, 1, 0,0);
-	global.luzAmbiente.direccion = Vec3(0, -1, 0);
-	global.luzAmbiente.ambiente = Vec4(0.025,0.025,0.025, 1);
-	global.luzAmbiente.asignarTipo(0);
-	global.luzAmbiente.difuso = Vec4(.2, .2, .2, 1);
-	global.luzAmbiente.especular = Vec4(0, 0, 0, 1);
 	global.luzAmbiente.habilitar();
+	global.cargarFondo();
+	global.parentarPosFondo(automovil.obtenerRefPosicion());
 
-	escenario.cargarYoshi();
-	escenario.cargarFondo();
+	escenario.cargarPista();
 	escenario.parentarPosFondo(automovil.obtenerRefPosicion());
 
 	bool *acelerar = global.obtenerPosTecla('w');
@@ -55,7 +50,8 @@ void init() {
 	bool *derecha = global.obtenerPosTecla('d');
 	automovil.parentarControles(acelerar, retroceder, freno, frenoDeMano, izquierda, derecha);
 	automovil.cargarAutomovil();
-	camara.obtenerDimensionesEscenario(abs(escenario.base[0].x - escenario.base[1].x), abs(escenario.base[2].z - escenario.base[1].z));
+	
+	camara.asignarDimensionesEscenario(abs(escenario.base[0].x - escenario.base[1].x), abs(escenario.base[2].z - escenario.base[1].z));
 	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
 	camara.actualizar();
 }
@@ -76,9 +72,10 @@ void display() {
 	
 
 	{
-
+		//Global
 		global.luzAmbiente.actualizarGlLightfv();
-		
+		global.dibujarFondo();
+
 		//Material base
 		baseMaterial.actualizarGlMaterialfv();
 
@@ -86,7 +83,6 @@ void display() {
 		//escenario.dibujarCuadricula();
 		escenario.dibujarPista();
 		escenario.dibujarTerreno();
-		escenario.dibujarFondo();
 		//Objetos
 		if (!global.obtenerPausa())automovil.actualizar();
 		automovil.dibujarAutomovil();
