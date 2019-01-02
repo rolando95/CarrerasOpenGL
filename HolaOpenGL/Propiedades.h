@@ -1,6 +1,10 @@
 #pragma once
 #include "Vectores.h"
 
+constexpr auto urlDigitos = "Resources/digitos.png";
+constexpr auto urlLetras = "Resources/letras.png";
+constexpr auto urlOceano2 = "Resources/oceano.jpg";
+
 class Material {
 public:
 	Vec4 emision;
@@ -30,7 +34,7 @@ public:
 	Vec3 atenuacion = { 0.0001,0.0001,1 };
 
 	float spotCutOff = 45; //Angulo de dispersión. Valores entre [0,90] o 128.
-	float spotExponent = 25; //Distribución de intensidad cerca de los bordes. Valores entre [0,128]
+	float spotExponent = 30; //Distribución de intensidad cerca de los bordes. Valores entre [0,128]
 
 	bool spot = false;
 
@@ -46,6 +50,7 @@ public:
 	void asignarTipo(int valor);
 	void actualizarGlLightfv();
 	void habilitar();
+	void inhabilitar();
 };
 
 class Textura {
@@ -77,3 +82,26 @@ viejo -> valor viejo para sobreescribir
 nuevo -> valor nuevo
 */
 void conecta4(int *matriz, int N, int M, int x, int y,int viejo, int  nuevo);
+
+class Plano2D {
+public:
+	Plano2D(float x0 = -1,float y0 = -1,float x1 = 1, float y1 = 1);
+};
+
+class Plano2DTex {
+public:
+	Plano2DTex(float xmin=0, float ymin=0, float xmax=1, float ymax=1, float x0 = -1, float y0 = -1, float x1 = 1, float y1 = 1);
+};
+
+static class Texto {
+public:
+	Textura letras, digitos, oceano;
+	void cargarImagenes();
+	/*
+	Dibuja un numero en pantalla.
+	Si se define numero de digitos, se dibujará ceros a la izquierda.
+	numDigitos=0 para dibujar el numero solamente.
+	*/
+	void entero(int n, int numDigitos=0);
+	void palabra(const char *palabra);
+};

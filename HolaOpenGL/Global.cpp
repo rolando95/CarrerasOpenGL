@@ -20,8 +20,7 @@ void Global::parentarPosFondo(Vec3 * posObj){
 }
 
 void Global::actualizarConfiguracionesGlobales(){
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+
 	if (modoSolido) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//Poner fondo de hora de dia
@@ -68,6 +67,11 @@ bool Global::obtenerEstadoTecla(char pos) {
 	return tecla[pos];
 }
 
+int Global::obtenerHorario()
+{
+	return horario;
+}
+
 bool Global::obtenerPausa() { return pausa; }
 
 bool *Global::obtenerPosTecla(char pos) {
@@ -77,12 +81,6 @@ bool *Global::obtenerPosTecla(char pos) {
 void Global::cargarFondo()
 {
 	//Imagen de fondo
-	float nLados = 10;
-
-	float apotema = distanciaDibujado;
-	float lado = apotema * tan(PI / nLados);
-
-	float alto = 500;
 
 	materialFondo.emision = fondoEmisionColor[1];
 	materialFondo.difuso = Vec4(0, 0, 0, 1);
@@ -91,6 +89,13 @@ void Global::cargarFondo()
 
 	texturaFondo[0].cargarTextura(urlFondoDia);
 	texturaFondo[1].cargarTextura(urlFondoNoche);
+
+	float nLados = 10;
+
+	float apotema = distanciaDibujado;
+	float lado = apotema * tan(PI / nLados);
+
+	float alto = 500;
 
 	GLfloat pts[4][3] = {
 	{-lado, -alto, 0},

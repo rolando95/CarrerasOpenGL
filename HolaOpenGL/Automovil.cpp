@@ -20,6 +20,7 @@ void Automovil::cargarAutomovil() {
 
 	lucesTraserasMaterial.difuso = Vec4(0.1, 0, 0, 1);
 	lucesTraserasMaterial.especular = Vec4(.5, .25, .25, 1);
+	lucesTraserasMaterial.ambiente = Vec4(0.5, 0.3, 0.3, 1);
 	lucesTraseras = glGenLists(1);
 
 	glNewList(lucesTraseras, GL_COMPILE);
@@ -61,6 +62,11 @@ Vec3 *Automovil::obtenerRefPosicion() {
 
 float *Automovil::obtenerRefRotacion() {
 	return &rot;
+}
+
+float * Automovil::obtenerRefVelocidad()
+{
+	return &vL;
 }
 
 void Automovil::girar(float direccion) {
@@ -241,12 +247,11 @@ void Automovil::dibujarAutomovil() {
 	if (*parentFrenoDeMano || *parentFreno || *parentRetroceder) {
 		lucesTraserasMaterial.emision = Vec4(1, 0, 0, 1);
 	}
-	else
+	else{
 		lucesTraserasMaterial.emision = Vec4(0, 0, 0, 1);
+	}
 	lucesTraserasMaterial.actualizarGlMaterialfv();
 	glCallList(lucesTraseras);
-	//glScalef(1, 1, -1);
-	//glCallList(lucesTraseras);
 	glPopMatrix();
 
 	lucesDelanteras.actualizarGlLightfv();

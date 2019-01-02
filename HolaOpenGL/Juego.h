@@ -3,7 +3,6 @@
 #include <conio.h>
 #include <ctime>
 
-
 using namespace std;
 
 constexpr auto distanciaDibujado = 500;
@@ -24,6 +23,88 @@ constexpr auto urlOceano = "Resources/oceano.jpg";
 constexpr auto urlTerreno = "Resources/terreno.jpg";
 constexpr auto urlAcantilado = "Resources/acantilado.jpg";
 constexpr auto urlAcantilado2 = "Resources/acantilado2.jpg";
+
+constexpr auto urlCircuitoMapa = "Resources/circuitoMapa.png";
+constexpr auto urlAutomovilPosicionMapa = "Resources/automovilPosicionMapa.png";
+
+class Interfaz {
+	Textura circuitoMapa, posAutoMapa;
+	Texto texto;
+
+	Vec2 *parentResolucion = new Vec2; //Resolucion de la ventana por referencia
+	Vec3 *parentPos = new Vec3; //Posicion de referencia del objeto al que sigue (automovil)
+	float *parentRot = 0; //Rotacion de referencia del objeto al que sigue (automovil)
+	float *parentVelocidad = 0; //Velocidad de referencia del objeto al que sigue (automovil)
+public:
+	void cargarInterfaz();
+
+	/*La interfaz guarda por referencia la posicion
+	y rotacion del objeto para mostrar en el mapa*/
+	void parentarPosObjeto(Vec3 *posAuto, float *rot,float *velocidad);
+	void parentarResolucionVentana(Vec2 *resolucion);
+	void dibujarInterfaz();
+};
+
+class Global {
+private:
+	bool tecla[ASCII];
+	bool pausa = false;
+	bool modoSolido = true;
+
+	int horario = 1; //0->Dia, 1->Noche
+	Vec4 difusoColor[2] = { Vec4(.5, .5, .5, 1), Vec4(.1, .1, .1, 1) };
+	Vec4 ambienteColor[2] = { Vec4(0.3,0.3,0.3,1), Vec4(0.025, 0.025, 0.025, 1) };
+
+	Vec4 fondoEmisionColor[2] = { Vec4(1,1,1,1), Vec4(0.3,0.3,0.3,1) };
+
+	Textura texturaFondo[2];
+
+	Material materialFondo;
+	GLint meshFondo;
+
+	GLfloat costa = 10; //Distancia de la region de la cuadricula del escenario al exterior
+	Textura texturaOceano;
+	Material materialOceano;
+
+	GLfloat oceanoPts[4][3] = {
+		{(-14 - costa)*s,-10, costa*s},
+		{ (11 + costa)*s,-10, costa*s},
+		{ (11 + costa)*s,-10,(-30 - costa)*s},
+		{(-14 - costa)*s,-10,(-30 - costa)*s}
+	};
+	Vec3 *parentPos = new Vec3;
+public:
+	Lampara luzAmbiente;
+	Global();
+
+
+	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
+	void parentarPosFondo(Vec3 *posObj);
+
+	void actualizarConfiguracionesGlobales();
+
+	//Asigna el estado de una tecla [char pos='w'] [bool valor=false]
+	void asignarTecla(char pos, bool valor);
+
+	//Obtiene es estado de una tecla
+	bool obtenerEstadoTecla(char pos);
+
+	int obtenerHorario();
+
+	//Obtiene es estado de la pausa en el juego
+	bool obtenerPausa();
+
+	/*Obtiene la direccion en memoria donde se encuentra esa tecla
+	Se sugiere usar solo para lectura*/
+	bool *obtenerPosTecla(char pos);
+
+	/*Carga el fondo de la escena*/
+	void cargarFondo();
+
+	/*Dibuja el fondo base*/
+	void dibujarFondo();
+};
+
 class Pista {
 private:
 
@@ -44,12 +125,11 @@ public:
 	Material materialTerreno;
 	Textura texturaTerreno[3];
 
-	/*
-	Puntos del terreno 
-	terreno[n][0] = posicion colina
+	/*Puntos del terreno 
+	terreno[n][0] = posicion mar
 	terreno[n][1] = inicio terreno
 	terreno[n][2] = fin terreno
-	terreno[n][3] = posicion mar*/
+	terreno[n][3] = posicion colina*/
 	Vec3 terreno[MAX][4]; 
 	int ti; //numero de puntos del terreno
 
@@ -97,64 +177,6 @@ public:
 	/*Dibujar el terreno en la escena tomando en cuenta la distancia de dibujado
 	Se puede activar el forzarDibujarTodo para siempre mostrar toda la pista*/
 	void dibujarTerreno(bool forzarDibujarTodo=false);
-};
-
-class Global {
-private:
-	bool tecla[ASCII];
-	bool pausa = false;
-	bool modoSolido = true;
-
-	int horario = 1; //0->Dia, 1->Noche
-	Vec4 difusoColor[2] = { Vec4(.5, .5, .5, 1), Vec4(.1, .1, .1, 1) };
-	Vec4 ambienteColor[2] = { Vec4(0.3,0.3,0.3,1), Vec4(0.025, 0.025, 0.025, 1) };
-	
-	Vec4 fondoEmisionColor[2] = { Vec4(1,1,1,1), Vec4(0.3,0.3,0.3,1) };
-
-	Textura texturaFondo[2];
-
-	Material materialFondo;
-	GLint meshFondo;
-
-	GLfloat costa = 10; //Distancia de la region de la cuadricula del escenario al exterior
-	Textura texturaOceano;
-	Material materialOceano;
-
-	GLfloat oceanoPts[4][3] = {
-		{(-14 - costa)*s,-10, costa*s},
-		{ (11 + costa)*s,-10, costa*s},
-		{ (11 + costa)*s,-10,(-30 - costa)*s},
-		{(-14 - costa)*s,-10,(-30 - costa)*s}
-	};
-	Vec3 *parentPos = new Vec3;
-public:
-	Lampara luzAmbiente;
-	Global();
-
-
-	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
-	void parentarPosFondo(Vec3 *posObj);
-
-	void actualizarConfiguracionesGlobales();
-
-	//Asigna el estado de una tecla [char pos='w'] [bool valor=false]
-	void asignarTecla(char pos, bool valor);
-
-	//Obtiene es estado de una tecla
-	bool obtenerEstadoTecla(char pos);
-
-	//Obtiene es estado de la pausa en el juego
-	bool obtenerPausa();
-
-	/*Obtiene la direccion en memoria donde se encuentra esa tecla
-	Se sugiere usar solo para lectura*/
-	bool *obtenerPosTecla(char pos);
-
-	/*Carga el fondo de la escena*/
-	void cargarFondo();
-
-	/*Dibuja el fondo base*/
-	void dibujarFondo();
 };
 
 class Automovil {
@@ -223,6 +245,7 @@ public:
 	*/
 	float *obtenerRefRotacion();
 
+	float *obtenerRefVelocidad();
 	/*
 	Rota el auto segun la direccion (-1,1)
 	*/
@@ -295,7 +318,7 @@ private:
 	Vec3 up = { 0,1,0 };
 public:
 
-	double w = 1280, h = 720;
+	Vec2 resolucion = { 1280, 720 };
 	void configurarTipoDeCamara(int tipo);
 
 	/*Establece el up de la camara*/
@@ -309,6 +332,9 @@ public:
 
 	//Retorna la posicion de la camara por referencia
 	Vec3 *obtenerRefPosicion();
+
+	//Retorna la resolucion de el pantalla por referencia
+	Vec2 *obtenerRefResolucion();
 
 	void actualizar();
 

@@ -120,6 +120,7 @@
     <ClCompile Include="Camara.cpp" />
     <ClCompile Include="Escena.cpp" />
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="Interfaz.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Propiedades.cpp" />
     <ClCompile Include="Tools.cpp" />

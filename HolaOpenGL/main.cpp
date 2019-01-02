@@ -19,7 +19,9 @@ Escenario escenario;
 Global global;
 Automovil automovil;
 Camara camara;
+Interfaz interfaz;
 
+static GLuint tex2;
 
 double alpha=0;
 
@@ -35,13 +37,24 @@ void init() {
 	//Texturas
 	glEnable(GL_TEXTURE_2D);
 
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_BLEND);
+
+	// Blending
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	//Configuraciones globales iniciales
 	global.luzAmbiente.habilitar();
 	global.cargarFondo();
 	global.parentarPosFondo(automovil.obtenerRefPosicion());
 
+	//Configuraciones iniciales del escenario 
 	escenario.cargarPista();
 	escenario.parentarPosFondo(automovil.obtenerRefPosicion());
 
+	//Configuraciones iniciales del automovil
 	bool *acelerar = global.obtenerPosTecla('w');
 	bool *retroceder = global.obtenerPosTecla('r');
 	bool *freno = global.obtenerPosTecla('s');
@@ -51,9 +64,21 @@ void init() {
 	automovil.parentarControles(acelerar, retroceder, freno, frenoDeMano, izquierda, derecha);
 	automovil.cargarAutomovil();
 	
+	//Configuraciones iniciales de la cámara
 	camara.asignarDimensionesEscenario(abs(escenario.base[0].x - escenario.base[1].x), abs(escenario.base[2].z - escenario.base[1].z));
 	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
 	camara.actualizar();
+
+	//Configuraciones iniciales de la interfaz
+	interfaz.cargarInterfaz();
+
+	interfaz.parentarPosObjeto(
+		automovil.obtenerRefPosicion(),
+		automovil.obtenerRefRotacion(),
+		automovil.obtenerRefVelocidad()
+	);
+	interfaz.parentarResolucionVentana(camara.obtenerRefResolucion());
+
 }
 
 void display() {
@@ -64,14 +89,11 @@ void display() {
 	//Camara
 	camara.actualizar();
 
+	//Escena
 	glPushAttrib(GL_FRONT);
 	glPushMatrix();
-
-	global.actualizarConfiguracionesGlobales();
-
-	
-
 	{
+		global.actualizarConfiguracionesGlobales();
 		//Global
 		global.luzAmbiente.actualizarGlLightfv();
 		global.dibujarFondo();
@@ -85,11 +107,39 @@ void display() {
 		escenario.dibujarTerreno();
 		//Objetos
 		if (!global.obtenerPausa())automovil.actualizar();
+
+		bool horario = true;
+		if (global.obtenerHorario() == 0) horario = false;
 		automovil.dibujarAutomovil();
-		glutSwapBuffers();
 	}
+	glPopAttrib();
+	glPopMatrix();
+
+
+	//Interfaz
+	//*_________________________________________
+	// Objetos traslucidos que van pegados a la camara
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glPushMatrix();		// Apilar la modelview
+	glLoadIdentity();	// Camara en posicion de defecto
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();		// Apilar la projection
+	glLoadIdentity();	// Vista por defecto
+	glOrtho(-1, 1, -1, 1, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
+
+	interfaz.dibujarInterfaz();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 	glPopAttrib();
+	//*__________________________________________________________*/
+
+	
+	glutSwapBuffers();
 	automovil.imprimirStats();
 }
 
@@ -158,7 +208,7 @@ int main(int argc, char **argv) {
 	//Posicionar la ventana de dibujo en la pantalla
 	glutInitWindowPosition(0, 0);
 	//Tamanio de la pantalla
-	glutInitWindowSize((int)camara.w,(int)camara.h);
+	glutInitWindowSize((int)camara.resolucion.x,(int)camara.resolucion.y);
 
 	//Crear la ventana
 	glutCreateWindow(PROYECTO);

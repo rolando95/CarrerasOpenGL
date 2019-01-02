@@ -15,8 +15,8 @@ void Camara::asignarDimensionesEscenario(float ancho, float largo)
 }
 
 void Camara::reescalar(int lW, int lH) {
-	w = lW; h = lH;
-	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	resolucion.x = lW; resolucion.y = lH;
+	glViewport(0, 0, (GLsizei)lW, (GLsizei)lH);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	actualizarPerspectiva();
@@ -24,13 +24,18 @@ void Camara::reescalar(int lW, int lH) {
 }
 
 void Camara::actualizarPerspectiva() {
-	float ra = float(w) / float(h);
+	float ra = float(resolucion.x) / float(resolucion.y);
 	gluPerspective(angulo, ra, 0.2, lejos);
 }
 
 Vec3 * Camara::obtenerRefPosicion()
 {
 	return &pos;
+}
+
+Vec2 * Camara::obtenerRefResolucion()
+{
+	return &resolucion;
 }
 
 void Camara::actualizar() {

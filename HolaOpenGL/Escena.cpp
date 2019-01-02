@@ -266,7 +266,7 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 	materialTerreno.actualizarGlMaterialfv();
 	//Terreno
 	float distancia;
-	static float coef = 0.5;
+	static float coef = 0.25;
 
 	float despIn=0, despFi=0; //Inicio y fin del dibujo de las texturas
 	static float texCoef = 0.01;
@@ -323,7 +323,6 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 
 void Escenario::parentarPosFondo(Vec3 * posObj)
 {
-	free(parentPos);
 	parentPos = posObj;
 }
 
