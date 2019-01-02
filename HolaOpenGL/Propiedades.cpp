@@ -103,6 +103,7 @@ Plano2D::Plano2D(float x0, float y0, float x1, float y1) {
 
 Plano2DTex::Plano2DTex(float xmin, float ymin, float xmax, float ymax, float x0, float y0, float x1, float y1)
 {
+	glPushMatrix();
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 0, 1);
 	glTexCoord2f(xmin, ymin);
@@ -114,6 +115,7 @@ Plano2DTex::Plano2DTex(float xmin, float ymin, float xmax, float ymax, float x0,
 	glTexCoord2f(xmin, ymax);
 	glVertex3f(x0, y1, 0);
 	glEnd();
+	glPopMatrix();
 }
 
 
@@ -186,7 +188,6 @@ void Texto::palabra(const char * palabra)
 		}
 		glPopMatrix();
 	}
-	cout << palabra << " ";
 	glPopMatrix();
 	glPopAttrib();
 }

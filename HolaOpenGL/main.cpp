@@ -72,10 +72,13 @@ void init() {
 	//Configuraciones iniciales de la interfaz
 	interfaz.cargarInterfaz();
 
+	Vec2 rango = automovil.obtenerRangoVelocidadLineal();
 	interfaz.parentarPosObjeto(
 		automovil.obtenerRefPosicion(),
 		automovil.obtenerRefRotacion(),
-		automovil.obtenerRefVelocidad()
+		automovil.obtenerRefVelocidad(),
+		rango.x,
+		rango.y
 	);
 	interfaz.parentarResolucionVentana(camara.obtenerRefResolucion());
 

@@ -3,14 +3,18 @@ void Interfaz::cargarInterfaz()
 {
 	circuitoMapa.cargarTextura(urlCircuitoMapa);
 	posAutoMapa.cargarTextura(urlAutomovilPosicionMapa);
+	velocimetroInterior.cargarTextura(urlVelocimetroInterior);
+	velocimetroExterior.cargarTextura(urlVelocimetroExterior);
 	texto.cargarImagenes();
 }
 
-void Interfaz::parentarPosObjeto(Vec3 * posAuto, float * rot, float *velocidad)
+void Interfaz::parentarPosObjeto(Vec3 * posAuto, float * rot, float *velocidad, float maximaVelocidadReversa, float maximaVelocidad)
 {
 	parentPos = posAuto;
 	parentRot = rot; //Rotacion de referencia del objeto al que registrará en el mapa (automovil)
 	parentVelocidad = velocidad;
+	parentMaxVR = maximaVelocidadReversa;
+	parentMaxV = maximaVelocidad;
 }
 
 void Interfaz::parentarResolucionVentana(Vec2 * resolucion)
@@ -29,8 +33,6 @@ void Interfaz::dibujarInterfaz()
 	
 	static float tam = 30;
 
-	//static Vec2 esc = {25, 30};
-	//static Vec2 origen = { 14,0 };
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_LIGHTING);
 	glColor3f(1, 1, 1);
@@ -70,11 +72,43 @@ void Interfaz::dibujarInterfaz()
 		glTranslatef(1 - offsetX, -1 + offsetY, 0);
 		glScalef(1 / proporcion, 1, 1);
 
-		glScalef(0.15, 0.15, 1);
-		glTranslatef(-1, 0, 0);
-		texto.entero(*parentVelocidad* 3600 / 1000,3);
+		glTranslatef(-.25, .25, 0);
+		//Velocimetro interior y exterior
+		glPushMatrix();
+		{
+			glScalef(0.25, 0.25, 0.25);
+			
+			//Exterior
+			velocimetroExterior.actualizar();
+			Plano2D();
+			
+			//Interior
+			velocimetroInterior.actualizar();
+			glTranslatef(0, -0.025, z);
+
+			glRotatef(135, 0, 0, 1); //Alinear la manecilla con el inicio del velocimetro
+			if (*parentVelocidad >= 0) {
+				glRotatef(-*parentVelocidad / parentMaxV * 225, 0, 0, 1);
+			}
+			else{
+				glRotatef(*parentVelocidad / parentMaxVR * 225, 0, 0, 1);
+			}
+			glScalef(0.9, 0.9, 1);
+			Plano2D();
+		}
+		glPopMatrix();
+
+		glTranslatef(0, 0, 2 * z);
+		//Digitos
+		glPushMatrix();
+		{	
+			glTranslatef(0.05, -0.20, 0);
+			glScalef(0.15, 0.15, 1);
+			texto.entero(*parentVelocidad * 3600 / 1000, 3);
+		}
+		glPopMatrix();
 	}
 	glPopMatrix();
-
+	
 	glPopAttrib();
 }

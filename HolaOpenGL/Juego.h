@@ -26,21 +26,24 @@ constexpr auto urlAcantilado2 = "Resources/acantilado2.jpg";
 
 constexpr auto urlCircuitoMapa = "Resources/circuitoMapa.png";
 constexpr auto urlAutomovilPosicionMapa = "Resources/automovilPosicionMapa.png";
+constexpr auto urlVelocimetroInterior = "Resources/velocimetroInterior.png";
+constexpr auto urlVelocimetroExterior = "Resources/velocimetroExterior.png";
 
 class Interfaz {
-	Textura circuitoMapa, posAutoMapa;
+	Textura circuitoMapa, posAutoMapa, velocimetroInterior, velocimetroExterior;
 	Texto texto;
 
 	Vec2 *parentResolucion = new Vec2; //Resolucion de la ventana por referencia
 	Vec3 *parentPos = new Vec3; //Posicion de referencia del objeto al que sigue (automovil)
 	float *parentRot = 0; //Rotacion de referencia del objeto al que sigue (automovil)
 	float *parentVelocidad = 0; //Velocidad de referencia del objeto al que sigue (automovil)
+	float parentMaxV=-100, parentMaxVR=300; //Maxima velocidad hacia el frente y en reversa
 public:
 	void cargarInterfaz();
 
 	/*La interfaz guarda por referencia la posicion
 	y rotacion del objeto para mostrar en el mapa*/
-	void parentarPosObjeto(Vec3 *posAuto, float *rot,float *velocidad);
+	void parentarPosObjeto(Vec3 *posAuto, float *rot,float *velocidad,float maximaVelocidadReversa, float maximaVelocidad);
 	void parentarResolucionVentana(Vec2 *resolucion);
 	void dibujarInterfaz();
 };
@@ -239,6 +242,8 @@ public:
 	//Retorna la posicion del automovil por referencia
 	Vec3 *obtenerRefPosicion();
 
+	//Retorna rango de velocidad lineal
+	Vec2 obtenerRangoVelocidadLineal();
 	/*
 	Retorna la rotacion del automovil por referencia
 	La rotacion extra por derrape no se toma en cuenta

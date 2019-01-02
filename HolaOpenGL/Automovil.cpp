@@ -60,6 +60,11 @@ Vec3 *Automovil::obtenerRefPosicion() {
 	return &pos;
 }
 
+Vec2 Automovil::obtenerRangoVelocidadLineal()
+{
+	return Vec2(vLMaxR, vLMax);
+}
+
 float *Automovil::obtenerRefRotacion() {
 	return &rot;
 }
