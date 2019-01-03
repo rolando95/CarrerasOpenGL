@@ -56,12 +56,20 @@ Vec3 Vec3::operator/(float & obj)
 		this->z /obj);
 }
 
-Vec3 Vec3::operator*(float & obj)
+Vec3 Vec3::operator*(float &obj)
 {
 	return Vec3(
-		this->x *obj,
-		this->y *obj,
-		this->z *obj);
+		this->x * obj,
+		this->y * obj,
+		this->z * obj);
+}
+
+Vec3 Vec3::operator*(const int &obj)
+{
+	return Vec3(
+		this->x * obj,
+		this->y * obj,
+		this->z * obj);
 }
 
 Vec3 Vec3::operator+(Vec3 & obj)
@@ -70,6 +78,14 @@ Vec3 Vec3::operator+(Vec3 & obj)
 		this->x + obj.x,
 		this->y + obj.y,
 		this->z + obj.z);
+}
+
+Vec3 Vec3::operator+(float &obj)
+{
+	return Vec3(
+		this->x + obj,
+		this->y + obj,
+		this->z + obj);
 }
 
 Vec3 Vec3::operator-(Vec3 & obj)
@@ -146,11 +162,7 @@ float modulo(Vec3 in, Vec3 fi) {
 
 Vec3 normalizar(Vec3 in, Vec3 fi) {
 	float mod = modulo(in, fi);
-	return Vec3(
-		(fi.x - in.x) / mod,
-		(fi.y - in.y) / mod,
-		(fi.z - in.z) / mod
-	);
+	return (fi - in) / mod;
 }
 
 

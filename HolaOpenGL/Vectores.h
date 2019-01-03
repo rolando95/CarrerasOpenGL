@@ -1,5 +1,8 @@
+
 #pragma once
 #include "Tools.h"
+
+
 
 class Vec2 {
 public:
@@ -9,7 +12,7 @@ public:
 	//Muestra por pantalla el vector (x,y)
 	void imprimir();
 
-
+	//template<typename Type>
 	Vec2 operator/(float &obj);
 	Vec2 operator*(float &obj);
 	Vec2 operator+(Vec2 &obj);
@@ -26,8 +29,12 @@ public:
 	void imprimir();
 
 	Vec3 operator/(float &obj);
+
+
 	Vec3 operator*(float &obj);
+	Vec3 operator*(const int &obj);
 	Vec3 operator+(Vec3 &obj);
+	Vec3 operator+(float &obj);
 	Vec3 operator-(Vec3 &obj);
 	operator GLfloat*();
 };

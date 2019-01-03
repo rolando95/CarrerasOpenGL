@@ -145,12 +145,6 @@ void Global::cargarFondo()
 
 	float alto = 500;
 
-	GLfloat pts[4][3] = {
-	{-lado, -alto, 0},
-	{ lado, -alto, 0},
-	{ lado,  alto, 0},
-	{-lado,  alto, 0}
-	};
 
 	meshFondo = glGenLists(1);
 	glNewList(meshFondo, GL_COMPILE);
@@ -158,7 +152,14 @@ void Global::cargarFondo()
 		glPushMatrix();
 		glRotatef(-i * 360 / nLados, 0, 1, 0);
 		glTranslatef(0, 0, -apotema);
-		quadtex(pts[0], pts[1], pts[2], pts[3], i / nLados, (i + 1) / nLados, 0, 1, 1, 1);
+		quadtex(
+			Vec3(-lado, -alto, 0),
+			Vec3(lado, -alto, 0),
+			Vec3(lado, alto, 0),
+			Vec3(-lado, alto, 0),
+			i / nLados, 
+			(i + 1) / nLados,
+			0, 1, 1, 1);
 		glPopMatrix();
 	}
 	glEndList();

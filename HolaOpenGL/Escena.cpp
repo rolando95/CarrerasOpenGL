@@ -72,8 +72,8 @@ void Pista::cargarPista() {
 }
 
 void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
-	in = { in.x*s, in.y*s, in.z*s };
-	fi = { fi.x*s, fi.y*s, fi.z*s };
+	in = in*s;
+	fi = fi*s;
 
 	if (iter < 1) iter = modulo(in, fi) / defaultIter;
 	if (iter < 2) iter = 2;
@@ -108,20 +108,15 @@ void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
 			
 		}
 
-		sup.x += unidad.x*cambio;
-		sup.z += unidad.z*cambio;
-
-		inf.x += unidad.x*cambio;
-		inf.z += unidad.z*cambio;
-
-		in.x += unidad.x*cambio;
-		in.z += unidad.z*cambio;
+		sup = unidad * cambio + sup;
+		inf = unidad * cambio + inf;
+		in = unidad * cambio + in;
 	}
 }
 
 void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio, int iter, bool autoScale) {
 	if (autoScale) {
-		centro = { centro.x*s, centro.y*s, centro.z*s };
+		centro = centro * s;
 		radio *= s;
 	}
 
@@ -153,56 +148,56 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 			if (n == 0) {
 				//Parte Baja del terreno
 				terreno[ti][0] = {
-					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra),
-					(GLfloat)(centro.y - 10),
-					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra)
+					centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra,
+					centro.y - 10,
+					centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra
 				};
 
 				//Parte Media del terreno
 				terreno[ti][1] = {
-					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT*extra),
-					(GLfloat)(centro.y - base),
-					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT*extra)
+					centro.x + radio * cos(angulo) + d * cos(angulo)*aT*extra,
+					centro.y - base,
+					centro.z - radio * sin(angulo) - d * sin(angulo)*aT*extra
 				};
 				terreno[ti][2] = {
-					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aT),
-					(GLfloat)(centro.y - base),
-					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aT)
+					centro.x + radio * cos(angulo) - d * cos(angulo)*aT,
+					centro.y - base,
+					centro.z - radio * sin(angulo) + d * sin(angulo)*aT
 				};
 
 				//Parte Alta del terreno
 				terreno[ti++][3] = {
-					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aC),
-					(GLfloat)(centro.y + altura),
-					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aC)
+					centro.x + radio * cos(angulo) - d * cos(angulo)*aC,
+					centro.y + altura,
+					centro.z - radio * sin(angulo) + d * sin(angulo)*aC
 				};
 			}
 
 			else {
 				//Parte Alta del terreno
 				terreno[ti][3] = {
-					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra),
-					(GLfloat)(centro.y + altura),
-					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra)
+					centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra,
+					centro.y + altura,
+					centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra
 				};
 
 				//Parte Media del terreno
 				terreno[ti][2] = {
-					(GLfloat)(centro.x + radio * cos(angulo) + d * cos(angulo)*aT*extra),
-					(GLfloat)(centro.y - base),
-					(GLfloat)(centro.z - radio * sin(angulo) - d * sin(angulo)*aT*extra)
+					centro.x + radio * cos(angulo) + d * cos(angulo)*aT*extra,
+					centro.y - base,
+					centro.z - radio * sin(angulo) - d * sin(angulo)*aT*extra
 				};
 				terreno[ti][1] = {
-					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aT),
-					(GLfloat)(centro.y - base),
-					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aT)
+					centro.x + radio * cos(angulo) - d * cos(angulo)*aT,
+					centro.y - base,
+					centro.z - radio * sin(angulo) + d * sin(angulo)*aT
 				};
 
 				//Parte Baja del terreno
 				terreno[ti++][0] = {
-					(GLfloat)(centro.x + radio * cos(angulo) - d * cos(angulo)*aC),
-					(GLfloat)(centro.y - altura),
-					(GLfloat)(centro.z - radio * sin(angulo) + d * sin(angulo)*aC)
+					centro.x + radio * cos(angulo) - d * cos(angulo)*aC,
+					centro.y - altura,
+					centro.z - radio * sin(angulo) + d * sin(angulo)*aC
 				};
 			}
 		}

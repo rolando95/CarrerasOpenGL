@@ -82,12 +82,13 @@ private:
 	Textura texturaOceano;
 	Material materialOceano;
 
-	GLfloat oceanoPts[4][3] = {
+	Vec3 oceanoPts[4] = {
 		{(-14 - costa)*s,-10, costa*s},
 		{ (11 + costa)*s,-10, costa*s},
 		{ (11 + costa)*s,-10,(-30 - costa)*s},
 		{(-14 - costa)*s,-10,(-30 - costa)*s}
 	};
+
 	Vec3 *parentPos = new Vec3;
 public:
 	Lampara luzAmbiente;
