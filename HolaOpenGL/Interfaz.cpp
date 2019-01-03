@@ -33,6 +33,7 @@ void Interfaz::dibujarInterfaz()
 	
 	static float tam = 30;
 
+	glDepthMask(GL_FALSE);
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_LIGHTING);
 	glColor3f(1, 1, 1);
@@ -109,6 +110,6 @@ void Interfaz::dibujarInterfaz()
 		glPopMatrix();
 	}
 	glPopMatrix();
-	
 	glPopAttrib();
+	glDepthMask(GL_TRUE);
 }

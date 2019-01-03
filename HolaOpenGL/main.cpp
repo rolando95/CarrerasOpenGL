@@ -37,11 +37,17 @@ void init() {
 	//Texturas
 	glEnable(GL_TEXTURE_2D);
 
+	//Niebla
+	//glEnable(GL_FOG);
+	//glFogfv(GL_FOG_COLOR, NEGRO);
+	//glFogf(GL_FOG_DENSITY, 0.01);
+
+
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_BLEND);
 
-	// Blending
+	// Blending (Transparencias)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 

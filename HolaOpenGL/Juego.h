@@ -203,11 +203,11 @@ private:
 	float vLMaxR = 27.778; //velocidad maxima en marcha atras (m/s)
 
 	float aL1 = 5.001; //Variacion de la velocidad lineal pisando el acelerador en primera(m/s^2)
-	float aL2 = 3.5; //Variacion de la velocidad lineal pisando el acelerador en los demas cambios (m/s^2)
+	float aL2 = 3.5; //Variacion de la velocidad lineal pisando el acelerador en segunda (m/s^2)
 	float cambio = 27.778; //Velocidad donde se realiza el cambio de primera a segunda (m/s^2)
 	float aNL = 1; //Variacion de la velociad lineal sin pisar el acelerador (m/s^2)
 	float aFL = 25; //Variacion de la velocidad lineal pisando el freno (m/s^2)
-	float aFDL = 20;
+	float coefDrift = 1.05; //Porcentaje artificial de reduccion de velocidad cuando se presiona el freno de mano (x100%)
 
 	//Movimiento Radial
 	float rot = 180; //Rotacion alrededor del eje y (alpha)

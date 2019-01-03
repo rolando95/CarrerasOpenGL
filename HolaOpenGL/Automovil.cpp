@@ -154,16 +154,19 @@ void Automovil::actualizar() {
 	//Velocidad Lineal
 
 	//Freno
+	if (*parentFrenoDeMano) {
+		if (vL > cambio+0.1) desacelerar(aL2*coefDrift);
+		else desacelerar(aL1*coefDrift);
+	}
+
 	if (*parentFreno) desacelerar(aFL);
 	//Acelerar
 	else if (*parentAcelerar) {
 		if (vL > cambio) acelerar(aL2);
 		else acelerar(aL1);
-		if (*parentFrenoDeMano) desacelerar(aFDL/5);
+		//if (*parentFrenoDeMano) desacelerar(aFDL/5);
 	}
-	else if (*parentFrenoDeMano) {
-		desacelerar(aFDL);
-	}
+	
 
 	else if (*parentRetroceder && !*parentFrenoDeMano) retroceder(aL2);
 	else desacelerar(aNL);

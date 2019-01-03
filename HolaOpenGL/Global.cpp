@@ -134,6 +134,6 @@ void Global::dibujarFondo()
 	//Mar
 	materialOceano.actualizarGlMaterialfv();
 	texturaOceano.actualizar();
-	quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6, 1, 1);
+	quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6, 100, 100);
 	glPopAttrib();
 }
