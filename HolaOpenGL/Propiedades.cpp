@@ -14,11 +14,11 @@ Material::Material(
 }
 
 void Material::actualizarGlMaterialfv() {
-	glMaterialfv(GL_FRONT, GL_AMBIENT, ambiente.glVec4());
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, difuso.glVec4());
-	glMaterialfv(GL_FRONT, GL_EMISSION, emision.glVec4());
-	glMaterialfv(GL_FRONT, GL_SHININESS, brillo.glVec4());
-	glMaterialfv(GL_FRONT, GL_SPECULAR, especular.glVec4());
+	glMaterialfv(GL_FRONT, GL_AMBIENT, ambiente);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, difuso);
+	glMaterialfv(GL_FRONT, GL_EMISSION, emision);
+	glMaterialfv(GL_FRONT, GL_SHININESS, brillo);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, especular);
 }
 
 Lampara::Lampara(
@@ -43,17 +43,17 @@ void Lampara::asignarTipo(int valor) {
 }
 
 void Lampara::actualizarGlLightfv() {
-	glLightfv(GL_LIGHT0 + num, GL_AMBIENT, ambiente.glVec4());
-	glLightfv(GL_LIGHT0 + num, GL_DIFFUSE, difuso.glVec4());
-	glLightfv(GL_LIGHT0 + num, GL_SPECULAR, especular.glVec4());
-	glLightfv(GL_LIGHT0 + num, GL_POSITION, posicion.glVec4());
+	glLightfv(GL_LIGHT0 + num, GL_AMBIENT, ambiente);
+	glLightfv(GL_LIGHT0 + num, GL_DIFFUSE, difuso);
+	glLightfv(GL_LIGHT0 + num, GL_SPECULAR, especular);
+	glLightfv(GL_LIGHT0 + num, GL_POSITION, posicion);
 	if (*tipo == 1) {
 		if (spot) {
 			glLightf(GL_LIGHT0 + num, GL_SPOT_CUTOFF, spotCutOff);
 			glLightf(GL_LIGHT0 + num, GL_SPOT_EXPONENT, spotExponent);
-			glLightfv(GL_LIGHT0 + num, GL_SPOT_DIRECTION, direccion.glVec3());
+			glLightfv(GL_LIGHT0 + num, GL_SPOT_DIRECTION, direccion);
 		}
-		glLightfv(GL_LIGHT0 + num, GL_QUADRATIC_ATTENUATION, atenuacion.glVec3());
+		glLightfv(GL_LIGHT0 + num, GL_QUADRATIC_ATTENUATION, atenuacion);
 	}
 }
 

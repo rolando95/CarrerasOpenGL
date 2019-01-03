@@ -229,10 +229,10 @@ void Escenario::dibujarPista(bool forzarDibujarTodo) {
 		if (modulo(puntos[j][0], *parentPos) < distanciaDibujado || forzarDibujarTodo) {
 			if (mod < 1) mod = 1;
 			quadtex(
-				puntos[j][0].glVec3(),
-				puntos[j][1].glVec3(),
-				puntos[j + 1][1].glVec3(),
-				puntos[j + 1][0].glVec3(),
+				puntos[j][0],
+				puntos[j][1],
+				puntos[j + 1][1],
+				puntos[j + 1][0],
 				0, 1,
 				despIn, despFi,
 				15, (int)mod
@@ -245,10 +245,10 @@ void Escenario::dibujarPista(bool forzarDibujarTodo) {
 		mod = modulo(puntos[i - 1][0], puntos[0][0]);
 		if (mod < 1) mod = 1;
 		quad(
-			puntos[i - 1][0].glVec3(),
-			puntos[i - 1][1].glVec3(),
-			puntos[0][1].glVec3(),
-			puntos[0][0].glVec3(),
+			puntos[i - 1][0],
+			puntos[i - 1][1],
+			puntos[0][1],
+			puntos[0][0],
 			15, (int)mod
 		);
 
@@ -287,10 +287,10 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 			for (auto k = 0; k < 3; k++) {
 				texturaTerreno[k].actualizar();
 				quadtex(
-					terreno[j + 1][k].glVec3(),
-					terreno[j][k].glVec3(),
-					terreno[j][k + 1].glVec3(),
-					terreno[j + 1][k + 1].glVec3(),
+					terreno[j + 1][k],
+					terreno[j][k],
+					terreno[j][k + 1],
+					terreno[j + 1][k + 1],
 					despFi, despIn,
 					0, 1,
 					numX,numX
@@ -306,10 +306,10 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 		for (auto k = 0; k < 3; k++) {
 			texturaTerreno[k].actualizar();
 			quadtex(
-				terreno[0][k].glVec3(),
-				terreno[ti - 1][k].glVec3(),
-				terreno[ti - 1][k + 1].glVec3(),
-				terreno[0][k + 1].glVec3(),
+				terreno[0][k],
+				terreno[ti - 1][k],
+				terreno[ti - 1][k + 1],
+				terreno[0][k + 1],
 				despFi, despFi+1,
 				0, 1,
 				numX, numX
@@ -337,10 +337,10 @@ void Escenario::dibujarCuadricula() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	//utilidades.h
-	quad(base[0].glVec3(),
-		base[1].glVec3(),
-		base[2].glVec3(),
-		base[3].glVec3(),
+	quad(base[0],
+		base[1],
+		base[2],
+		base[3],
 		25,
 		30
 	);
