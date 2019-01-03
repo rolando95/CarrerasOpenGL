@@ -3,28 +3,53 @@
 Global::Global() {
 	for (auto i = 0; i < ASCII; i++) {
 		tecla[i] = false;
+		flipTecla[i] = false;
 	}
 
-	luzAmbiente.posicion = Vec4(1, 1, 0, 0);
+	flipTecla[interfaz] = true;
+
+	luzAmbiente.posicion = Vec4(0, 1, 0, 0);
 	luzAmbiente.direccion = Vec3(0, -1, 0);
-	luzAmbiente.ambiente = ambienteColor[1];
-	luzAmbiente.asignarTipo(0);
-	luzAmbiente.difuso = difusoColor[1];
+	luzAmbiente.ambiente = ambienteColor[flipTecla[horario]];
+	luzAmbiente.difuso = difusoColor[flipTecla[horario]];
 	luzAmbiente.especular = Vec4(0, 0, 0, 1);
+	luzAmbiente.asignarTipo(0);
 
 }
 
-void Global::parentarPosFondo(Vec3 * posObj){
-	free(parentPos);
-	parentPos = posObj;
+void Global::cargarConfiguracionesGlobales() {
+	//Fijar color de borrado
+	glClearColor(0, 0, 0.2, 1);
+
+	glEnable(GL_DEPTH_TEST);
+
+	//Iluminacion
+	glEnable(GL_LIGHTING);
+
+	//Texturas
+	glEnable(GL_TEXTURE_2D);
+
+	//Niebla
+	glDisable(GL_FOG);
+
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_BLEND);
+
+	// Blending (Transparencias)
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void Global::actualizarConfiguracionesGlobales(){
+void Global::actualizarConfiguracionesGlobales() {
 
-	if (modoSolido) {
+	if (!flipTecla[modoSolido]) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		//Poner fondo de hora de dia
-		glClearColor(0, 0, 0.2, 1);
+		if (flipTecla[horario])
+			glFogfv(GL_FOG_COLOR, GRISCLARO);
+		else
+			glFogfv(GL_FOG_COLOR, GRISOSCURO);
+		glFogf(GL_FOG_DENSITY, 0.01);
 	}
 	else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -34,61 +59,84 @@ void Global::actualizarConfiguracionesGlobales(){
 	}
 }
 
+void Global::parentarPosFondo(Vec3 * posObj){
+	parentPos = posObj;
+}
+
 void Global::asignarTecla(char pos, bool valor) {
 	tecla[pos] = valor;
-	if ((pos == 'p' || pos == 'P') && valor==1) pausa = !pausa;
-	if ((pos == 'l' || pos == 'L') && valor == 1) {
-		horario = (horario+1) % 2; //Alterna valores 0 y 1
-		luzAmbiente.difuso = difusoColor[horario];
-		luzAmbiente.ambiente = difusoColor[horario];
-		materialFondo.emision = fondoEmisionColor[horario];
+	if (valor) {
+		flipTecla[pos] = !flipTecla[pos];
 	}
-	if ((pos == 'i' || pos == 'I') && valor == 1) {
-		modoSolido = !modoSolido;
 
-		if(modoSolido){
+	if (pos >= 65 && pos <= 90) {
+		pos += 32;
+		tecla[pos] = valor;
+		if (valor) {
+			flipTecla[pos] = !flipTecla[pos];
+		}
+	}
+
+	if (pos == horario) {
+		luzAmbiente.difuso = difusoColor[flipTecla[horario]];
+		luzAmbiente.ambiente = difusoColor[flipTecla[horario]];
+		materialFondo.emision = fondoEmisionColor[flipTecla[horario]];
+		luzAmbiente.asignarTipo(0);
+	}
+
+	if (pos == modoSolido) {
+		if(!flipTecla[modoSolido]){
 			//Iluminacion
 			glEnable(GL_LIGHTING);
 
 			//Texturas
 			glEnable(GL_TEXTURE_2D);
+
+			//Niebla
+			if (flipTecla[niebla]) {
+				glEnable(GL_FOG);
+			}
 		}
 		else {
 			//Iluminacion
 			glDisable(GL_LIGHTING);
 
 			//Texturas
-			//glDisable(GL_TEXTURE_2D);
+			glDisable(GL_TEXTURE_2D);
+
+			//Niebla
+			glDisable(GL_FOG);
 		}
+	}
+
+	if (pos == niebla) {
+		if (flipTecla[niebla]) glEnable(GL_FOG);
+		else glDisable(GL_FOG);
 	}
 }
 
-bool Global::obtenerEstadoTecla(char pos) {
-	return tecla[pos];
-}
+bool Global::obtenerEstadoTecla(char pos) { return tecla[pos]; }
+bool Global::obtenerEstadoTeclaFlip(char pos) { return flipTecla[pos]; }
 
-int Global::obtenerHorario()
-{
-	return horario;
-}
+bool Global::obtenerHorario() { return flipTecla[horario]; }
+bool Global::obtenerPausa() { return flipTecla[pausa]; }
+bool Global::obtenerInterfaz() { return flipTecla[interfaz]; }
 
-bool Global::obtenerPausa() { return pausa; }
+bool *Global::obtenerPosTecla(char pos) { return &tecla[pos]; }
 
-bool *Global::obtenerPosTecla(char pos) {
-	return &tecla[pos];
-}
-
+//bool Global::obtenerCon
 void Global::cargarFondo()
 {
 	//Imagen de fondo
 
-	materialFondo.emision = fondoEmisionColor[1];
+	materialFondo.emision = fondoEmisionColor[flipTecla[horario]];
 	materialFondo.difuso = Vec4(0, 0, 0, 1);
 	materialFondo.ambiente = Vec4(0, 0, 0, 1);
 	materialFondo.especular = Vec4(0, 0, 0, 1);
 
-	texturaFondo[0].cargarTextura(urlFondoDia);
-	texturaFondo[1].cargarTextura(urlFondoNoche);
+	texturaFondo[0].cargarTextura(urlFondoNoche);
+	texturaFondo[1].cargarTextura(urlFondoDia);
+	
 
 	float nLados = 10;
 
@@ -126,7 +174,7 @@ void Global::dibujarFondo()
 
 	//Imagen de fondo
 	materialFondo.actualizarGlMaterialfv();
-	texturaFondo[horario].actualizar();
+	texturaFondo[flipTecla[horario]].actualizar();
 	glTranslatef(parentPos->x, parentPos->y, parentPos->z);
 	glCallList(meshFondo);
 	glPopMatrix();
@@ -136,4 +184,24 @@ void Global::dibujarFondo()
 	texturaOceano.actualizar();
 	quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6, 100, 100);
 	glPopAttrib();
+}
+
+void Global::imprimirControles() {
+	cout << "\nControles" << endl;
+	cout << "_________________________" << endl<< endl;
+	cout << "Acelerar           -> [W]" << endl;
+	cout << "Izquierda          -> [A]" << endl;
+	cout << "Freno              -> [S]" << endl;
+	cout << "Derecha            -> [D]" << endl;
+	cout << "Retroceder         -> [R]" << endl;
+	cout << "Freno de Mano      -> [Espacio]" << endl<<endl;
+	cout << "Pausa              -> [P]" << endl;
+	cout << "Camara helicoptero -> [1]" << endl;
+	cout << "Camara 3ra persona -> [2]" << endl;
+	cout << "Camara 1ra persona -> [3]" << endl << endl;
+	cout << "Niebla on/off      -> [N]" << endl;
+	cout << "Dia/Noche          -> [L]" << endl;
+	cout << "Interfaz on/off    -> [C]" << endl;
+	cout << "Modo Solido/Malla  -> [M]" << endl << endl<<endl;
+	_getch();
 }

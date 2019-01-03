@@ -5,15 +5,19 @@
 
 using namespace std;
 
+//Distancia de dibujado en la escena
 constexpr auto distanciaDibujado = 500;
+constexpr auto distanciaDibujadoHight = distanciaDibujado / 3;
 
-constexpr auto s = 50; //Escala de la escena y entorno
+//Escala de la escena y entorno
+constexpr auto s = 50; 
 
 constexpr auto ASCII = 256;
 constexpr auto MAX = 100000;
 constexpr auto FPS = 60;
 constexpr auto PROYECTO = "- Maestro del derrape -";
 
+//Texturas
 constexpr auto urlFondoDia = "Resources/fondoDia.jpg";
 constexpr auto urlFondoNoche = "Resources/fondoNoche.jpg";
 constexpr auto urlReflejoFondoDia = "Resources/fondoReflejoDia.jpg";
@@ -50,15 +54,24 @@ public:
 
 class Global {
 private:
-	bool tecla[ASCII];
-	bool pausa = false;
-	bool modoSolido = true;
+	bool tecla[ASCII]; //Estado de pulsación de la tecla (true->pulsada, false->soltada)
+	bool flipTecla[ASCII]; //Cada vez que se pulse una tecla se cambia de estado
+	
+	/*
+	Trabajar con teclas minúsculas. 
+	Por defecto las mayúsculas leídas se convertirán en minúsculas
+	*/
+	char pausa = 'p';
+	char modoSolido = 'm';
+	char interfaz = 'c';
+	char horario = 'l'; 
+	char niebla = 'n';
+	
+	//0->Noche, 1->Dia
+	Vec4 difusoColor[2] = { Vec4(.1, .1, .1, 1), Vec4(.4, .4, .41, 1) };
+	Vec4 ambienteColor[2] = { Vec4(0.02, 0.02, 0.02, 1), Vec4(0.1,0.1,0.1,1)};
 
-	int horario = 1; //0->Dia, 1->Noche
-	Vec4 difusoColor[2] = { Vec4(.5, .5, .5, 1), Vec4(.1, .1, .1, 1) };
-	Vec4 ambienteColor[2] = { Vec4(0.3,0.3,0.3,1), Vec4(0.025, 0.025, 0.025, 1) };
-
-	Vec4 fondoEmisionColor[2] = { Vec4(1,1,1,1), Vec4(0.3,0.3,0.3,1) };
+	Vec4 fondoEmisionColor[2] = { Vec4(0.4,0.4,0.4,1), Vec4(1,1,1,1) };
 
 	Textura texturaFondo[2];
 
@@ -84,18 +97,27 @@ public:
 	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
 	void parentarPosFondo(Vec3 *posObj);
 
+	void cargarConfiguracionesGlobales();
+
 	void actualizarConfiguracionesGlobales();
 
 	//Asigna el estado de una tecla [char pos='w'] [bool valor=false]
 	void asignarTecla(char pos, bool valor);
 
-	//Obtiene es estado de una tecla
+	//Obtiene el estado de una tecla
 	bool obtenerEstadoTecla(char pos);
 
-	int obtenerHorario();
+	//Obtiene el estado de una tecla flip
+	bool obtenerEstadoTeclaFlip(char pos);
 
-	//Obtiene es estado de la pausa en el juego
+	//Obtiene el estado del horario en el juego
+	bool obtenerHorario();
+
+	//Obtiene el estado de la pausa en el juego
 	bool obtenerPausa();
+
+	//Obtiene el estado de la interfaz en el juego
+	bool obtenerInterfaz();
 
 	/*Obtiene la direccion en memoria donde se encuentra esa tecla
 	Se sugiere usar solo para lectura*/
@@ -106,6 +128,8 @@ public:
 
 	/*Dibuja el fondo base*/
 	void dibujarFondo();
+
+	void imprimirControles();
 };
 
 class Pista {
@@ -187,6 +211,8 @@ private:
 	GLint mesh;
 	GLint lucesTraseras;
 	Material pintura;
+	Material mateGris;
+	Material mateNegro;
 	Material lucesTraserasMaterial;
 	Lampara lucesDelanteras;
 	Textura reflejo;
@@ -289,9 +315,6 @@ public:
 
 	//Actualizar estado del automovil
 	void actualizar();
-
-	//Muestra los controles del automovil
-	void imprimirControles();
 
 	//Muestra el estado actual del automovil
 	void imprimirStats(bool inicio = true);

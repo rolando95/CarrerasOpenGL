@@ -26,32 +26,10 @@ static GLuint tex2;
 double alpha=0;
 
 void init() {
-	//Fijar color de borrado
-	glClearColor(0,0,0.2,1);
 	
-	glEnable(GL_DEPTH_TEST);
-
-	//Iluminacion
-	glEnable(GL_LIGHTING);
-
-	//Texturas
-	glEnable(GL_TEXTURE_2D);
-
-	//Niebla
-	//glEnable(GL_FOG);
-	//glFogfv(GL_FOG_COLOR, NEGRO);
-	//glFogf(GL_FOG_DENSITY, 0.01);
-
-
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glEnable(GL_BLEND);
-
-	// Blending (Transparencias)
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 
 	//Configuraciones globales iniciales
+	global.cargarConfiguracionesGlobales();
 	global.luzAmbiente.habilitar();
 	global.cargarFondo();
 	global.parentarPosFondo(automovil.obtenerRefPosicion());
@@ -102,9 +80,9 @@ void display() {
 	glPushAttrib(GL_FRONT);
 	glPushMatrix();
 	{
-		global.actualizarConfiguracionesGlobales();
 		//Global
 		global.luzAmbiente.actualizarGlLightfv();
+		global.actualizarConfiguracionesGlobales();
 		global.dibujarFondo();
 
 		//Material base
@@ -117,8 +95,8 @@ void display() {
 		//Objetos
 		if (!global.obtenerPausa())automovil.actualizar();
 
-		bool horario = true;
-		if (global.obtenerHorario() == 0) horario = false;
+		//bool horario = true;
+		//if (global.obtenerHorario() == 0) horario = false;
 		automovil.dibujarAutomovil();
 	}
 	glPopAttrib();
@@ -138,7 +116,7 @@ void display() {
 	glMatrixMode(GL_MODELVIEW);
 	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
 
-	interfaz.dibujarInterfaz();
+	if(global.obtenerInterfaz()) interfaz.dibujarInterfaz();
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -203,7 +181,7 @@ void onMove(int x, int y) {
 
 
 int main(int argc, char **argv) {
-	automovil.imprimirControles();
+	global.imprimirControles();
 
 	//Inicializar
 	glutInit(&argc, argv);

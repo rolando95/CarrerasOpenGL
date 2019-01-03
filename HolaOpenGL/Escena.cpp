@@ -279,7 +279,7 @@ void Escenario::dibujarTerreno(bool forzarDibujarTodo)
 		despFi = despIn + modTex * texCoef;
 
 		if(mod< distanciaDibujado || forzarDibujarTodo){
-			if (mod < distanciaDibujado / 3) {
+			if (mod < distanciaDibujadoHight) {
 				numX = (modTex*coef<10)? 10 : modTex*coef;
 			}else {
 				numX = 2;
