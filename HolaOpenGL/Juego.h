@@ -42,6 +42,8 @@ class Interfaz {
 	float *parentRot = 0; //Rotacion de referencia del objeto al que sigue (automovil)
 	float *parentVelocidad = 0; //Velocidad de referencia del objeto al que sigue (automovil)
 	float parentMaxV=-100, parentMaxVR=300; //Maxima velocidad hacia el frente y en reversa
+
+	void ajustarProporcionPantalla();
 public:
 	void cargarInterfaz();
 
@@ -50,6 +52,7 @@ public:
 	void parentarPosObjeto(Vec3 *posAuto, float *rot,float *velocidad,float maximaVelocidadReversa, float maximaVelocidad);
 	void parentarResolucionVentana(Vec2 *resolucion);
 	void dibujarInterfaz();
+	void dibujarPausa();
 };
 
 class Global {
@@ -124,11 +127,14 @@ public:
 	Se sugiere usar solo para lectura*/
 	bool *obtenerPosTecla(char pos);
 
-	/*Carga el fondo de la escena*/
+	/*Carga el fondo y el mar de la escena*/
 	void cargarFondo();
 
-	/*Dibuja el fondo base*/
+	/*Dibuja el fondo en la escena*/
 	void dibujarFondo();
+
+	/*Dibuja el mar*/
+	void dibujarMar();
 
 	void imprimirControles();
 };
@@ -203,19 +209,21 @@ public:
 	void dibujarPista(bool forzarDibujarTodo=false);
 
 	/*Dibujar el terreno en la escena tomando en cuenta la distancia de dibujado
-	Se puede activar el forzarDibujarTodo para siempre mostrar toda la pista*/
-	void dibujarTerreno(bool forzarDibujarTodo=false);
+	Se puede configurar el detalleAlto para dibujar todo lo visible con bajo detalle
+	Se puede activar el forzarDibujarTodo para siempre mostrar toda la pista
+	*/
+	void dibujarTerreno(bool detalleBajo = false, bool forzarDibujarTodo=false);
 };
 
 class Automovil {
 private:
 	GLint mesh;
 	GLint lucesTraseras;
+	Lampara lucesDelanteras;
 	Material pintura;
 	Material mateGris;
 	Material mateNegro;
 	Material lucesTraserasMaterial;
-	Lampara lucesDelanteras;
 	Textura reflejo;
 	
 	/*Escala de velocidad lineal 
@@ -257,6 +265,7 @@ private:
 	bool *parentGiroDerecha;
 
 public:
+
 	//Carga la lista del modelo 3D del automovil
 	void cargarAutomovil();
 
@@ -266,16 +275,20 @@ public:
 	/*Asigna por referencia los controles del automovil*/
 	void parentarControles(bool *acelerar, bool *retroceder, bool *freno, bool *frenoDeMano, bool *izquierda, bool *derecha);
 
-	//Retorna la posicion del automovil por referencia
-	Vec3 *obtenerRefPosicion();
-
 	//Retorna rango de velocidad lineal
 	Vec2 obtenerRangoVelocidadLineal();
+
+	//Retorna la posicion del automovil por referencia
+	Vec3 *obtenerRefPosicion();
+	
 	/*
 	Retorna la rotacion del automovil por referencia
 	La rotacion extra por derrape no se toma en cuenta
 	*/
 	float *obtenerRefRotacion();
+
+	//Retorna la rotacion extra por derrape del automovil por referencia
+	float *obtenerRefRotacionExtra();
 
 	float *obtenerRefVelocidad();
 	/*
@@ -323,11 +336,14 @@ public:
 	//Dibuja el automovil en la escena
 	void dibujarAutomovil();
 
+	//Activa/Desactiva las luces delanteras (true->habilitado, false->inhabilitado)
+	void cambiarEstadoLucesDelanteras(bool valor);
 };
 
 class Camara {
 private:
-	double offsetA = 4; //Distancia en eje Y local con respecto al objeto parentado
+	double offsetA = 4; //Distancia en eje Y local con respecto al objeto parentado en 3ra persona
+	double offsetAFPS = 2; //Distancia en eje Y local con respecto al objeto parentado en 1ra persona
 	double offsetD = 11.5;  //Distancia en eje X local con respecto al objeto parentado
 	double offsetAngulo = 20; //Inclinacion de la camara con respecto al eje Z local con respecto al objeto parentado
 
@@ -335,9 +351,10 @@ private:
 	double angulo = 35;
 	double distancia = 1 / sin(angulo / 2 * PI / 180);
 	double lejos = 50*s; //distancia maxima que dibuja la camara
-	int tipoCamara = 2; //1: Vista Planta, 2: 3ra Persona
+	int tipoCamara = 2; //1->Camara Helicoptero, 2-> 3ra Persona, 3-> 1ra Persona
 
 	Vec3 *parentPos = new Vec3; //Posicion de referencia del objeto al que sigue (automovil)
+	float *parentExtraRot = new float(0); //Rotacion de referencia del objeto al que sigue (derrape del automovil)
 	float *parentRot = 0; //Rotacion de referencia del objeto al que sigue (automovil)
 
 	Vec2 dimEscenario; //Dimensiones en ancho y alto del escenario para la camara en planta
@@ -357,6 +374,8 @@ public:
 
 	void reescalar(int lW = 1280, int lH = 720);
 
+	int obtenerTipoCamara();
+
 	void actualizarPerspectiva();
 
 	//Retorna la posicion de la camara por referencia
@@ -371,6 +390,11 @@ public:
 	y rotacion del objeto a seguir
 	*/
 	void parentarPosObjeto(Vec3 *posAuto, float *rot);
+
+	/*La camara guarda por referencia la rotacion
+	extra por derrape del objeto a seguir
+	*/
+	void parentarExtraRotObjeto(float *extraRot);
 
 	//Situa la camara sobre la escena
 	void vistaPlanta();

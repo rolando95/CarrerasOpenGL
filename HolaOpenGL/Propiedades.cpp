@@ -137,7 +137,7 @@ void Texto::cargarImagenes() {
 	digitos.cargarTextura(urlDigitos);
 }
 
-void Texto::entero(int num, int numDigitos)
+void Texto::entero(int num, int numDigitos, int alineacionX, int alineacionY)
 {
 	char var[10]; //cadena que será enviada como parámetro para imprimir palabra.
 	char extra0[10] = ""; //Cadena con los 0's extra
@@ -154,40 +154,55 @@ void Texto::entero(int num, int numDigitos)
 	palabra(var);
 }
 
-void Texto::palabra(const char * palabra)
+void Texto::palabra(const char * palabra, int alineacionX, int alineacionY)
 {
 	bool tipo = -1; //0->char 1 ->digito -1->error
 	int pos = 0;
 
 	int len = strlen(palabra);
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	glPushMatrix();
+
+	float aX = (len / 2.0)*(alineacionX - 1);
+	float aY = (len / 8.0)*(alineacionY - 1);
+
+	pushAtributosObjetos(); {
 
 
-	for (auto i = 0; i < len; i++) {
-		if (palabra[i] >= 65 && palabra[i] <= 90) {
-			tipo = 0; pos = palabra[i] - 65;
-		}
-		else if (palabra[i] >= 97 && palabra[i] <= 122) {
-			tipo = 0; pos = palabra[i] - 97;
-		}
-		else if (palabra[i] >= 48 && palabra[i] <= 57) {
-			tipo = 1; pos = palabra[i] - 48;
-		}
-		else tipo = -1;
+		for (auto i = 0; i < len; i++) {
+			if (palabra[i] >= 65 && palabra[i] <= 90) {
+				tipo = 0; pos = palabra[i] - 65;
+			}
+			else if (palabra[i] >= 97 && palabra[i] <= 122) {
+				tipo = 0; pos = palabra[i] - 97;
+			}
+			else if (palabra[i] >= 48 && palabra[i] <= 57) {
+				tipo = 1; pos = palabra[i] - 48;
+			}
+			else tipo = -1;
 
-		glPushMatrix();
-		glScalef(0.5, 1, 1);
-		if (tipo == 0) {
-			letras.actualizar();
-			Plano2DTex((float)pos / 26, 0, (float)(pos + 1) / 26, 1, i, 0, i + 1, 1);
+			glPushMatrix();
+			glScalef(0.5, 1, 1);
+			if (tipo == 0) {
+				letras.actualizar();
+				Plano2DTex(
+					(float)pos / 26,
+					0,
+					(float)(pos + 1) / 26,
+					1,
+
+					aX + i, aY, aX + i + 1, aY + 1
+				);
+			}
+			else if (tipo == 1) {
+				digitos.actualizar();
+				Plano2DTex(
+					(float)pos / 10,
+					0,
+					(float)(pos + 1) / 10,
+					1,
+
+					aX + i, aY, aX + i + 1, aY + 1);
+			}
+			glPopMatrix();
 		}
-		else if (tipo == 1) {
-			digitos.actualizar();
-			Plano2DTex((float)pos / 10, 0, (float)(pos + 1) / 10, 1, i, 0, i + 1, 1);
-		}
-		glPopMatrix();
-	}
-	glPopMatrix();
-	glPopAttrib();
+	}popAtributosObjetos();
 }

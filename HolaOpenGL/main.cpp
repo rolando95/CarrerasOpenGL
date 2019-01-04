@@ -67,6 +67,8 @@ void init() {
 }
 
 void display() {
+	static int tipoCamara;
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -75,30 +77,36 @@ void display() {
 	camara.actualizar();
 
 	//Escena
-	glPushAttrib(GL_FRONT);
 	glPushMatrix();
 	{
-		//Global
-		global.luzAmbiente.actualizarGlLightfv();
-		global.actualizarConfiguracionesGlobales();
-		global.dibujarFondo();
+		//Automovil
+		if (tipoCamara != 3)automovil.dibujarAutomovil();
+		if (!global.obtenerPausa())automovil.actualizar();
+
+		tipoCamara = camara.obtenerTipoCamara();
 
 		//Material base
 		baseMaterial.actualizarGlMaterialfv();
 
 		//Escenario
 		//escenario.dibujarCuadricula();
-		escenario.dibujarPista();
-		escenario.dibujarTerreno();
-		//Objetos
-		if (!global.obtenerPausa())automovil.actualizar();
+		
+		if (tipoCamara == 1){
+			escenario.dibujarPista(true);
+			escenario.dibujarTerreno(true, true);
+		}
+		else{
+			escenario.dibujarPista();
+			escenario.dibujarTerreno();
+		}
 
-		//bool horario = true;
-		//if (global.obtenerHorario() == 0) horario = false;
-		automovil.dibujarAutomovil();
-	}
-	glPopAttrib();
-	glPopMatrix();
+		//Global
+		global.luzAmbiente.actualizarGlLightfv();
+		global.actualizarConfiguracionesGlobales();
+		if(tipoCamara != 1) global.dibujarFondo();
+		global.dibujarMar();
+
+	}glPopMatrix();
 
 
 	//Interfaz
@@ -114,7 +122,8 @@ void display() {
 	glMatrixMode(GL_MODELVIEW);
 	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
 
-	if(global.obtenerInterfaz()) interfaz.dibujarInterfaz();
+	if (global.obtenerInterfaz()) interfaz.dibujarInterfaz();
+	if (global.obtenerPausa()) interfaz.dibujarPausa();
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -148,6 +157,15 @@ void onKey(unsigned char tecla, int x, int y) {
 		camara.configurarTipoDeCamara(tecla - 48);
 	}
 	if (tecla == 27) exit(0); //27: Esc
+
+	//Configurar lamparas
+	int horario = global.obtenerHorario();
+	if (horario == 0) {
+		automovil.cambiarEstadoLucesDelanteras(true);
+	}
+	else {
+		automovil.cambiarEstadoLucesDelanteras(false);
+	}
 }
 void onUpKey(unsigned char tecla, int x, int y) {
 	global.asignarTecla(tecla, false);

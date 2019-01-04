@@ -1,7 +1,7 @@
 #include "Juego.h"
 
 void Camara::configurarTipoDeCamara(int tipo) {
-	if (tipo >= 1 && tipo <= 2) tipoCamara = tipo;
+	if (tipo >= 1 && tipo <= 3) tipoCamara = tipo;
 }
 
 void Camara::asignarArriba(Vec3 lUp) {
@@ -21,6 +21,11 @@ void Camara::reescalar(int lW, int lH) {
 	glLoadIdentity();
 	actualizarPerspectiva();
 	glutPostRedisplay();
+}
+
+int Camara::obtenerTipoCamara()
+{
+	return tipoCamara;
 }
 
 void Camara::actualizarPerspectiva() {
@@ -43,40 +48,59 @@ void Camara::actualizar() {
 	su posicion actual
 	*/
 	if (tipoCamara == 1) vistaPlanta();
-	else {
-		/*
-		Se posiciona la camara antes de hacer
-		de hacer el calculo del frame actual.
-		Crea un ligero retraso que mejorar la jugabilidad
-		*/
-		gluLookAt(pos.x, pos.y, pos.z,
-			look.x, look.y, look.z,
-			up.x, up.y, up.z
-		);
+	else{
+
 
 		//Calculo de la nueva posicion de camara
-		pos.x = parentPos->x - offsetD * cos(*parentRot*PI / 180);
-		pos.y = parentPos->y + offsetA;
-		pos.z = parentPos->z + offsetD * sin(*parentRot*PI / 180);
+		if(tipoCamara == 2){
+			/*
+			En 3ra persona Se posiciona la camara antes de hacer
+			de hacer el calculo del frame actual.
+			Crea un ligero retraso que mejorar la jugabilidad
+			*/
+			gluLookAt(pos.x, pos.y, pos.z,
+				look.x, look.y, look.z,
+				up.x, up.y, up.z
+			);
 
-		look.x = parentPos->x;
-		look.y = parentPos->y + offsetA - tan(offsetAngulo * PI / 180)*offsetA;
-		look.z = parentPos->z;
+			pos.x = parentPos->x - offsetD * cos(*parentRot*PI / 180);
+			pos.y = parentPos->y + offsetA;
+			pos.z = parentPos->z + offsetD * sin(*parentRot*PI / 180);
 
+			look.x = parentPos->x;
+			look.y = parentPos->y + offsetA - tan(offsetAngulo * PI / 180)*offsetA;
+			look.z = parentPos->z;
+		}
+		else {
+			static float dist = 0.01;
+			pos.x = parentPos->x - dist * cos((*parentRot - *parentExtraRot)*PI / 180);
+			pos.y = parentPos->y + offsetAFPS;
+			pos.z = parentPos->z + dist * sin((*parentRot - *parentExtraRot)*PI / 180);
+
+			look.x = parentPos->x;
+			look.y = parentPos->y + offsetAFPS;// +offsetA - tan(offsetAngulo * PI / 180)*offsetA;
+			look.z = parentPos->z;
+
+			up = Vec3(0, 1, 0);
+			gluLookAt(pos.x, pos.y, pos.z,
+				look.x, look.y, look.z,
+				up.x, up.y, up.z
+			);
+
+		}
 
 		up = Vec3(0, 1, 0);
-
-		/*
-		gluLookAt(pos.x, pos.y, pos.z,
-			look.x, look.y, look.z,
-			up.x, up.y, up.z
-		); */
 	}
 }
 
 void Camara::parentarPosObjeto(Vec3 *posAuto, float *rot) {
 	parentPos = posAuto;
 	parentRot = rot; //Rotacion de referencia del objeto al que sigue (automovil)
+}
+
+void Camara::parentarExtraRotObjeto(float * extraRot)
+{
+	parentExtraRot = extraRot;
 }
 
 void Camara::vistaPlanta() {

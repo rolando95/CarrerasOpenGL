@@ -1,4 +1,9 @@
 #include "Juego.h"
+void Interfaz::ajustarProporcionPantalla()
+{
+	float proporcion = parentResolucion->x / parentResolucion->y;
+	glScalef(1 / proporcion, 1, 1);
+}
 void Interfaz::cargarInterfaz()
 {
 	circuitoMapa.cargarTextura(urlCircuitoMapa);
@@ -24,12 +29,10 @@ void Interfaz::parentarResolucionVentana(Vec2 * resolucion)
 
 void Interfaz::dibujarInterfaz()
 {
-	static float escala = 0.5;
-
 	//static float altura = 0.5; //Alto del mapa en pantalla en base del viewport
 	static float offsetX = 0.1; //Distancia relativa con respecto a la esquina de la ventana
 	static float offsetY = 0.1; //
-	float proporcion = parentResolucion->x / parentResolucion->y;
+	
 	
 	static float tam = 30;
 
@@ -39,11 +42,12 @@ void Interfaz::dibujarInterfaz()
 	glColor3f(1, 1, 1);
 
 	float z = 0.01;
+
 	//Mapa
 	glPushMatrix();
 	{
 		glTranslatef(-1+offsetX, -1+offsetY, 0);
-		glScalef(1 / proporcion, 1, 1);
+		ajustarProporcionPantalla();
 		
 		//Escala del mapa
 		glScalef(0.5, 0.5, 0.5);
@@ -71,7 +75,7 @@ void Interfaz::dibujarInterfaz()
 	glPushMatrix();
 	{
 		glTranslatef(1 - offsetX, -1 + offsetY, 0);
-		glScalef(1 / proporcion, 1, 1);
+		ajustarProporcionPantalla();
 
 		glTranslatef(-.25, .25, 0);
 		//Velocimetro interior y exterior
@@ -110,6 +114,24 @@ void Interfaz::dibujarInterfaz()
 		glPopMatrix();
 	}
 	glPopMatrix();
+	glPopAttrib();
+	glDepthMask(GL_TRUE);
+}
+
+void Interfaz::dibujarPausa()
+{
+	glDepthMask(GL_FALSE);
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glDisable(GL_LIGHTING);
+	glPushMatrix(); {
+		glColor4f(0, 0, 0, 0.5);
+		Plano2D();
+		ajustarProporcionPantalla();
+		glColor3f(1, 1, 1);
+		glScalef(0.1, 0.1, 0.1);
+		texto.palabra("PAUSA", 0, 0);
+
+	}glPopMatrix();
 	glPopAttrib();
 	glDepthMask(GL_TRUE);
 }

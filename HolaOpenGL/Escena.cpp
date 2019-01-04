@@ -208,7 +208,7 @@ void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio,
 
 void Escenario::dibujarPista(bool forzarDibujarTodo) {
 	glPushMatrix();
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	pushAtributosMateriales();
 
 	materialPista.actualizarGlMaterialfv();
 	texturaPista.actualizar();
@@ -248,72 +248,71 @@ void Escenario::dibujarPista(bool forzarDibujarTodo) {
 		);
 
 	}
-	glPopAttrib();
+	popAtributosMateriales();
 	glPopMatrix();
 }
 
-void Escenario::dibujarTerreno(bool forzarDibujarTodo)
+void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 {
-	glPushMatrix();
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	float mod, modTex;
+	pushAtributosObjetos(); {
+		float mod, modTex;
 
-	materialTerreno.actualizarGlMaterialfv();
-	//Terreno
-	float distancia;
-	static float coef = 0.25;
+		materialTerreno.actualizarGlMaterialfv();
+		//Terreno
+		float distancia;
+		static float coef = 0.25;
 
-	float despIn=0, despFi=0; //Inicio y fin del dibujo de las texturas
-	static float texCoef = 0.01;
-	
-	int numX, numY;
+		float despIn = 0, despFi = 0; //Inicio y fin del dibujo de las texturas
+		static float texCoef = 0.01;
 
-	for (auto j = 0; j < ti - 1; j++) {
-		mod = modulo(terreno[j][3], *parentPos);
-		modTex = modulo(terreno[j][3], terreno[j + 1][3]);
-		despFi = despIn + modTex * texCoef;
+		int numX, numY;
 
-		if(mod< distanciaDibujado || forzarDibujarTodo){
-			if (mod < distanciaDibujadoHight) {
-				numX = (modTex*coef<10)? 10 : modTex*coef;
-			}else {
-				numX = 2;
+		for (auto j = 0; j < ti - 1; j++) {
+			mod = modulo(terreno[j][3], *parentPos);
+			modTex = modulo(terreno[j][3], terreno[j + 1][3]);
+			despFi = despIn + modTex * texCoef;
+
+			if (mod < distanciaDibujado || forzarDibujarTodo) {
+				if (mod < distanciaDibujadoHight && !detalleBajo) {
+					numX = (modTex*coef < 10) ? 10 : modTex * coef;
+				}
+				else {
+					numX = 2;
+				}
+				for (auto k = 0; k < 3; k++) {
+					texturaTerreno[k].actualizar();
+					quadtex(
+						terreno[j + 1][k],
+						terreno[j][k],
+						terreno[j][k + 1],
+						terreno[j + 1][k + 1],
+						despFi, despIn,
+						0, 1,
+						numX, numX
+					);
+				}
 			}
+			despIn = despFi - (int)despFi;
+		}
+
+		if (tipo == 1) {
+			mod = modulo(terreno[ti - 1][3], *parentPos);
+			if (mod < 1) mod = 1;
 			for (auto k = 0; k < 3; k++) {
 				texturaTerreno[k].actualizar();
 				quadtex(
-					terreno[j + 1][k],
-					terreno[j][k],
-					terreno[j][k + 1],
-					terreno[j + 1][k + 1],
-					despFi, despIn,
+					terreno[0][k],
+					terreno[ti - 1][k],
+					terreno[ti - 1][k + 1],
+					terreno[0][k + 1],
+					despFi, despFi + 1,
 					0, 1,
-					numX,numX
+					numX, numX
 				);
 			}
 		}
-		despIn = despFi - (int)despFi;
-	}
-	
-	if(tipo==1){
-		mod = modulo(terreno[ti-1][3], *parentPos);
-		if (mod < 1) mod = 1;
-		for (auto k = 0; k < 3; k++) {
-			texturaTerreno[k].actualizar();
-			quadtex(
-				terreno[0][k],
-				terreno[ti - 1][k],
-				terreno[ti - 1][k + 1],
-				terreno[0][k + 1],
-				despFi, despFi+1,
-				0, 1,
-				numX, numX
-			);
-		}
-	}
 
-	glPopAttrib();
-	glPopMatrix();
+	}popAtributosObjetos();
 }
 
 void Escenario::parentarPosFondo(Vec3 * posObj)
@@ -322,16 +321,16 @@ void Escenario::parentarPosFondo(Vec3 * posObj)
 }
 
 void Escenario::dibujarCuadricula() {
-	//cuadricula base
+	//Ejes
 	glPushMatrix();
 	glTranslatef(0, 0.1, 0);
 	glScalef(s, s, s);
 	ejes();
 	glPopMatrix();
+
+	//Lineas de la cuadricula
 	glPushAttrib(GL_FRONT_AND_BACK);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	//utilidades.h
 	quad(base[0],
 		base[1],
 		base[2],

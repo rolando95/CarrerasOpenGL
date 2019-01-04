@@ -98,10 +98,18 @@ public:
 	Textura letras, digitos, oceano;
 	void cargarImagenes();
 	/*
-	Dibuja un numero en pantalla.
+	Dibuja un numero en la escena.
 	Si se define numero de digitos, se dibujará ceros a la izquierda.
 	numDigitos=0 para dibujar el numero solamente.
+	AlineacionX (Alineacion del texto horizontal) 1->left, 0 ->center, -1 ->right
+	AlineacionY (Alineacion del texto vertical) 1->top, 0 ->middle, -1 ->bottom
 	*/
-	void entero(int n, int numDigitos=0);
-	void palabra(const char *palabra);
+	void entero(int n, int numDigitos=0, int alineacionX=1 , int alineacionY=1);
+	
+	/*
+	Dibuja una palabra en la escena.
+	AlineacionX (Alineacion del texto horizontal) 1->left, 0 ->center, -1 ->right
+	AlineacionY (Alineacion del texto vertical) 1->top, 0 ->middle, -1 ->bottom
+	*/
+	void palabra(const char *palabra, int alineacionX=1, int alineacionY=1);
 };

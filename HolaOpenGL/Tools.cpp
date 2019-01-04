@@ -313,3 +313,27 @@ void texturarFondo()
 
 	glPopAttrib();
 }
+
+void pushAtributosObjetos()
+{
+	glPushMatrix();
+	pushAtributosMateriales();
+}
+
+void popAtributosObjetos()
+{
+	glPopMatrix();
+	popAtributosMateriales();
+}
+
+void pushAtributosMateriales()
+{
+	glPushAttrib(GL_TEXTURE_BIT);
+	glPushAttrib(GL_LIGHTING_BIT);
+}
+
+void popAtributosMateriales()
+{
+	glPopAttrib();
+	glPopAttrib();
+}

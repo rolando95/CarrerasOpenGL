@@ -6,7 +6,8 @@
 	Bugs rad() y deg() .... R.Vivo',2014
 	Texto en WCS y DCS .... R.Vivo',2015
 
-	Adaptacion al proyecto de carreras... Rolando A. Rosales J., 2018
+	Adaptacion al proyecto de carreras ... Rolando A. Rosales J., 2018
+	push y pop Attrib personalizados ..... Rolando A. Rosales J., 2018
 */
 
 #include <iostream>
@@ -87,4 +88,15 @@ void texturarFondo();
 /* Carga como fondo del area de dibujo la textura corriente.
    Debe llamarse inmediatamente despues del glClear()       */
 
+/*Llama glPushAtrib(..) de texturas y materiales y glPushMatrix()*/
+void pushAtributosObjetos();
+
+/*Desapila las llamadas de pushObjetos*/
+void popAtributosObjetos();
+
+/*Llama glPushAtrib(..) de texturas y materiales*/
+void pushAtributosMateriales();
+
+/*Desapila las llamadas de pushAtributos*/
+void popAtributosMateriales();
 #endif

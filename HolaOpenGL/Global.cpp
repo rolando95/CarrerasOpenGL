@@ -179,7 +179,12 @@ void Global::dibujarFondo()
 	glTranslatef(parentPos->x, parentPos->y, parentPos->z);
 	glCallList(meshFondo);
 	glPopMatrix();
+	glPopAttrib();
+}
 
+void Global::dibujarMar()
+{
+	glPushAttrib(GL_TEXTURE_BIT);
 	//Mar
 	materialOceano.actualizarGlMaterialfv();
 	texturaOceano.actualizar();

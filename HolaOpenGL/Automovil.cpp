@@ -18,12 +18,9 @@ void Automovil::cargarAutomovil() {
 
 	mesh = glGenLists(1);
 	glNewList(mesh, GL_COMPILE);
-	glPushMatrix();
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	{
+	pushAtributosObjetos();{
 		//Ventana
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glPushMatrix(); {		
+		pushAtributosObjetos();{
 			reflejo.actualizar();
 			mateGris.actualizarGlMaterialfv();
 			
@@ -49,9 +46,8 @@ void Automovil::cargarAutomovil() {
 				Vec3(0.90, 1.3, -0.9),
 				Vec3(-1.70, 1.3, -0.9),
 				2, 2);
-		}
-		glPopMatrix();
-		glPopAttrib();
+		}popAtributosObjetos();
+		
 
 		//Mate Gris
 		mateGris.actualizarGlMaterialfv();
@@ -90,9 +86,9 @@ void Automovil::cargarAutomovil() {
 		glPopMatrix();
 
 		//Pintura
-		pintura.actualizarGlMaterialfv();
-		reflejo.actualizar();
-		glPushMatrix(); {
+		pushAtributosObjetos(); {
+			pintura.actualizarGlMaterialfv();
+			reflejo.actualizar();
 
 			//Parte alta (color auto)
 			for(auto n=-1; n<2; n+=2){
@@ -123,11 +119,10 @@ void Automovil::cargarAutomovil() {
 			glTranslatef(0, 1.1, 0);
 			glScalef(5, 0.5, 2);
 			glutSolidCube(1);
-		}
-		glPopMatrix();
-	}
-	glPopMatrix();
-	glPopAttrib();
+		}popAtributosObjetos();
+
+	}popAtributosObjetos();
+
 	glEndList();
 
 	lucesTraserasMaterial.difuso = Vec4(0.1, 0, 0, 1);
@@ -179,6 +174,11 @@ Vec2 Automovil::obtenerRangoVelocidadLineal()
 
 float *Automovil::obtenerRefRotacion() {
 	return &rot;
+}
+
+float * Automovil::obtenerRefRotacionExtra()
+{
+	return &rotD;
 }
 
 float * Automovil::obtenerRefVelocidad()
@@ -255,8 +255,7 @@ void Automovil::amortiguarDerrape(float valor) {
 			else reduccion = -valor / FPS;
 		}
 
-		//El valor de rotacion extra reducido se
-		//transmite a rot
+		//El valor de rotacion extra reducido se transmite a rot
 		rot += reduccion / 2;
 	}
 }
@@ -341,53 +340,55 @@ void Automovil::imprimirStats(bool inicio) {
 }
 
 void Automovil::dibujarAutomovil() {
-	glPushMatrix();
-	glPushAttrib(GL_FRONT);
+	glPushMatrix();{
 
-	glTranslatef(pos.x, pos.y, pos.z);
-	glRotatef(rot + rotD, 0, 1, 0);	
-	
-	glCallList(mesh);
-	
+		glTranslatef(pos.x, pos.y, pos.z);
+		glRotatef(rot + rotD, 0, 1, 0);
 
-	glPushMatrix();
-	if (*parentFrenoDeMano || *parentFreno || *parentRetroceder) {
-		lucesTraserasMaterial.emision = Vec4(1, 0, 0, 1);
-	}
-	else{
-		lucesTraserasMaterial.emision = Vec4(0, 0, 0, 1);
-	}
-	lucesTraserasMaterial.actualizarGlMaterialfv();
-	glCallList(lucesTraseras);
+		lucesDelanteras.actualizarGlLightfv();
 
-	//Ruedas
-	mateNegro.actualizarGlMaterialfv();
-	static float rot = 0;
-	glPushMatrix();
-	{
-		for (auto x = -1; x < 2; x += 2) {
-			for (auto z = -1; z < 2; z += 2) {
-				glPushMatrix();
-				glTranslatef(1.5*x, 0, z);
-				glTranslatef(0, 0.5, 0);
-				glScalef(0.5, 0.5, 0.5);
-				glTranslatef(0, 0, -0.5);
-				glRotatef(-rot*PI, 0, 0, 1);
-				glutSolidCylinder(1, 1, 10, 2);
-				glPopMatrix();
+		glCallList(mesh);
+
+
+		//Luces traseras y ruedas
+		glPushMatrix(); {
+			if (*parentFrenoDeMano || *parentFreno || *parentRetroceder) {
+				lucesTraserasMaterial.emision = Vec4(1, 0, 0, 1);
 			}
-		}
-		rot += vL;
-		if (rot > 360) rot -= 360;
-		else if (rot < 0) rot += 360;
-		
-	}
-	glPopMatrix();
+			else {
+				lucesTraserasMaterial.emision = Vec4(0, 0, 0, 1);
+			}
+			lucesTraserasMaterial.actualizarGlMaterialfv();
+			glCallList(lucesTraseras);
 
-	glPopMatrix();
+			//Ruedas
+			mateNegro.actualizarGlMaterialfv();
+			static float rot = 0;
+			glPushMatrix();
+			{
+				for (auto x = -1; x < 2; x += 2) {
+					for (auto z = -1; z < 2; z += 2) {
+						glPushMatrix();
+						glTranslatef(1.5*x, 0, z);
+						glTranslatef(0, 0.5, 0);
+						glScalef(0.5, 0.5, 0.5);
+						glTranslatef(0, 0, -0.5);
+						glRotatef(-rot * PI, 0, 0, 1);
+						glutSolidCylinder(1, 1, 10, 2);
+						glPopMatrix();
+					}
+				}
+				rot += vL;
+				if (rot > 360) rot -= 360;
+				else if (rot < 0) rot += 360;
 
-	lucesDelanteras.actualizarGlLightfv();
+			}glPopMatrix();
+		}glPopMatrix();
+	}glPopMatrix();
+}
 
-	glPopAttrib();
-	glPopMatrix();
+void Automovil::cambiarEstadoLucesDelanteras(bool valor)
+{
+	if (valor) lucesDelanteras.habilitar();
+	else lucesDelanteras.inhabilitar();
 }
