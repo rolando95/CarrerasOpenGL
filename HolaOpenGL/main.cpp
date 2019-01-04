@@ -21,8 +21,6 @@ Automovil automovil;
 Camara camara;
 Interfaz interfaz;
 
-static GLuint tex2;
-
 double alpha=0;
 
 void init() {
