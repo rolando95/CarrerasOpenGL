@@ -10,6 +10,8 @@ void Pista::cargarPista() {
 	texturaTerreno[1].cargarTextura(urlTerreno);
 	texturaTerreno[2].cargarTextura(urlAcantilado);
 
+	vistaHelicoptero.cargarTextura(urlVistaHelicoptero);
+
 	i = 0;
 	ti = 0;
 	float j;
@@ -313,6 +315,25 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 		}
 
 	}popAtributosObjetos();
+}
+
+void Escenario::dibujarTexturaVistaHelicoptero()
+{
+	pushAtributosObjetos();
+	glDepthMask(GL_FALSE);
+	materialTerreno.actualizarGlMaterialfv();
+	vistaHelicoptero.actualizar();
+	
+	static float despX = 0.25;
+	static float despZ = 1;
+	quad(
+		Vec3((-14+despX)* s, 10 , despZ * s),
+		Vec3( (16+despX)* s, 10 , despZ * s),
+		Vec3( (16+despX)* s, 10 , (-30 + despZ) * s),
+		Vec3((-14+despX)* s, 10 , (-30 + despZ) * s)
+	);
+	glDepthMask(GL_TRUE);
+	popAtributosObjetos();
 }
 
 void Escenario::parentarPosFondo(Vec3 * posObj)

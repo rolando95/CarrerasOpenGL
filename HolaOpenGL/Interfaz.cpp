@@ -1,8 +1,7 @@
 #include "Juego.h"
 void Interfaz::ajustarProporcionPantalla()
 {
-	float proporcion = parentResolucion->x / parentResolucion->y;
-	glScalef(1 / proporcion, 1, 1);
+	glScalef(parentResolucion->y / parentResolucion->x, 1, 1);
 }
 void Interfaz::cargarInterfaz()
 {
@@ -29,23 +28,18 @@ void Interfaz::parentarResolucionVentana(Vec2 * resolucion)
 
 void Interfaz::dibujarInterfaz()
 {
-	//static float altura = 0.5; //Alto del mapa en pantalla en base del viewport
 	static float offsetX = 0.1; //Distancia relativa con respecto a la esquina de la ventana
 	static float offsetY = 0.1; //
 	
 	
 	static float tam = 30;
-
-	glDepthMask(GL_FALSE);
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	glDisable(GL_LIGHTING);
-	glColor3f(1, 1, 1);
-
 	float z = 0.01;
 
-	//Mapa
-	glPushMatrix();
-	{
+	glDepthMask(GL_FALSE);
+	pushAtributosObjetos();{
+		glDisable(GL_LIGHTING);
+		glColor3f(1, 1, 1);
+		//Mapa
 		glTranslatef(-1+offsetX, -1+offsetY, 0);
 		ajustarProporcionPantalla();
 		
@@ -112,9 +106,7 @@ void Interfaz::dibujarInterfaz()
 			texto.entero(*parentVelocidad * 3600 / 1000, 3);
 		}
 		glPopMatrix();
-	}
-	glPopMatrix();
-	glPopAttrib();
+	}popAtributosObjetos();
 	glDepthMask(GL_TRUE);
 }
 

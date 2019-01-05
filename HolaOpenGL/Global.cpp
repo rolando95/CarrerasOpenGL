@@ -17,10 +17,12 @@ Global::Global() {
 
 }
 
-void Global::cargarConfiguracionesGlobales() {
-	//Fijar color de borrado
-	glClearColor(0, 0, 0.2, 1);
+void Global::parentarResolucionVentana(Vec2 * resolucion)
+{
+	parentResolucion = resolucion;
+}
 
+void Global::cargarConfiguracionesGlobales() {
 	glEnable(GL_DEPTH_TEST);
 
 	//Iluminacion
@@ -44,6 +46,10 @@ void Global::cargarConfiguracionesGlobales() {
 void Global::actualizarConfiguracionesGlobales() {
 
 	if (!flipTecla[modoSolido]) {
+		//Fijar color de borrado
+		glClearColor(0, 0, 0, 1);
+
+		//Modo solido activado
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (flipTecla[horario])
 			glFogfv(GL_FOG_COLOR, GRISCLARO);
@@ -53,6 +59,7 @@ void Global::actualizarConfiguracionesGlobales() {
 	}
 	else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable(GL_FOG);
 		//Poner fondo blanco
 		glClearColor(1, 1, 1, 1);
 		glColor3f(0, 0, 0);
@@ -112,6 +119,14 @@ void Global::asignarTecla(char pos, bool valor) {
 	if (pos == niebla) {
 		if (flipTecla[niebla]) glEnable(GL_FOG);
 		else glDisable(GL_FOG);
+	}
+
+	//Guardar captura
+	if (pos == captura && valor) {
+		
+		sprintf_s(urlImagen, "%s%d.png", urlFichero, numCaptura%100 + 100);
+		saveScreenshot(urlImagen, 1280, 720);
+		numCaptura += 1;
 	}
 }
 
@@ -182,15 +197,21 @@ void Global::dibujarFondo()
 	glPopAttrib();
 }
 
-void Global::dibujarMar()
+void Global::dibujarMar(int tipo)
 {
+
 	glPushAttrib(GL_TEXTURE_BIT);
 	//Mar
 	materialOceano.actualizarGlMaterialfv();
 	texturaOceano.actualizar();
-	quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6, 100, 100);
+	if (tipo == 1)
+		quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6, 100, 100);
+	else if(tipo==2){
+		quadtex(oceanoPts[0]*2, oceanoPts[1]*2, oceanoPts[2]*2, oceanoPts[3]*2, 0, 5, 0, 6, 5, 5);
+	}
 	glPopAttrib();
 }
+
 
 void Global::imprimirControles() {
 	cout << "\nControles" << endl;
@@ -208,6 +229,7 @@ void Global::imprimirControles() {
 	cout << "Niebla on/off      -> [N]" << endl;
 	cout << "Dia/Noche          -> [L]" << endl;
 	cout << "Interfaz on/off    -> [C]" << endl;
-	cout << "Modo Solido/Malla  -> [M]" << endl << endl<<endl;
+	cout << "Modo Solido/Malla  -> [M]" << endl;
+	cout << "Captura de pantalla-> [V] (Capturas/screenshotXXX.png)" << endl << endl << endl;
 	_getch();
 }

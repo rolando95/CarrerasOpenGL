@@ -33,6 +33,9 @@ constexpr auto urlAutomovilPosicionMapa = "Resources/automovilPosicionMapa.png";
 constexpr auto urlVelocimetroInterior = "Resources/velocimetroInterior.png";
 constexpr auto urlVelocimetroExterior = "Resources/velocimetroExterior.png";
 
+constexpr auto urlVistaHelicoptero = "Resources/circuitoVistaHelicoptero.png";
+ 
+
 class Interfaz {
 	Textura circuitoMapa, posAutoMapa, velocimetroInterior, velocimetroExterior;
 	Texto texto;
@@ -69,7 +72,13 @@ private:
 	char interfaz = 'c';
 	char horario = 'l'; 
 	char niebla = 'n';
+	char captura = 'v';
 	
+	//Capturas de pantalla
+	const char urlFichero[20] = "Capturas/screenshot";
+	char urlImagen[27];
+	int numCaptura = 0;
+
 	//0->Noche, 1->Dia
 	Vec4 difusoColor[2] = { Vec4(.1, .1, .1, 1), Vec4(.4, .4, .41, 1) };
 	Vec4 ambienteColor[2] = { Vec4(0.02, 0.02, 0.02, 1), Vec4(0.1,0.1,0.1,1)};
@@ -92,7 +101,11 @@ private:
 		{(-14 - costa)*s,-10,(-30 - costa)*s}
 	};
 
+	//Posicion por referencia del objeto a seguir
 	Vec3 *parentPos = new Vec3;
+
+	//Resolucion de pantalla
+	Vec2 *parentResolucion = new Vec2;
 public:
 	Lampara luzAmbiente;
 	Global();
@@ -100,6 +113,9 @@ public:
 
 	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
 	void parentarPosFondo(Vec3 *posObj);
+	
+	//Recibe por referencia la resolucion de la pantalla
+	void parentarResolucionVentana(Vec2 *resolucion);
 
 	void cargarConfiguracionesGlobales();
 
@@ -133,8 +149,9 @@ public:
 	/*Dibuja el fondo en la escena*/
 	void dibujarFondo();
 
-	/*Dibuja el mar*/
-	void dibujarMar();
+	/*Dibuja el mar
+	tipo: 1-> mesh en la escena, 2-> textura de fondo*/
+	void dibujarMar(int tipo=1);
 
 	void imprimirControles();
 };
@@ -155,7 +172,7 @@ public:
 	int tipo = 1; //0: sprint, 1: circuito
 	Material materialPista;
 	Textura texturaPista;
-
+	Textura vistaHelicoptero;
 	Material materialTerreno;
 	Textura texturaTerreno[3];
 
@@ -213,6 +230,8 @@ public:
 	Se puede activar el forzarDibujarTodo para siempre mostrar toda la pista
 	*/
 	void dibujarTerreno(bool detalleBajo = false, bool forzarDibujarTodo=false);
+
+	void dibujarTexturaVistaHelicoptero();
 };
 
 class Automovil {

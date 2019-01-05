@@ -104,13 +104,14 @@ void Camara::parentarExtraRotObjeto(float * extraRot)
 }
 
 void Camara::vistaPlanta() {
+	static int despZ = 1;
 	pos.x = 0;
 	pos.y = dimEscenario.y*1.65;
-	pos.z = -dimEscenario.y/2;
+	pos.z = -dimEscenario.y/2 + despZ*s;
 
 	look.x = 0;
 	look.y = 0;
-	look.z = -dimEscenario.y / 2;
+	look.z = -dimEscenario.y / 2 + despZ * s;
 	up = Vec3(0, 0, -1);
 	gluLookAt(pos.x, pos.y, pos.z,
 		look.x, look.y, look.z,

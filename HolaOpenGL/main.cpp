@@ -21,8 +21,6 @@ Automovil automovil;
 Camara camara;
 Interfaz interfaz;
 
-double alpha=0;
-
 void init() {
 	
 
@@ -31,6 +29,7 @@ void init() {
 	global.luzAmbiente.habilitar();
 	global.cargarFondo();
 	global.parentarPosFondo(automovil.obtenerRefPosicion());
+	global.parentarResolucionVentana(camara.obtenerRefResolucion());
 
 	//Configuraciones iniciales del escenario 
 	escenario.cargarPista();
@@ -76,9 +75,17 @@ void display() {
 	//Camara
 	camara.actualizar();
 
-	//Escena
 	glPushMatrix();
 	{
+		//Global
+		global.luzAmbiente.actualizarGlLightfv();
+		global.actualizarConfiguracionesGlobales();
+		if (tipoCamara != 1) {
+			global.dibujarFondo();
+			global.dibujarMar();
+		}
+		else global.dibujarMar(2);
+
 		//Automovil
 		if (tipoCamara != 3)automovil.dibujarAutomovil();
 		if (!global.obtenerPausa())automovil.actualizar();
@@ -99,12 +106,8 @@ void display() {
 			escenario.dibujarPista();
 			escenario.dibujarTerreno();
 		}
-
-		//Global
-		global.luzAmbiente.actualizarGlLightfv();
-		global.actualizarConfiguracionesGlobales();
-		if(tipoCamara != 1) global.dibujarFondo();
-		global.dibujarMar();
+		//if (tipoCamara == 1) escenario.dibujarVistaHelicoptero();
+		escenario.dibujarTexturaVistaHelicoptero();
 
 	}glPopMatrix();
 
