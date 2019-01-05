@@ -73,15 +73,15 @@ void Pista::cargarPista() {
 	agregarRecta(Vec3(4, 0, 0), Vec3(3, 0, 0));
 }
 
-void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
+void Pista::agregarRecta(Vec3 in, Vec3 fin, bool pushFirst, int iter) {
 	in = in*s;
-	fi = fi*s;
+	fin = fin*s;
 
-	if (iter < 1) iter = modulo(in, fi) / defaultIter;
+	if (iter < 1) iter = modulo(fin, in) / defaultIter;
 	if (iter < 2) iter = 2;
 
-	float cambio = modulo(in, fi) / iter;
-	Vec3 unidad = normalizar(in, fi);
+	float cambio = modulo(fin, in) / iter;
+	Vec3 unidad = normalizar(fin, in);
 	Vec3 inf(
 		in.x + unidad.z*d,
 		in.y,
@@ -116,20 +116,20 @@ void Pista::agregarRecta(Vec3 in, Vec3 fi, bool pushFirst, int iter) {
 	}
 }
 
-void Pista::agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio, int iter, bool autoScale) {
+void Pista::agregarCurva(Vec3 centro, float anguloIn, float anguloFin, float radio, int iter, bool autoScale) {
 	if (autoScale) {
 		centro = centro * s;
 		radio *= s;
 	}
 
-	if (iter < 1) iter = abs(anguloF - anguloI) / defaultIter * 2 * ((radio / s < 2) ? 2 : radio / s);
+	if (iter < 1) iter = abs(anguloFin - anguloIn) / defaultIter * 2 * ((radio / s < 2) ? 2 : radio / s);
 
 
-	float cambio = (anguloF - anguloI)*PI / 180 / iter;
+	float cambio = (anguloFin - anguloIn)*PI / 180 / iter;
 
-	float angulo = anguloI * PI / 180;
+	float angulo = anguloIn * PI / 180;
 	int n = 0;
-	if (anguloF > anguloI) n = 1;
+	if (anguloFin > anguloIn) n = 1;
 
 	for (auto j = 0; j < iter; j++) {
 		puntos[i][n] = {
@@ -221,9 +221,9 @@ void Escenario::dibujarPista(bool forzarDibujarTodo) {
 
 	//Pista
 	for (auto j = 0; j < i - 1; j++) {
-		mod = modulo(puntos[j][0], puntos[j + 1][0]);
+		mod = modulo(puntos[j + 1][0], puntos[j][0]);
 		despFi = despIn + mod * texCoef;
-		if (modulo(puntos[j][0], *parentPos) < distanciaDibujado || forzarDibujarTodo) {
+		if (modulo(*parentPos, puntos[j][0]) < distanciaDibujado || forzarDibujarTodo) {
 			if (mod < 1) mod = 1;
 			quadtex(
 				puntos[j][0],
@@ -239,7 +239,7 @@ void Escenario::dibujarPista(bool forzarDibujarTodo) {
 	}
 	
 	if (tipo == 1) {
-		mod = modulo(puntos[i - 1][0], puntos[0][0]);
+		mod = modulo(puntos[0][0], puntos[i - 1][0]);
 		if (mod < 1) mod = 1;
 		quad(
 			puntos[i - 1][0],
@@ -270,8 +270,8 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 		int numX, numY;
 
 		for (auto j = 0; j < ti - 1; j++) {
-			mod = modulo(terreno[j][3], *parentPos);
-			modTex = modulo(terreno[j][3], terreno[j + 1][3]);
+			mod = modulo(*parentPos, terreno[j][3]);
+			modTex = modulo(terreno[j + 1][3], terreno[j][3]);
 			despFi = despIn + modTex * texCoef;
 
 			if (mod < distanciaDibujado || forzarDibujarTodo) {
@@ -298,7 +298,7 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 		}
 
 		if (tipo == 1) {
-			mod = modulo(terreno[ti - 1][3], *parentPos);
+			mod = modulo(*parentPos, terreno[ti - 1][3]);
 			if (mod < 1) mod = 1;
 			for (auto k = 0; k < 3; k++) {
 				texturaTerreno[k].actualizar();
@@ -330,7 +330,8 @@ void Escenario::dibujarTexturaVistaHelicoptero()
 		Vec3((-14+despX)* s, 10 , despZ * s),
 		Vec3( (16+despX)* s, 10 , despZ * s),
 		Vec3( (16+despX)* s, 10 , (-30 + despZ) * s),
-		Vec3((-14+despX)* s, 10 , (-30 + despZ) * s)
+		Vec3((-14+despX)* s, 10 , (-30 + despZ) * s),
+		1,1
 	);
 	glDepthMask(GL_TRUE);
 	popAtributosObjetos();

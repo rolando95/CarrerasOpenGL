@@ -151,7 +151,7 @@ public:
 
 	/*Dibuja el mar
 	tipo: 1-> mesh en la escena, 2-> textura de fondo*/
-	void dibujarMar(int tipo=1);
+	void dibujarMar(bool detalleBajo=false);
 
 	void imprimirControles();
 };
@@ -163,35 +163,8 @@ private:
 	float aC = 2.5; //Ancho de la colina/mar (se cuenta desde la orilla de la carretera)
 	float base = 0.1;
 	float altura = 10; //Altura de la colina/ profundidad de la costa
-	int resCurva = 3; //Resolucion del terreno en curva //Menos es mas detallado
-	int resRect = 2;// Resolucion del terreno en rectas //Menos es mas detallado
 
-public:
-
-	float defaultIter = 30.0;
-	int tipo = 1; //0: sprint, 1: circuito
-	Material materialPista;
-	Textura texturaPista;
-	Textura vistaHelicoptero;
-	Material materialTerreno;
-	Textura texturaTerreno[3];
-
-	/*Puntos del terreno 
-	terreno[n][0] = posicion mar
-	terreno[n][1] = inicio terreno
-	terreno[n][2] = fin terreno
-	terreno[n][3] = posicion colina*/
-	Vec3 terreno[MAX][4]; 
-	int ti; //numero de puntos del terreno
-
-	Vec3 puntos[MAX][2]; //Puntos de la pista
-	int i; //numero de puntos de la pista
-
-	float d = 8; //Distancia desde el centro de la calle a la arista
-
-
-	//Carga todo el circuito (Tiene forma similar al Yoshi Circuit de Mario Kart, aunque con gráficos de N64)
-	void cargarPista();
+	float defaultIter = 30.0; //Resolucion de la pista (mas es mejor, afecta la resolucion del terreno tambien)
 
 	//Agrega una recta dado dos puntos de origen y final.
 	void agregarRecta(Vec3 in, Vec3 fi, bool pushFirst = true, int iter = -1);
@@ -201,6 +174,35 @@ public:
 	Si el semicirculo se dibujo en el sentido de las manecillas del reloj, anguloI>AnguloF
 	*/
 	void agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio, int iter = -1, bool autoScale = true);
+
+protected:
+	int tipo = 1; //0: sprint, 1: circuito
+	Material materialPista;
+	Textura texturaPista;
+	Textura vistaHelicoptero;
+	Material materialTerreno;
+	Textura texturaTerreno[3];
+
+	//Puntos de la pista
+	Vec3 puntos[MAX][2];
+	int i; //numero de puntos de la pista
+
+	/*Puntos del terreno 
+	terreno[n][0] = posicion mar
+	terreno[n][1] = inicio terreno
+	terreno[n][2] = fin terreno
+	terreno[n][3] = posicion colina*/
+	Vec3 terreno[MAX][4]; 
+	int resCurva = 3; //Resolucion del terreno en curva //Menos es mas detallado
+	int resRect = 2;// Resolucion del terreno en rectas //Menos es mas detallado
+	int ti; //numero de puntos del terreno
+
+	float d = 8; //Distancia desde el centro de la calle a la arista
+
+
+public:
+	//Carga todo el circuito (Tiene forma similar al Yoshi Circuit de Mario Kart, aunque con gráficos de N64)
+	void cargarPista();
 };
 
 class Escenario :public Pista{
@@ -208,10 +210,10 @@ class Escenario :public Pista{
 public:
 	//Limites de la cuadricula
 	Vec3 base[4] = {
-		{ -14 * s,-0.1,0 },
-		{ 11 * s,-0.1,0 },
-		{ 11 * s,-0.1,-30* s },
-		{ -14 * s,-0.1,-30* s }
+		{ -15 * s,-0.1,0 },
+		{  15 * s,-0.1,0 },
+		{  15 * s,-0.1,-30* s },
+		{ -15 * s,-0.1,-30* s }
 	};
 
 	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
@@ -251,7 +253,7 @@ private:
 	float escalaVelocidadL = 2;
 
 	//Movimiento Lineal
-	Vec3 pos = { 0, 0.01, 0 }; //Posicion (m)
+	Vec3 pos; //Posicion (m)
 	float vL = 0; //velocidad lineal (m/s)
 	float vLMax = 70.833; //velocidad maxima lineal (m/s)
 	float vLMaxR = 27.778; //velocidad maxima en marcha atras (m/s)
@@ -264,7 +266,7 @@ private:
 	float coefDrift = 1.05; //Porcentaje artificial de reduccion de velocidad cuando se presiona el freno de mano (x100%)
 
 	//Movimiento Radial
-	float rot = 180; //Rotacion alrededor del eje y (alpha)
+	float rot = 0; //Rotacion alrededor del eje y (alpha)
 	float vRot = 10; //Velocidad de rotacion en angulos (alpha/s)
 
 	//Derrape (No se considera la aceleracion radial en los calculos por simplicidad)
@@ -283,33 +285,6 @@ private:
 	bool *parentGiroIzquierda;
 	bool *parentGiroDerecha;
 
-public:
-
-	//Carga la lista del modelo 3D del automovil
-	void cargarAutomovil();
-
-	/*Configurar localizacion absoluta del objeto*/
-	void posicionarYOrientar(Vec3 lPos, float r);
-
-	/*Asigna por referencia los controles del automovil*/
-	void parentarControles(bool *acelerar, bool *retroceder, bool *freno, bool *frenoDeMano, bool *izquierda, bool *derecha);
-
-	//Retorna rango de velocidad lineal
-	Vec2 obtenerRangoVelocidadLineal();
-
-	//Retorna la posicion del automovil por referencia
-	Vec3 *obtenerRefPosicion();
-	
-	/*
-	Retorna la rotacion del automovil por referencia
-	La rotacion extra por derrape no se toma en cuenta
-	*/
-	float *obtenerRefRotacion();
-
-	//Retorna la rotacion extra por derrape del automovil por referencia
-	float *obtenerRefRotacionExtra();
-
-	float *obtenerRefVelocidad();
 	/*
 	Rota el auto segun la direccion (-1,1)
 	*/
@@ -345,6 +320,34 @@ public:
 	sustraido al de la rotacion del vehiculo
 	*/
 	void amortiguarDerrape(float valor);
+
+public:
+
+	//Carga la lista del modelo 3D del automovil
+	void cargarAutomovil();
+
+	/*Configurar localizacion absoluta del objeto*/
+	void posicionarYOrientar(Vec3 lPos, float r);
+
+	/*Asigna por referencia los controles del automovil*/
+	void parentarControles(bool *acelerar, bool *retroceder, bool *freno, bool *frenoDeMano, bool *izquierda, bool *derecha);
+
+	//Retorna rango de velocidad lineal
+	Vec2 obtenerRangoVelocidadLineal();
+
+	//Retorna la posicion del automovil por referencia
+	Vec3 *obtenerRefPosicion();
+	
+	/*
+	Retorna la rotacion del automovil por referencia
+	La rotacion extra por derrape no se toma en cuenta
+	*/
+	float *obtenerRefRotacion();
+
+	//Retorna la rotacion extra por derrape del automovil por referencia
+	float *obtenerRefRotacionExtra();
+
+	float *obtenerRefVelocidad();
 
 	//Actualizar estado del automovil
 	void actualizar();

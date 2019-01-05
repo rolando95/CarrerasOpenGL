@@ -72,6 +72,11 @@ Vec3 Vec3::operator*(const int &obj)
 		this->z * obj);
 }
 
+float Vec3::operator*(Vec3 & obj)
+{
+	return this->x*obj.x + this->y*obj.y + this->x*obj.z;
+}
+
 Vec3 Vec3::operator+(Vec3 & obj)
 {
 	return Vec3(
@@ -152,17 +157,38 @@ Vec4::operator GLfloat*()
 	return vector;
 }
 
-float modulo(Vec3 in, Vec3 fi) {
+float modulo(Vec3 fin, Vec3 in) {
 	return sqrt(
-		pow(fi.x - in.x, 2) +
-		pow(fi.y - in.y, 2) +
-		pow(fi.z - in.z, 2)
+		pow(fin.x - in.x, 2) +
+		pow(fin.y - in.y, 2) +
+		pow(fin.z - in.z, 2)
 	);
 }
 
-Vec3 normalizar(Vec3 in, Vec3 fi) {
-	float mod = modulo(in, fi);
-	return (fi - in) / mod;
+Vec3 normalizar(Vec3 fin, Vec3 in) {
+	float mod = modulo(in, fin);
+	if (mod != 0)
+		return (fin - in) / mod;
+	else
+		return Vec3(0, 0, 0);
 }
 
+float anguloRad(Vec3 fin, Vec3 in)
+{
+	/*
+	float n = 0;
+	if (fin.x - in.x != 0) {
+		if (fin.y - in.y < 0 && fin.x - in.x < 0) n = PI;
+		return atan((fin.y - in.y) / (fin.x - in.y)) + n;
+	}
+	else {
+		if (fin.y - in.y < 0) n = PI;
+		return PI/2 + n;
+	}
+	*/
+	return 0;//acos( fin*in / (modulo(fin)*modulo(in)));
+}
 
+float anguloDeg(Vec3 fin, Vec3 in) {
+	return anguloRad(fin, in) * 180 / PI;
+}

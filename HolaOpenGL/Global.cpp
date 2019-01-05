@@ -197,17 +197,17 @@ void Global::dibujarFondo()
 	glPopAttrib();
 }
 
-void Global::dibujarMar(int tipo)
+void Global::dibujarMar(bool detalleBajo)
 {
 
 	glPushAttrib(GL_TEXTURE_BIT);
 	//Mar
 	materialOceano.actualizarGlMaterialfv();
 	texturaOceano.actualizar();
-	if (tipo == 1)
+	if (!detalleBajo)
 		quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6, 100, 100);
-	else if(tipo==2){
-		quadtex(oceanoPts[0]*2, oceanoPts[1]*2, oceanoPts[2]*2, oceanoPts[3]*2, 0, 5, 0, 6, 5, 5);
+	else{
+		quadtex(oceanoPts[0]*2, oceanoPts[1]*2, oceanoPts[2]*2, oceanoPts[3]*2, 0, 5, 0, 6, 1, 1);
 	}
 	glPopAttrib();
 }

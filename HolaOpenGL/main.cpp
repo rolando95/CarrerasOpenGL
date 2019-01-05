@@ -42,6 +42,7 @@ void init() {
 	bool *frenoDeMano = global.obtenerPosTecla(' ');
 	bool *izquierda = global.obtenerPosTecla('a');
 	bool *derecha = global.obtenerPosTecla('d');
+	automovil.posicionarYOrientar({ 0,0.01,0 }, 180);
 	automovil.parentarControles(acelerar, retroceder, freno, frenoDeMano, izquierda, derecha);
 	automovil.cargarAutomovil();
 	
@@ -84,7 +85,7 @@ void display() {
 			global.dibujarFondo();
 			global.dibujarMar();
 		}
-		else global.dibujarMar(2);
+		else global.dibujarMar(true);
 
 		//Automovil
 		if (tipoCamara != 3)automovil.dibujarAutomovil();
@@ -137,7 +138,7 @@ void display() {
 
 	
 	glutSwapBuffers();
-	automovil.imprimirStats();
+	if(!global.obtenerPausa())automovil.imprimirStats();
 }
 
 void reshape(int w, int h) {
@@ -200,6 +201,8 @@ void onMove(int x, int y) {
 
 
 int main(int argc, char **argv) {
+
+	//cout << anguloDeg({ 1,1,0 }, { 0,0,0 })<<endl;
 	global.imprimirControles();
 
 	//Inicializar
