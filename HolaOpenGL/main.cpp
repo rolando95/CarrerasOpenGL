@@ -44,6 +44,8 @@ void init() {
 	//Configuraciones iniciales del escenario 
 	escenario.cargarPista();
 	escenario.parentarPosFondo(automovil.obtenerRefPosicion());
+	escenario.cargarMeshFarola();
+	escenario.asignarEstadoFarolas(true);
 
 	mostrarCarga(60);
 	//Configuraciones iniciales del automovil
@@ -56,7 +58,7 @@ void init() {
 	automovil.posicionarYOrientar({ 0,0.01,0 }, 180);
 	automovil.parentarControles(acelerar, retroceder, freno, frenoDeMano, izquierda, derecha);
 	automovil.cargarAutomovil();
-	
+
 	mostrarCarga(60);
 	//Configuraciones iniciales de la cámara
 	camara.asignarDimensionesEscenario(abs(escenario.base[0].x - escenario.base[1].x), abs(escenario.base[2].z - escenario.base[1].z));
@@ -76,7 +78,6 @@ void init() {
 		rango.y
 	);
 	interfaz.parentarResolucionVentana(camara.obtenerRefResolucion());
-
 }
 
 void display() {
@@ -92,7 +93,8 @@ void display() {
 	glPushMatrix();
 	{
 		//Global
-		global.luzAmbiente.actualizarGlLightfv();
+		global.actualizar();
+		global.luzAmbiente.actualizar();
 		global.actualizarConfiguracionesGlobales();
 		if (tipoCamara != 1) {
 			global.dibujarFondo();
@@ -107,16 +109,19 @@ void display() {
 		tipoCamara = camara.obtenerTipoCamara();
 
 		//Material base
-		baseMaterial.actualizarGlMaterialfv();
+		baseMaterial.actualizar();
 
 		//Escenario
 		//escenario.dibujarCuadricula();
 		
 		if (tipoCamara == 1){
+			escenario.dibujarFarolas(true);
 			escenario.dibujarPista(true);
 			escenario.dibujarTerreno(true, true);
+			
 		}
 		else{
+			escenario.dibujarFarolas();
 			escenario.dibujarPista();
 			escenario.dibujarTerreno();
 		}
@@ -178,10 +183,13 @@ void onKey(unsigned char tecla, int x, int y) {
 	//Configurar lamparas
 	int horario = global.obtenerHorario();
 	if (horario == 0) {
-		automovil.cambiarEstadoLucesDelanteras(true);
+		automovil.asignarEstadoLucesDelanteras(true);
+		escenario.asignarEstadoFarolas(true);
+
 	}
 	else {
-		automovil.cambiarEstadoLucesDelanteras(false);
+		automovil.asignarEstadoLucesDelanteras(false);
+		escenario.asignarEstadoFarolas(false);
 	}
 }
 void onUpKey(unsigned char tecla, int x, int y) {

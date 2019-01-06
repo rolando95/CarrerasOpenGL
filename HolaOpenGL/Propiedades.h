@@ -19,7 +19,7 @@ public:
 		Vec4 Iespecular = { 0.2, 0.2, 0.2, 1 },
 		Vec4 Ibrillo = { 1, 1, 1, 1 },
 		Vec4 Iemision = { 0,0,0,1 });
-	void actualizarGlMaterialfv();
+	void actualizar();
 };
 
 class Lampara : public Material {
@@ -48,7 +48,7 @@ public:
 
 	//(1:puntual, 0:direccional)
 	void asignarTipo(int valor);
-	void actualizarGlLightfv();
+	void actualizar();
 	void habilitar();
 	void inhabilitar();
 };

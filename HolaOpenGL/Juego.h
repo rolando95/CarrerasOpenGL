@@ -34,7 +34,6 @@ constexpr auto urlVelocimetroInterior = "Resources/velocimetroInterior.png";
 constexpr auto urlVelocimetroExterior = "Resources/velocimetroExterior.png";
 
 constexpr auto urlVistaHelicoptero = "Resources/circuitoVistaHelicoptero.png";
- 
 
 class Interfaz {
 	Textura circuitoMapa, posAutoMapa, velocimetroInterior, velocimetroExterior;
@@ -80,7 +79,7 @@ private:
 	int numCaptura = 0;
 
 	//0->Noche, 1->Dia
-	Vec4 difusoColor[2] = { Vec4(.1, .1, .1, 1), Vec4(.4, .4, .41, 1) };
+	Vec4 difusoColor[2] = { Vec4(.05, .05, .05, 1), Vec4(.4, .4, .41, 1) };
 	Vec4 ambienteColor[2] = { Vec4(0.02, 0.02, 0.02, 1), Vec4(0.1,0.1,0.1,1)};
 
 	Vec4 fondoEmisionColor[2] = { Vec4(0.4,0.4,0.4,1), Vec4(1,1,1,1) };
@@ -106,10 +105,18 @@ private:
 
 	//Resolucion de pantalla
 	Vec2 *parentResolucion = new Vec2;
+
+	//Almacena los segundos transcurridos desde el inicio del juego. Requiere actualizarse llamando la funcion actualizar
+	float tiempo = 0;
+
 public:
 	Lampara luzAmbiente;
 	Global();
 
+	//Devuelve los segundos transcurridos desde el inicio del juego
+	float obtenerTiempo();
+
+	void actualizar();
 
 	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
 	void parentarPosFondo(Vec3 *posObj);
@@ -215,6 +222,12 @@ public:
 
 class Escenario :public Pista{
 	Vec3 *parentPos = new Vec3;
+	GLint meshFarola;
+
+	Material materialFarola;
+	Lampara lamparasFarolas[3];
+	int numLamparasFarolas = 3;
+
 public:
 	//Limites de la cuadricula
 	Vec3 base[4] = {
@@ -223,6 +236,10 @@ public:
 		{  15 * s,-0.1,-30* s },
 		{ -15 * s,-0.1,-30* s }
 	};
+
+	void asignarEstadoFarolas(int valor);
+
+	void cargarMeshFarola();
 
 	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
 	void parentarPosFondo(Vec3 *posObj);
@@ -240,6 +257,9 @@ public:
 	Se puede activar el forzarDibujarTodo para siempre mostrar toda la pista
 	*/
 	void dibujarTerreno(bool detalleBajo = false, bool forzarDibujarTodo=false);
+
+	/*Dibujar las farolas en la escena tomando en cuenta la distancia e dibujado.*/
+	void dibujarFarolas(bool forzarDibujarTodo = false);
 
 	void dibujarTexturaVistaHelicoptero();
 };
@@ -367,7 +387,7 @@ public:
 	void dibujarAutomovil();
 
 	//Activa/Desactiva las luces delanteras (true->habilitado, false->inhabilitado)
-	void cambiarEstadoLucesDelanteras(bool valor);
+	void asignarEstadoLucesDelanteras(bool valor);
 };
 
 class Camara {

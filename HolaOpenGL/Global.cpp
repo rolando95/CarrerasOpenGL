@@ -1,5 +1,4 @@
 #include "Juego.h"
-
 Global::Global() {
 	for (auto i = 0; i < ASCII; i++) {
 		tecla[i] = false;
@@ -15,6 +14,19 @@ Global::Global() {
 	luzAmbiente.especular = Vec4(0, 0, 0, 1);
 	luzAmbiente.asignarTipo(0);
 
+}
+
+float Global::obtenerTiempo()
+{
+	return tiempo;
+}
+
+void Global::actualizar()
+{
+	float ahora = (float)glutGet(GLUT_ELAPSED_TIME)/1000;
+	static float inicio = ahora;
+	tiempo = ahora - inicio;
+	
 }
 
 void Global::parentarResolucionVentana(Vec2 * resolucion)
@@ -189,7 +201,7 @@ void Global::dibujarFondo()
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
 	//Imagen de fondo
-	materialFondo.actualizarGlMaterialfv();
+	materialFondo.actualizar();
 	texturaFondo[flipTecla[horario]].actualizar();
 	glTranslatef(parentPos->x, parentPos->y, parentPos->z);
 	glCallList(meshFondo);
@@ -202,7 +214,7 @@ void Global::dibujarMar(bool detalleBajo)
 
 	glPushAttrib(GL_TEXTURE_BIT);
 	//Mar
-	materialOceano.actualizarGlMaterialfv();
+	materialOceano.actualizar();
 	texturaOceano.actualizar();
 	if (!detalleBajo)
 		quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6, 100, 100);

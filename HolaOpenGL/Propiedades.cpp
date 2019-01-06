@@ -13,7 +13,7 @@ Material::Material(
 	emision = Iemision;
 }
 
-void Material::actualizarGlMaterialfv() {
+void Material::actualizar() {
 	glMaterialfv(GL_FRONT, GL_AMBIENT, ambiente);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, difuso);
 	glMaterialfv(GL_FRONT, GL_EMISSION, emision);
@@ -35,14 +35,15 @@ Lampara::Lampara(
 
 	tipo = &posicion.w;
 	num = numLamparas;
-	numLamparas++;
+	if (numLamparas < 7) numLamparas++; //OpenGL soporta hasta 8 lamparas
+	else cout << "Error: Numero maximo de lamparas excedido" << endl;
 }
 
 void Lampara::asignarTipo(int valor) {
-		*tipo = valor;
+	*tipo = valor;
 }
 
-void Lampara::actualizarGlLightfv() {
+void Lampara::actualizar() {
 	glLightfv(GL_LIGHT0 + num, GL_AMBIENT, ambiente);
 	glLightfv(GL_LIGHT0 + num, GL_DIFFUSE, difuso);
 	glLightfv(GL_LIGHT0 + num, GL_SPECULAR, especular);
@@ -58,7 +59,7 @@ void Lampara::actualizarGlLightfv() {
 }
 
 void Lampara::habilitar() {
-		glEnable(GL_LIGHT0 + num);
+	glEnable(GL_LIGHT0 + num);
 }
 
 void Lampara::inhabilitar() {
@@ -66,7 +67,7 @@ void Lampara::inhabilitar() {
 }
 
 //Inicializa el conteo de lamparas
-int Lampara::numLamparas = 0;
+int Lampara::numLamparas = 1;
 
 void Textura::cargarTextura(const char * ruta)
 {

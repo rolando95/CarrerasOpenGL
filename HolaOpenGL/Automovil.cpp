@@ -22,7 +22,7 @@ void Automovil::cargarAutomovil() {
 		//Ventana
 		pushAtributosObjetos();{
 			reflejo.actualizar();
-			mateGris.actualizarGlMaterialfv();
+			mateGris.actualizar();
 			
 			//Ventana trasera
 			quad(
@@ -50,7 +50,7 @@ void Automovil::cargarAutomovil() {
 		
 
 		//Mate Gris
-		mateGris.actualizarGlMaterialfv();
+		mateGris.actualizar();
 		glPushMatrix();
 		{
 			//Base mitad (gris)
@@ -61,7 +61,7 @@ void Automovil::cargarAutomovil() {
 		glPopMatrix();
 
 		//Mate negro
-		mateNegro.actualizarGlMaterialfv();
+		mateNegro.actualizar();
 		glPushMatrix();
 		{
 			//Parte superior
@@ -87,7 +87,7 @@ void Automovil::cargarAutomovil() {
 
 		//Pintura
 		pushAtributosObjetos(); {
-			pintura.actualizarGlMaterialfv();
+			pintura.actualizar();
 			reflejo.actualizar();
 
 			//Parte alta (color auto)
@@ -125,11 +125,12 @@ void Automovil::cargarAutomovil() {
 
 	glEndList();
 
+	//Luces traseras
 	lucesTraserasMaterial.difuso = Vec4(0.1, 0, 0, 1);
 	lucesTraserasMaterial.especular = Vec4(.5, .25, .25, 1);
 	lucesTraserasMaterial.ambiente = Vec4(0.5, 0.3, 0.3, 1);
+	
 	lucesTraseras = glGenLists(1);
-
 	glNewList(lucesTraseras, GL_COMPILE);
 	for(auto n=0; n<2; n++){
 		glPushMatrix();
@@ -316,6 +317,7 @@ void Automovil::imprimirStats(bool inicio) {
 		conteo = 0;
 		anterior = ahora - 1;
 	}
+
 	cout << "Estado del Automovil" << endl; i++;
 	cout << "______________________\n" << endl; i += 2;
 	cout << "Pos x: " << round(pos.x * 100) / 100 << " m\t\t" << endl; i++;
@@ -345,7 +347,7 @@ void Automovil::dibujarAutomovil() {
 		glTranslatef(pos.x, pos.y, pos.z);
 		glRotatef(rot + rotD, 0, 1, 0);
 
-		lucesDelanteras.actualizarGlLightfv();
+		lucesDelanteras.actualizar();
 
 		glCallList(mesh);
 
@@ -358,11 +360,11 @@ void Automovil::dibujarAutomovil() {
 			else {
 				lucesTraserasMaterial.emision = Vec4(0, 0, 0, 1);
 			}
-			lucesTraserasMaterial.actualizarGlMaterialfv();
+			lucesTraserasMaterial.actualizar();
 			glCallList(lucesTraseras);
 
 			//Ruedas
-			mateNegro.actualizarGlMaterialfv();
+			mateNegro.actualizar();
 			static float rot = 0;
 			glPushMatrix();
 			{
@@ -387,7 +389,7 @@ void Automovil::dibujarAutomovil() {
 	}glPopMatrix();
 }
 
-void Automovil::cambiarEstadoLucesDelanteras(bool valor)
+void Automovil::asignarEstadoLucesDelanteras(bool valor)
 {
 	if (valor) lucesDelanteras.habilitar();
 	else lucesDelanteras.inhabilitar();

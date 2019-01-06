@@ -233,7 +233,7 @@ void Escenario::dibujarPista(bool forzarDibujarTodo) {
 	glPushMatrix();
 	pushAtributosMateriales();
 
-	materialPista.actualizarGlMaterialfv();
+	materialPista.actualizar();
 	texturaPista.actualizar();
 	float mod;
 
@@ -280,7 +280,7 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 	pushAtributosObjetos(); {
 		float mod, modTex;
 
-		materialTerreno.actualizarGlMaterialfv();
+		materialTerreno.actualizar();
 		//Terreno
 		float distancia;
 		static float coef = 0.25;
@@ -334,26 +334,54 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 				);
 			}
 		}
+		
+	}popAtributosObjetos();
+}
 
+void Escenario::dibujarFarolas(bool forzarDibujarTodo)
+{
+	float mod;
+	float cerca = modulo(*parentPos, farolas[0]);
+	int posCerca = 0;
+	int jC;
+	pushAtributosObjetos(); {
 		//Farolas
-		/*
+		materialFarola.actualizar();
 		for (auto j = 0; j < fi; j++) {
 			glPushMatrix();
 			glTranslatef(farolas[j].x, farolas[j].y, farolas[j].z);
-			glRotatef(angulofi[j], 0, 1, 0);
-			glRotatef(90, 0, 1, 0);
-			glutSolidCone(2, 4, 8, 3);
-			glPopMatrix();
+			glRotatef(angulofi[j] + 90, 0, 1, 0);
+			glTranslatef(0, 0, -1);
+			glCallList(meshFarola);
+			glPopMatrix();	
+			mod = modulo(*parentPos, farolas[j]);
+			if (mod < cerca) {
+				cerca = mod;
+				posCerca = j;
+			}
 		}
-		*/
 	}popAtributosObjetos();
+
+	//LucesFarolas
+	for (auto j = 0; j < numLamparasFarolas; j++) {
+		glPushMatrix();
+		jC = (posCerca + j) % fi;
+		glTranslatef(farolas[jC].x, farolas[jC].y, farolas[jC].z);
+		glRotatef(angulofi[jC] + 90, 0, 1, 0);
+		glTranslatef(0, 10, 5);
+		glTranslatef(0, 0, -1);
+		//glutSolidCube(3);
+		lamparasFarolas[j].actualizar();
+		//prueba.actualizar();
+		glPopMatrix();
+	}
 }
 
 void Escenario::dibujarTexturaVistaHelicoptero()
 {
 	pushAtributosObjetos();
 	glDepthMask(GL_FALSE);
-	materialTerreno.actualizarGlMaterialfv();
+	materialTerreno.actualizar();
 	vistaHelicoptero.actualizar();
 	
 	static float despX = 0.25;
@@ -367,6 +395,52 @@ void Escenario::dibujarTexturaVistaHelicoptero()
 	);
 	glDepthMask(GL_TRUE);
 	popAtributosObjetos();
+}
+
+void Escenario::asignarEstadoFarolas(int estado)
+{
+	for (auto i = 0; i < numLamparasFarolas; i++)
+		if(estado)lamparasFarolas[i].habilitar();
+		else lamparasFarolas[i].inhabilitar();
+}
+
+void Escenario::cargarMeshFarola()
+{
+	//meshFarola
+	materialFarola.ambiente = Vec4(0.4, 0.4, 0.4, 1);
+	materialFarola.difuso = Vec4(1, 1, 1, 1);
+	//materialFarola.especular = Vec4(1, 1, 1, 1);
+	//materialFarola.brillo = Vec4(75, 75, 75, 1);
+	
+	meshFarola = glGenLists(1);
+	glNewList(meshFarola, GL_COMPILE);
+	pushAtributosObjetos(); {
+		glPushMatrix();{
+			glTranslatef(0, 9.5, 0);
+			glRotatef(0, 0, 1, 0);
+			glutSolidCylinder(0.25, 5, 6, 5);
+			glTranslatef(0, 0, 5);
+			glRotatef(90, 1, 0, 0);
+			glutSolidCylinder(0.5, 0.5, 5, 1);
+		}glPopMatrix();
+		glRotatef(-90, 1, 0, 0);
+		glutSolidCylinder(0.25,10,6,5);
+	}popAtributosObjetos();
+	glEndList();
+	
+	
+	//Lamparas
+	for (auto i = 0; i < numLamparasFarolas; i++) {
+		lamparasFarolas[i].difuso = Vec4(0.1, 0.1, 0.1, 1);
+		lamparasFarolas[i].ambiente = Vec4(1.5, 1.5, 1.5, 1);
+		lamparasFarolas[i].posicion = Vec4(0, 0, 0, 1);
+		lamparasFarolas[i].especular = Vec4(0, 0, 0, 1);
+		lamparasFarolas[i].asignarTipo(1);
+		lamparasFarolas[i].spot = true;
+		lamparasFarolas[i].spotCutOff = 90;
+		lamparasFarolas[i].spotExponent = 5;
+		lamparasFarolas[i].direccion = Vec3(0, -1, 0);
+	}
 }
 
 void Escenario::parentarPosFondo(Vec3 * posObj)
