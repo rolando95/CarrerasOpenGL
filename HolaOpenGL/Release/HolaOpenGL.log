@@ -1,14 +1,49 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Release\) contains files shared from another project (HolaOpenGL.vcxproj, Proyecto.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Vectores.cpp
+  Escena.cpp
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(33): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(34): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(39): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(40): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
 c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\tools.h(42): warning C4305: 'initializing': truncation from 'double' to 'const GLfloat'
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\vectores.cpp(193): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\propiedades.h(16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\propiedades.h(34): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\propiedades.h(42): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\propiedades.h(115): warning C4091: 'static ': ignored on left of 'Texto' when no variable is declared
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(83): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(84): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(86): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(164): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(225): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(266): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(267): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(269): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(271): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(274): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\juego.h(286): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(5): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(31): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(40): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(55): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(57): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(59): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(60): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(20): warning C4101: 'j': unreferenced local variable
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(83): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(127): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(139): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(142): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(144): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(163): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(229): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(245): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(293): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(304): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(295): warning C4101: 'numY': unreferenced local variable
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(289): warning C4101: 'distancia': unreferenced local variable
+c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\escena.cpp(382): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   Generating code
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\vectores.cpp(107): warning C4172: returning address of local variable or temporary: vector
-c:\users\rarj1\documents\trabajos\yo\carreras\holaopengl\vectores.cpp(157): warning C4172: returning address of local variable or temporary: vector
-  All 157 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  2 of 159 functions ( 1.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    5 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   HolaOpenGL.vcxproj -> C:\Users\rarj1\Documents\Trabajos\Yo\Carreras\HolaOpenGL\Carreras.exe

@@ -13,7 +13,7 @@ constexpr auto distanciaDibujadoHight = distanciaDibujado / 3;
 constexpr auto s = 50; 
 
 constexpr auto ASCII = 256;
-constexpr auto MAX = 100000;
+constexpr auto MAX = 1000;
 constexpr auto FPS = 60;
 constexpr auto PROYECTO = "- Maestro del derrape -";
 
@@ -196,6 +196,14 @@ protected:
 	int resCurva = 3; //Resolucion del terreno en curva //Menos es mas detallado
 	int resRect = 2;// Resolucion del terreno en rectas //Menos es mas detallado
 	int ti; //numero de puntos del terreno
+
+
+	Vec3 farolas[MAX];
+	float angulofi[MAX];
+	float distFi = 5 * s;
+	float antFi;
+	int fi;
+
 
 	float d = 8; //Distancia desde el centro de la calle a la arista
 

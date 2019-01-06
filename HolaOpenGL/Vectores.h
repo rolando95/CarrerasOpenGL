@@ -63,12 +63,15 @@ Si solo es un valor vectorial, asignar in.
 float modulo(Vec3 fin, Vec3 in = { 0,0,0 });
 
 //Normaliza un vector dado un vector de 3 dimensiones o dos puntos {x,y,z}
-Vec3 normalizar(Vec3 fin, Vec3 in);
+Vec3 normalizar(Vec3 fin, Vec3 in = { 0,0,0 });
 
 //Devuelve el angulo entre 2 Vec3
-float anguloRad(Vec3 fin, Vec3 in);
+float anguloRad(Vec3 fin, Vec3 in = { 0,0,0 });
 
 //Devuelve el angulo entre 2 Vec3
-float anguloDeg(Vec3 fin, Vec3 in);
+float anguloDeg(Vec3 fin, Vec3 in = { 0,0,0 });
+
+//Devuelve 1 y -1 segun el signo de cada componente
+Vec3 signoV(Vec3 vector);
 
 

@@ -231,5 +231,4 @@ void Global::imprimirControles() {
 	cout << "Interfaz on/off    -> [C]" << endl;
 	cout << "Modo Solido/Malla  -> [M]" << endl;
 	cout << "Captura de pantalla-> [V] (Capturas/screenshotXXX.png)" << endl << endl << endl;
-	_getch();
 }

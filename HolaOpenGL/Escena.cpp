@@ -14,6 +14,9 @@ void Pista::cargarPista() {
 
 	i = 0;
 	ti = 0;
+	fi = 0;
+	antFi = 0;
+
 	float j;
 	//Planta del pie
 	agregarRecta(Vec3(3, 0, 0), Vec3(-4, 0, 0));
@@ -82,13 +85,13 @@ void Pista::agregarRecta(Vec3 in, Vec3 fin, bool pushFirst, int iter) {
 
 	float cambio = modulo(fin, in) / iter;
 	Vec3 unidad = normalizar(fin, in);
-	Vec3 inf(
+	Vec3 sup(
 		in.x + unidad.z*d,
 		in.y,
 		in.z - unidad.x*d
 	);
 
-	Vec3 sup(
+	Vec3 inf(
 		in.x - unidad.z*d,
 		in.y,
 		in.z + unidad.x*d
@@ -97,8 +100,8 @@ void Pista::agregarRecta(Vec3 in, Vec3 fin, bool pushFirst, int iter) {
 	for (auto j = 0; j < iter; j++) {
 		if (pushFirst || j > 0) {
 			//Pista
-			puntos[i][0] = inf;
-			puntos[i++][1] = sup;
+			puntos[i][0] = sup;
+			puntos[i++][1] = inf;
 			
 			//El terreno tiene 1/resRect de la resolucion de la pista
 			if (i % resRect == 0) {
@@ -113,6 +116,15 @@ void Pista::agregarRecta(Vec3 in, Vec3 fin, bool pushFirst, int iter) {
 		sup = unidad * cambio + sup;
 		inf = unidad * cambio + inf;
 		in = unidad * cambio + in;
+
+
+		//Farolas
+		antFi += modulo(puntos[i - 1][1], puntos[max(0, i - 2)][1]);
+		if (antFi > distFi) {
+			antFi = 0;
+			farolas[fi] = puntos[i - 1][1];
+			angulofi[fi++] = anguloDeg(puntos[i - 1][0] - puntos[i - 1][1], (1, 0, 0)) * signoV(puntos[i - 1][0] - puntos[i - 1][1]).z * -1;
+		}
 	}
 }
 
@@ -132,11 +144,13 @@ void Pista::agregarCurva(Vec3 centro, float anguloIn, float anguloFin, float rad
 	if (anguloFin > anguloIn) n = 1;
 
 	for (auto j = 0; j < iter; j++) {
+		//sup
 		puntos[i][n] = {
 			centro.x + radio * cos(angulo) + d * cos(angulo),
 			centro.y,
 			centro.z - radio * sin(angulo) - d * sin(angulo),
 		};
+		//inf
 		puntos[i++][1 - n] = {
 			centro.x + radio * cos(angulo) - d * cos(angulo),
 			centro.y,
@@ -148,7 +162,7 @@ void Pista::agregarCurva(Vec3 centro, float anguloIn, float anguloFin, float rad
 
 		if (i%resCurva == 0) {
 			if (n == 0) {
-				//Parte Baja del terreno
+				//Parte Baja del terreno (sup)
 				terreno[ti][0] = {
 					centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra,
 					centro.y - 10,
@@ -167,7 +181,7 @@ void Pista::agregarCurva(Vec3 centro, float anguloIn, float anguloFin, float rad
 					centro.z - radio * sin(angulo) + d * sin(angulo)*aT
 				};
 
-				//Parte Alta del terreno
+				//Parte Alta del terreno (inf)
 				terreno[ti++][3] = {
 					centro.x + radio * cos(angulo) - d * cos(angulo)*aC,
 					centro.y + altura,
@@ -176,34 +190,41 @@ void Pista::agregarCurva(Vec3 centro, float anguloIn, float anguloFin, float rad
 			}
 
 			else {
-				//Parte Alta del terreno
-				terreno[ti][3] = {
-					centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra,
-					centro.y + altura,
-					centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra
+				//Parte Baja del terreno (sup)
+				terreno[ti][0] = {
+					centro.x + radio * cos(angulo) - d * cos(angulo)*aC,
+					centro.y - altura,
+					centro.z - radio * sin(angulo) + d * sin(angulo)*aC
 				};
 
 				//Parte Media del terreno
-				terreno[ti][2] = {
-					centro.x + radio * cos(angulo) + d * cos(angulo)*aT*extra,
-					centro.y - base,
-					centro.z - radio * sin(angulo) - d * sin(angulo)*aT*extra
-				};
 				terreno[ti][1] = {
 					centro.x + radio * cos(angulo) - d * cos(angulo)*aT,
 					centro.y - base,
 					centro.z - radio * sin(angulo) + d * sin(angulo)*aT
 				};
+				terreno[ti][2] = {
+					centro.x + radio * cos(angulo) + d * cos(angulo)*aT*extra,
+					centro.y - base,
+					centro.z - radio * sin(angulo) - d * sin(angulo)*aT*extra
+				};
 
-				//Parte Baja del terreno
-				terreno[ti++][0] = {
-					centro.x + radio * cos(angulo) - d * cos(angulo)*aC,
-					centro.y - altura,
-					centro.z - radio * sin(angulo) + d * sin(angulo)*aC
+				//Parte Alta del terreno (inf)
+				terreno[ti++][3] = {
+					centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra,
+					centro.y + altura,
+					centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra
 				};
 			}
 		}
 		
+		//Farolas
+		antFi += modulo(puntos[i - 1][1], puntos[max(0,i - 2)][1]);
+		if (antFi > distFi) {
+			antFi = 0;
+			farolas[fi] = puntos[i - 1][1];
+			angulofi[fi++] = anguloDeg(puntos[i - 1][0] - puntos[i - 1][1], (1, 0, 0)) * signoV(puntos[i - 1][0] - puntos[i - 1][1]).z * -1;
+		}
 		angulo += cambio;
 	}
 }
@@ -314,6 +335,17 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 			}
 		}
 
+		//Farolas
+		/*
+		for (auto j = 0; j < fi; j++) {
+			glPushMatrix();
+			glTranslatef(farolas[j].x, farolas[j].y, farolas[j].z);
+			glRotatef(angulofi[j], 0, 1, 0);
+			glRotatef(90, 0, 1, 0);
+			glutSolidCone(2, 4, 8, 3);
+			glPopMatrix();
+		}
+		*/
 	}popAtributosObjetos();
 }
 

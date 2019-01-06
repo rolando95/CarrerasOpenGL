@@ -21,9 +21,18 @@ Automovil automovil;
 Camara camara;
 Interfaz interfaz;
 
-void init() {
-	
+void mostrarCarga(int porcentaje) {
+	if (porcentaje < 100)
+		cout << "-- Cargando "<<porcentaje<<"% --\r";
+	else{
+		cout << "-- Presione enter para empezar --\r";
+		_getch();
+		cout << "								  \r";
+	}
+}
 
+void init() {
+	mostrarCarga(1);
 	//Configuraciones globales iniciales
 	global.cargarConfiguracionesGlobales();
 	global.luzAmbiente.habilitar();
@@ -31,10 +40,12 @@ void init() {
 	global.parentarPosFondo(automovil.obtenerRefPosicion());
 	global.parentarResolucionVentana(camara.obtenerRefResolucion());
 
+	mostrarCarga(20);
 	//Configuraciones iniciales del escenario 
 	escenario.cargarPista();
 	escenario.parentarPosFondo(automovil.obtenerRefPosicion());
 
+	mostrarCarga(60);
 	//Configuraciones iniciales del automovil
 	bool *acelerar = global.obtenerPosTecla('w');
 	bool *retroceder = global.obtenerPosTecla('r');
@@ -46,11 +57,13 @@ void init() {
 	automovil.parentarControles(acelerar, retroceder, freno, frenoDeMano, izquierda, derecha);
 	automovil.cargarAutomovil();
 	
+	mostrarCarga(60);
 	//Configuraciones iniciales de la cámara
 	camara.asignarDimensionesEscenario(abs(escenario.base[0].x - escenario.base[1].x), abs(escenario.base[2].z - escenario.base[1].z));
 	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
 	camara.actualizar();
 
+	mostrarCarga(70);
 	//Configuraciones iniciales de la interfaz
 	interfaz.cargarInterfaz();
 
@@ -202,7 +215,6 @@ void onMove(int x, int y) {
 
 int main(int argc, char **argv) {
 
-	//cout << anguloDeg({ 1,1,0 }, { 0,0,0 })<<endl;
 	global.imprimirControles();
 
 	//Inicializar
@@ -221,7 +233,12 @@ int main(int argc, char **argv) {
 
 	//Crear la ventana
 	glutCreateWindow(PROYECTO);
+	glutHideWindow();
 	init();
+
+	mostrarCarga(100);
+
+	glutShowWindow();
 	//Registrar las callbacks
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);

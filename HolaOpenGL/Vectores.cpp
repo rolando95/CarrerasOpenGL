@@ -1,5 +1,5 @@
 #include "Vectores.h"
-
+#include <math.h>
 Vec2::Vec2(GLfloat X, GLfloat Y) { x = X; y = Y; }
 
 void Vec2::imprimir()
@@ -74,7 +74,7 @@ Vec3 Vec3::operator*(const int &obj)
 
 float Vec3::operator*(Vec3 & obj)
 {
-	return this->x*obj.x + this->y*obj.y + this->x*obj.z;
+	return this->x*obj.x + this->y*obj.y + this->z*obj.z;
 }
 
 Vec3 Vec3::operator+(Vec3 & obj)
@@ -170,25 +170,24 @@ Vec3 normalizar(Vec3 fin, Vec3 in) {
 	if (mod != 0)
 		return (fin - in) / mod;
 	else
-		return Vec3(0, 0, 0);
+		return Vec3(1, 0, 0);
 }
 
 float anguloRad(Vec3 fin, Vec3 in)
 {
-	/*
-	float n = 0;
-	if (fin.x - in.x != 0) {
-		if (fin.y - in.y < 0 && fin.x - in.x < 0) n = PI;
-		return atan((fin.y - in.y) / (fin.x - in.y)) + n;
-	}
-	else {
-		if (fin.y - in.y < 0) n = PI;
-		return PI/2 + n;
-	}
-	*/
-	return 0;//acos( fin*in / (modulo(fin)*modulo(in)));
+	fin = normalizar(fin);
+	in = normalizar(in);
+	return acos(fin*in);
 }
 
 float anguloDeg(Vec3 fin, Vec3 in) {
-	return anguloRad(fin, in) * 180 / PI;
+	return anguloRad(fin, in) * (180/PI);
+}
+
+Vec3 signoV(Vec3 v)
+{
+	v.x = (v.x < 0) ? -1 : 1;
+	v.y = (v.y < 0) ? -1 : 1;
+	v.z = (v.z < 0) ? -1 : 1;
+	return v;
 }
