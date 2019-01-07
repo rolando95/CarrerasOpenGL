@@ -348,16 +348,18 @@ void Escenario::dibujarFarolas(bool forzarDibujarTodo)
 		//Farolas
 		materialFarola.actualizar();
 		for (auto j = 0; j < fi; j++) {
-			glPushMatrix();
-			glTranslatef(farolas[j].x, farolas[j].y, farolas[j].z);
-			glRotatef(angulofi[j] + 90, 0, 1, 0);
-			glTranslatef(0, 0, -1);
-			glCallList(meshFarola);
-			glPopMatrix();	
 			mod = modulo(*parentPos, farolas[j]);
-			if (mod < cerca) {
-				cerca = mod;
-				posCerca = j;
+			if(mod<distanciaDibujado){
+				glPushMatrix();
+				glTranslatef(farolas[j].x, farolas[j].y, farolas[j].z);
+				glRotatef(angulofi[j] + 90, 0, 1, 0);
+				glTranslatef(0, 0, -1);
+				glCallList(meshFarola);
+				glPopMatrix();	
+				if (mod < cerca) {
+					cerca = mod;
+					posCerca = j;
+				}
 			}
 		}
 	}popAtributosObjetos();

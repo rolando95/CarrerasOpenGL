@@ -2,9 +2,10 @@
 #include <math.h>
 Vec2::Vec2(GLfloat X, GLfloat Y) { x = X; y = Y; }
 
-void Vec2::imprimir()
+void Vec2::imprimir(bool endLine)
 {
 	cout << "(" << x << ", " << y << ")";
+	if (endLine) cout << endl;
 }
 
 Vec2 Vec2::operator/(float & obj)
@@ -43,9 +44,10 @@ Vec2::operator GLfloat*()
 
 Vec3::Vec3(GLfloat X, GLfloat Y, GLfloat Z) { x = X; y = Y; z = Z; }
 
-void Vec3::imprimir()
+void Vec3::imprimir(bool endLine)
 {
 	cout << "(" << x << ", " << y << ", " << z << ")";
+	if (endLine) cout << endl;
 }
 
 Vec3 Vec3::operator/(float & obj)
@@ -110,9 +112,10 @@ Vec3::operator GLfloat*()
 
 Vec4::Vec4(GLfloat X, GLfloat Y, GLfloat Z, GLfloat W) { x = X; y = Y; z = Z; w = W; }
 
-void Vec4::imprimir()
+void Vec4::imprimir(bool endLine)
 {
 	cout << "(" << x << ", " << y << ", " << z << ", " << w << ")";
+	if (endLine) cout << endl;
 }
 
 Vec4 Vec4::operator/(float & obj)

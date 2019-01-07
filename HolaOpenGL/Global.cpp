@@ -135,10 +135,13 @@ void Global::asignarTecla(char pos, bool valor) {
 
 	//Guardar captura
 	if (pos == captura && valor) {
-		
-		sprintf_s(urlImagen, "%s%d.png", urlFichero, numCaptura%100 + 100);
-		saveScreenshot(urlImagen, 1280, 720);
+		//Hay un problema cuando se cambia el tamaño de la ventana ocasionalmente al hacer capturas
+		static int resX = parentResolucion->x;
+		static int resY = parentResolucion->y;
+
+		sprintf_s(urlImagen, "%s%d.png", urlFichero, numCaptura % 100 + 100);
 		numCaptura += 1;
+		saveScreenshot(urlImagen, resX, resY);
 	}
 }
 

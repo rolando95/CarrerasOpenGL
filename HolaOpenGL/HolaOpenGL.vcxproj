@@ -121,6 +121,7 @@
     <ClCompile Include="Escena.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="Interfaz.cpp" />
+    <ClCompile Include="Colisiones2D.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Propiedades.cpp" />
     <ClCompile Include="Tools.cpp" />

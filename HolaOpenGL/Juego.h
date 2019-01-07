@@ -182,7 +182,7 @@ private:
 	*/
 	void agregarCurva(Vec3 centro, float anguloI, float anguloF, float radio, int iter = -1, bool autoScale = true);
 
-protected:
+public:
 	int tipo = 1; //0: sprint, 1: circuito
 	Material materialPista;
 	Textura texturaPista;
@@ -403,6 +403,8 @@ private:
 	double lejos = 50*s; //distancia maxima que dibuja la camara
 	int tipoCamara = 2; //1->Camara Helicoptero, 2-> 3ra Persona, 3-> 1ra Persona
 
+	Automovil *automovil;
+
 	Vec3 *parentPos = new Vec3; //Posicion de referencia del objeto al que sigue (automovil)
 	float *parentExtraRot = new float(0); //Rotacion de referencia del objeto al que sigue (derrape del automovil)
 	float *parentRot = 0; //Rotacion de referencia del objeto al que sigue (automovil)
@@ -436,6 +438,9 @@ public:
 
 	void actualizar();
 
+
+	void parentAutomovil(Automovil *obj);
+
 	/*La camara guarda por referencia la posicion
 	y rotacion del objeto a seguir
 	*/
@@ -450,3 +455,40 @@ public:
 	void vistaPlanta();
 };
 
+/*
+Colisionador bastante sencillo.
+Funciona utilizando el plano XZ.
+Solo tiene como utilidad detectar, no realiza ningún cálculo físico
+*/
+class Colisiones2D {
+	Vec3 terreno[MAX][4];
+	int ti;
+
+	float distR = 3; //Distancia entre los dos radios del automovil
+	float radio = 1; //Radio de la base de la circunferencia de colision
+	float offset = 0;
+
+	float rGrande = radio * 2 + distR;
+
+	Vec3 *parentPos = new Vec3;
+	float *parentRot = new float(0);
+	float *parentVelocidad = new float(0);
+public:
+	//Recibe los puntos del terreno para mas adelante realizar los cálculos de detección de colisiones
+	void obtenerPuntosTerreno(Vec3 terreno[MAX][4], int ti);
+
+	/*
+	Recibe los radios y la distancia entre ellos para la colision del automovil
+	radio -> radio de las circunferencias de colision
+	distanciaEntreRadios -> distancia en el eje X entre las circunferencias
+	offset -> La colision supone que ambas circunferencias estan centradas en el origen si offset=0,
+	con valor distinto se desplazan en el eje X relativo al obj
+	*/
+	void asignarMeshColision(float radio, float distanciaEntreRadios, float offet=0);
+
+	void obtenerRefObjeto(Vec3 *objPos, float *objRot, float *objVelocidad);
+	/*
+	pistaTerreno -> Valor ti más cercano al automovil para no tener que hacer todo el cálculo de búsqueda de nuevo
+	*/
+	void colisionar(int pistaTerreno = -1);
+};

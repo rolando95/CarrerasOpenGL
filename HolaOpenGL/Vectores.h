@@ -1,7 +1,7 @@
 
 #pragma once
 #include "Tools.h"
-
+#include <iostream>
 
 
 class Vec2 {
@@ -10,7 +10,7 @@ public:
 	Vec2(GLfloat X=0, GLfloat Y=0);
 	
 	//Muestra por pantalla el vector (x,y)
-	void imprimir();
+	void imprimir(bool endLine = true);
 
 	//template<typename Type>
 	Vec2 operator/(float &obj);
@@ -26,7 +26,7 @@ public:
 	Vec3(GLfloat X=0, GLfloat Y=0, GLfloat Z=0);
 	
 	//Muestra por pantalla el vector (x,y,z)
-	void imprimir();
+	void imprimir(bool endLine = true);
 
 	Vec3 operator/(float &obj);
 
@@ -47,7 +47,7 @@ public:
 	
 
 	//Muestra por pantalla el vector (x,y,z,w)
-	void imprimir();
+	void imprimir(bool endLine = true);
 
 	Vec4 operator/(float &obj);
 	Vec4 operator*(float &obj);

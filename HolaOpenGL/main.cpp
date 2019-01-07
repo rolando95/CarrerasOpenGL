@@ -20,6 +20,7 @@ Global global;
 Automovil automovil;
 Camara camara;
 Interfaz interfaz;
+Colisiones2D colision;
 
 void mostrarCarga(int porcentaje) {
 	if (porcentaje < 100)
@@ -55,17 +56,22 @@ void init() {
 	bool *frenoDeMano = global.obtenerPosTecla(' ');
 	bool *izquierda = global.obtenerPosTecla('a');
 	bool *derecha = global.obtenerPosTecla('d');
-	automovil.posicionarYOrientar({ 0,0.01,0 }, 180);
+	automovil.posicionarYOrientar(Vec3(0,0.01,0), 180);
 	automovil.parentarControles(acelerar, retroceder, freno, frenoDeMano, izquierda, derecha);
 	automovil.cargarAutomovil();
 
-	mostrarCarga(60);
+	//Configuraciones iniciales de colision
+	mostrarCarga(70);
+	colision.asignarMeshColision(1, 3);
+	colision.obtenerPuntosTerreno(escenario.terreno, escenario.ti); //Deberia acceder a estas variables utilizando funciones en vez de ser publicas
+	colision.obtenerRefObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion(), automovil.obtenerRefVelocidad());
+	mostrarCarga(80);
 	//Configuraciones iniciales de la cámara
 	camara.asignarDimensionesEscenario(abs(escenario.base[0].x - escenario.base[1].x), abs(escenario.base[2].z - escenario.base[1].z));
 	camara.parentarPosObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion());
 	camara.actualizar();
 
-	mostrarCarga(70);
+	mostrarCarga(90);
 	//Configuraciones iniciales de la interfaz
 	interfaz.cargarInterfaz();
 
@@ -92,8 +98,10 @@ void display() {
 
 	glPushMatrix();
 	{
+		tipoCamara = camara.obtenerTipoCamara();
+
 		//Global
-		global.actualizar();
+		if(!global.obtenerPausa())global.actualizar();
 		global.luzAmbiente.actualizar();
 		global.actualizarConfiguracionesGlobales();
 		if (tipoCamara != 1) {
@@ -106,7 +114,8 @@ void display() {
 		if (tipoCamara != 3)automovil.dibujarAutomovil();
 		if (!global.obtenerPausa())automovil.actualizar();
 
-		tipoCamara = camara.obtenerTipoCamara();
+		//Colision
+		if (!global.obtenerPausa()) colision.colisionar();
 
 		//Material base
 		baseMaterial.actualizar();

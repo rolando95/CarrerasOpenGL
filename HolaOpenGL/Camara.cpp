@@ -93,6 +93,11 @@ void Camara::actualizar() {
 	}
 }
 
+void Camara::parentAutomovil(Automovil * obj)
+{
+	automovil = obj;
+}
+
 void Camara::parentarPosObjeto(Vec3 *posAuto, float *rot) {
 	parentPos = posAuto;
 	parentRot = rot; //Rotacion de referencia del objeto al que sigue (automovil)
