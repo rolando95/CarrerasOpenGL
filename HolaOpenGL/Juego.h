@@ -227,8 +227,9 @@ class Escenario :public Pista{
 	Material materialFarola;
 	Lampara lamparasFarolas[3];
 	int numLamparasFarolas = 3;
-
 public:
+	float cercaFi = 0; //Posicion del terreno más cercana al automovil (util para agilizar cálculos en colisiones)
+
 	//Limites de la cuadricula
 	Vec3 base[4] = {
 		{ -15 * s,-0.1,0 },
@@ -472,6 +473,7 @@ class Colisiones2D {
 
 	Vec3 *parentPos = new Vec3;
 	float *parentRot = new float(0);
+	float *parentExtraRot = new float(0);
 	float *parentVelocidad = new float(0);
 public:
 	//Recibe los puntos del terreno para mas adelante realizar los cálculos de detección de colisiones
@@ -484,11 +486,18 @@ public:
 	offset -> La colision supone que ambas circunferencias estan centradas en el origen si offset=0,
 	con valor distinto se desplazan en el eje X relativo al obj
 	*/
-	void asignarMeshColision(float radio, float distanciaEntreRadios, float offet=0);
+	void asignarMeshColision(float radio);
 
-	void obtenerRefObjeto(Vec3 *objPos, float *objRot, float *objVelocidad);
+	void parentarObjeto(Vec3 *objPos, float *objRot, float *objVelocidad);
 	/*
 	pistaTerreno -> Valor ti más cercano al automovil para no tener que hacer todo el cálculo de búsqueda de nuevo
 	*/
+
+
+	/*La camara guarda por referencia la rotacion
+	extra por derrape del objeto a seguir
+	*/
+	void parentarExtraRotObjeto(float *extraRot);
+
 	void colisionar(int pistaTerreno = -1);
 };

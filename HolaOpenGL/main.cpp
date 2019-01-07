@@ -62,9 +62,10 @@ void init() {
 
 	//Configuraciones iniciales de colision
 	mostrarCarga(70);
-	colision.asignarMeshColision(1, 3);
+	colision.asignarMeshColision(2);
 	colision.obtenerPuntosTerreno(escenario.terreno, escenario.ti); //Deberia acceder a estas variables utilizando funciones en vez de ser publicas
-	colision.obtenerRefObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion(), automovil.obtenerRefVelocidad());
+	colision.parentarObjeto(automovil.obtenerRefPosicion(), automovil.obtenerRefRotacion(), automovil.obtenerRefVelocidad());
+	colision.parentarExtraRotObjeto(automovil.obtenerRefRotacionExtra());
 	mostrarCarga(80);
 	//Configuraciones iniciales de la cámara
 	camara.asignarDimensionesEscenario(abs(escenario.base[0].x - escenario.base[1].x), abs(escenario.base[2].z - escenario.base[1].z));
@@ -110,12 +111,12 @@ void display() {
 		}
 		else global.dibujarMar(true);
 
+		//Colision
+		if (!global.obtenerPausa()) colision.colisionar(escenario.cercaFi); //Deberia acceder a estas variables utilizando funciones en vez de ser publicas
+
 		//Automovil
 		if (tipoCamara != 3)automovil.dibujarAutomovil();
 		if (!global.obtenerPausa())automovil.actualizar();
-
-		//Colision
-		if (!global.obtenerPausa()) colision.colisionar();
 
 		//Material base
 		baseMaterial.actualizar();

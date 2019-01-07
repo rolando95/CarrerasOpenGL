@@ -280,7 +280,12 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 	pushAtributosObjetos(); {
 		float mod, modTex;
 
+		//Parte del terreno más cercana al automovil
+		float cerca = modulo(*parentPos, terreno[0][3]);
+		cercaFi = 0;
+
 		materialTerreno.actualizar();
+
 		//Terreno
 		float distancia;
 		static float coef = 0.25;
@@ -313,6 +318,11 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 						0, 1,
 						numX, numX
 					);
+				}
+
+				if (mod < cerca) {
+					cerca = mod;
+					cercaFi = j;
 				}
 			}
 			despIn = despFi - (int)despFi;
