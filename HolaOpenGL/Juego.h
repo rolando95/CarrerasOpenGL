@@ -15,7 +15,7 @@ constexpr auto s = 50;
 constexpr auto ASCII = 256;
 constexpr auto MAX = 1000;
 constexpr auto FPS = 60;
-constexpr auto PROYECTO = "- Maestro del derrape -";
+constexpr auto PROYECTO = "- Maestros del Derrape - Por: Rolando A. Rosales J.";
 
 //Texturas
 constexpr auto urlBlank = "Resources/blank.jpg";

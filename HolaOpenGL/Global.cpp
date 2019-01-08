@@ -233,7 +233,7 @@ void Global::dibujarMar(bool detalleBajo)
 
 
 void Global::imprimirControles() {
-	cout << PROYECTO << " - Por: Rolando A. Rosales J." << endl << endl;
+	cout << PROYECTO << endl;
 	cout << "\nControles" << endl;
 	cout << "_________________________" << endl;
 	cout << "Acelerar           -> [W]" << endl;
