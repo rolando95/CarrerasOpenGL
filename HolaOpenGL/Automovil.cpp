@@ -141,8 +141,8 @@ void Automovil::cargarAutomovil() {
 	}
 	glEndList();
 
-	lucesDelanteras.difuso = Vec4(25, 25, 25, 1);
-	lucesDelanteras.ambiente = Vec4(1, 1, 1, 1);
+	lucesDelanteras.difuso = Vec4(10, 10, 10, 1);
+	lucesDelanteras.ambiente = Vec4(0.8, 0.8, 0.8, 1);
 	lucesDelanteras.posicion = Vec4(3, 1, 0, 1);
 	lucesDelanteras.especular = Vec4(1, 1, 1, 1);
 	lucesDelanteras.asignarTipo(1);
@@ -301,46 +301,6 @@ void Automovil::actualizar() {
 	pos.z -= vL * escalaVelocidadL * sin((rot - rotD / 2)*PI / 180) / FPS;
 }
 
-
-
-void Automovil::imprimirStats(bool inicio) {
-	int i = 0;
-
-	static int anterior = 0;
-
-	int ahora = (int)time(0);
-	static int conteo = 0;
-	static int fps = 0;
-	conteo += 1;
-	if (ahora - anterior > 1) {
-		fps = conteo;
-		conteo = 0;
-		anterior = ahora - 1;
-	}
-
-	cout << "Estado del Automovil" << endl; i++;
-	cout << "______________________\n" << endl; i += 2;
-	cout << "Pos x: " << round(pos.x * 100) / 100 << " m\t\t" << endl; i++;
-	//cout << "Pos y: " << round(pos.y*100)/100 << " m\t\t" << endl; i++;
-	cout << "Pos z: " << round(pos.z * 100) / 100 << " m\t\t" << endl; i++;
-	cout << "Velocidad: " << vL * 3600 / 1000 << " km/h \t\t" << endl; i++;
-	cout << "Rotacion : " << rot << " grados\t\t" << endl; i++;
-	//cout << "Rot derrape: " << rotD << " grados\t\t" << endl; i++;
-	//cout << "Acelerar: " << *parentAcelerar << "\t\t" << endl; i++;
-	//cout << "Giro iz : " << *parentGiroIzquierda << "\t\t" << endl; i++;
-	//cout << "Giro der: " << *parentGiroDerecha << "\t\t" << endl; i++;
-	//cout << "Freno   : " << *parentFreno<< "\t\t" << endl; i++;
-	//cout << "Retroceder : " << *parentRetroceder << "\t\t" << endl; i++;
-	//cout << "FrenoMano  : " << *parentFrenoDeMano<< "\t\t" << endl; i++;
-	cout << "FPS: " << fps << "\t\t" << endl; i++;
-	static CONSOLE_SCREEN_BUFFER_INFO coninfo;
-	static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	GetConsoleScreenBufferInfo(hConsole, &coninfo);
-	coninfo.dwCursorPosition.Y -= i;    // move up one line
-	coninfo.dwCursorPosition.X = 0;    // move to the right the length of the word
-	SetConsoleCursorPosition(hConsole, coninfo.dwCursorPosition);
-}
-
 void Automovil::dibujarAutomovil() {
 	glPushMatrix();{
 
@@ -364,7 +324,6 @@ void Automovil::dibujarAutomovil() {
 			glCallList(lucesTraseras);
 
 			//Ruedas
-			mateNegro.actualizar();
 			static float rot = 0;
 			glPushMatrix();
 			{
@@ -376,6 +335,7 @@ void Automovil::dibujarAutomovil() {
 						glScalef(0.5, 0.5, 0.5);
 						glTranslatef(0, 0, -0.5);
 						glRotatef(-rot * PI, 0, 0, 1);
+						mateNegro.actualizar();
 						glutSolidCylinder(1, 1, 10, 2);
 						glPopMatrix();
 					}

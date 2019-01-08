@@ -127,3 +127,33 @@ void Interfaz::dibujarPausa()
 	glPopAttrib();
 	glDepthMask(GL_TRUE);
 }
+
+void Interfaz::imprimirStats(bool inicio) {
+	int i = 0;
+
+	static int anterior = 0;
+
+	int ahora = (int)time(0);
+	static int conteo = 0;
+	static int fps = 0;
+	conteo += 1;
+	if (ahora - anterior > 1) {
+		fps = conteo;
+		conteo = 0;
+		anterior = ahora - 1;
+	}
+
+	cout << "Estado del Automovil" << endl; i++;
+	cout << "______________________" << endl; i++;
+	cout << "Pos x: " << round(parentPos->x * 100) / 100 << " m\t\t" << endl; i++;
+	cout << "Pos z: " << round(parentPos->z * 100) / 100 << " m\t\t" << endl; i++;
+	cout << "Velocidad: " << *parentVelocidad * 3600 / 1000 << " km/h \t\t" << endl; i++;
+	cout << "Rotacion : " << *parentRot << " grados\t\t" << endl; i++;
+	cout << "FPS: " << fps << "\t\t" << endl; i++;
+	static CONSOLE_SCREEN_BUFFER_INFO coninfo;
+	static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleScreenBufferInfo(hConsole, &coninfo);
+	coninfo.dwCursorPosition.Y -= i;    // move up one line
+	coninfo.dwCursorPosition.X = 0;    // move to the right the length of the word
+	SetConsoleCursorPosition(hConsole, coninfo.dwCursorPosition);
+}

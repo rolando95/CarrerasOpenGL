@@ -57,6 +57,7 @@ void Colisiones2D::colisionar(int pistaTerreno)
 	|
 	|______> z (x)
 	*/
+
 	float x = terreno[(pos + 1) % ti][lado].z;
 	float x0 = terreno[pos][lado].z;
 	float y = terreno[(pos + 1) % ti][lado].x;
@@ -94,7 +95,7 @@ void Colisiones2D::colisionar(int pistaTerreno)
 
 	//cout << "("<<x0 << " " << y0 << ")( " << x << " " << y << ")( " << m << " " << b << ") c(" << h << " " << k<<")";
 	//Se detectan problemas con posiciones de pendientes cercanas a inf
-	if (pos != 103 && pos != 111 && pos != 116 && pos != 126){
+	if (pos != 40 && pos != 103 && pos != 111 && pos != 116 && pos != 126){
 
 		//Circunferencia
 		float r = radio;
@@ -105,8 +106,8 @@ void Colisiones2D::colisionar(int pistaTerreno)
 		//glPushMatrix(); glTranslatef(terreno[pos][lado].x, terreno[pos][lado].y, terreno[pos][lado].z); glutSolidCube(3); glPopMatrix();
 		//pushAtributosObjetos(); glTranslatef(parentPos->x, parentPos->y, parentPos->z); glScalef(r, r, r); glRotatef(-90, 1, 0, 0); if (n == 0)glutSolidCylinder(1, 1, 8, 1); else glutSolidCone(1, 1, 8, 1); popAtributosObjetos();
 
-		//static int posC = 0;
-		//cout << posC <<" "<< mx <<" ";
+		static int posC = 0;
+		cout << posC <<" ";
 
 		//Ecuacion de la recta
 		//cout << "y= " << round(m * 10) / 10 << "x +" << round(b * 10) / 10 << " -- ";
@@ -125,7 +126,7 @@ void Colisiones2D::colisionar(int pistaTerreno)
 			float xder = (-b1 + sqrt(coef)) / (2 * a);
 			if (h-r < xiz && h+r > xder){//( (parentPos->z - r) < xiz &&  (parentPos->z + r) > xder ) {
 				//cout <<">> "<< lado << " COLISION ";
-				//posC = pos;
+				posC = pos;
 				*parentVelocidad = 0;
 				parentPos->x = (terreno[pos][2].x + terreno[pos][1].x) / 2;
 				parentPos->z = (terreno[pos][2].z + terreno[pos][1].z) / 2;

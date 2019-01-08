@@ -1,10 +1,10 @@
 /*
 	ProyectoFinal
 
-	Juego de carreras con mucho drift!!
+	Juego de carreras con mucho Derrape!!
 
 	@author: Rolando A. Rosales J.
-	@version: v1.0 x/dic/2018
+	@version: v1.0 7/enero/2019
 	@require: freeglut
 
 */
@@ -45,7 +45,7 @@ void init() {
 	//Configuraciones iniciales del escenario 
 	escenario.cargarPista();
 	escenario.parentarPosFondo(automovil.obtenerRefPosicion());
-	escenario.cargarMeshFarola();
+	escenario.cargarAssets();
 	escenario.asignarEstadoFarolas(true);
 
 	mostrarCarga(60);
@@ -107,9 +107,7 @@ void display() {
 		global.actualizarConfiguracionesGlobales();
 		if (tipoCamara != 1) {
 			global.dibujarFondo();
-			global.dibujarMar();
 		}
-		else global.dibujarMar(true);
 
 		//Colision
 		if (!global.obtenerPausa()) colision.colisionar(escenario.cercaFi); //Deberia acceder a estas variables utilizando funciones en vez de ser publicas
@@ -125,19 +123,26 @@ void display() {
 		//escenario.dibujarCuadricula();
 		
 		if (tipoCamara == 1){
-			escenario.dibujarFarolas(true);
+			escenario.dibujarAssets(true);
 			escenario.dibujarPista(true);
 			escenario.dibujarTerreno(true, true);
 			
 		}
 		else{
-			escenario.dibujarFarolas();
+			escenario.dibujarAssets();
 			escenario.dibujarPista();
 			escenario.dibujarTerreno();
 		}
 		//if (tipoCamara == 1) escenario.dibujarVistaHelicoptero();
 		escenario.dibujarTexturaVistaHelicoptero();
 
+		//Objetos translucidos
+		glDepthMask(GL_FALSE);
+
+		if(tipoCamara!=1)global.dibujarMar();
+		else global.dibujarMar(true);
+
+		glDepthMask(GL_TRUE);
 	}glPopMatrix();
 
 
@@ -166,7 +171,7 @@ void display() {
 
 	
 	glutSwapBuffers();
-	if(!global.obtenerPausa())automovil.imprimirStats();
+	if(!global.obtenerPausa())interfaz.imprimirStats();
 }
 
 void reshape(int w, int h) {
@@ -192,15 +197,14 @@ void onKey(unsigned char tecla, int x, int y) {
 
 	//Configurar lamparas
 	int horario = global.obtenerHorario();
-	if (horario == 0) {
-		automovil.asignarEstadoLucesDelanteras(true);
-		escenario.asignarEstadoFarolas(true);
 
-	}
-	else {
-		automovil.asignarEstadoLucesDelanteras(false);
-		escenario.asignarEstadoFarolas(false);
-	}
+	//Coche
+	if (horario == 0) automovil.asignarEstadoLucesDelanteras(true);
+	else automovil.asignarEstadoLucesDelanteras(false);
+
+	//Farolas
+	if(horario == 0 && camara.obtenerTipoCamara() != 1)escenario.asignarEstadoFarolas(true);
+	else escenario.asignarEstadoFarolas(false);
 }
 void onUpKey(unsigned char tecla, int x, int y) {
 	global.asignarTecla(tecla, false);

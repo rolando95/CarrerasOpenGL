@@ -159,13 +159,12 @@ void Pista::agregarCurva(Vec3 centro, float anguloIn, float anguloFin, float rad
 
 		//Porcentaje de radio extra en las curvas (Para que el extremo del terreno no se pegue con la calle)
 		static float extra = 1.05; 
-
 		if (i%resCurva == 0) {
 			if (n == 0) {
 				//Parte Baja del terreno (sup)
 				terreno[ti][0] = {
 					centro.x + radio * cos(angulo) + d * cos(angulo)*aC*extra,
-					centro.y - 10,
+					centro.y - altura,
 					centro.z - radio * sin(angulo) - d * sin(angulo)*aC*extra
 				};
 
@@ -348,7 +347,7 @@ void Escenario::dibujarTerreno(bool detalleBajo, bool forzarDibujarTodo)
 	}popAtributosObjetos();
 }
 
-void Escenario::dibujarFarolas(bool forzarDibujarTodo)
+void Escenario::dibujarAssets(bool forzarDibujarTodo)
 {
 	float mod;
 	float cerca = modulo(*parentPos, farolas[0]);
@@ -387,6 +386,9 @@ void Escenario::dibujarFarolas(bool forzarDibujarTodo)
 		//prueba.actualizar();
 		glPopMatrix();
 	}
+
+	//Meta
+	glCallList(meshMeta);
 }
 
 void Escenario::dibujarTexturaVistaHelicoptero()
@@ -399,10 +401,10 @@ void Escenario::dibujarTexturaVistaHelicoptero()
 	static float despX = 0.25;
 	static float despZ = 1;
 	quad(
-		Vec3((-14+despX)* s, 10 , despZ * s),
-		Vec3( (16+despX)* s, 10 , despZ * s),
-		Vec3( (16+despX)* s, 10 , (-30 + despZ) * s),
-		Vec3((-14+despX)* s, 10 , (-30 + despZ) * s),
+		Vec3((-14+despX)* s, 20 , despZ * s),
+		Vec3( (16+despX)* s, 20 , despZ * s),
+		Vec3( (16+despX)* s, 20 , (-30 + despZ) * s),
+		Vec3((-14+despX)* s, 20 , (-30 + despZ) * s),
 		1,1
 	);
 	glDepthMask(GL_TRUE);
@@ -416,11 +418,11 @@ void Escenario::asignarEstadoFarolas(int estado)
 		else lamparasFarolas[i].inhabilitar();
 }
 
-void Escenario::cargarMeshFarola()
+void Escenario::cargarAssets()
 {
-	//meshFarola
-	materialFarola.ambiente = Vec4(0.4, 0.4, 0.4, 1);
-	materialFarola.difuso = Vec4(1, 1, 1, 1);
+	//Farola
+	materialFarola.ambiente = Vec4(0.3, 0.3, 0.3, 1);
+	materialFarola.difuso = Vec4(.1, .1, .1, 1);
 	//materialFarola.especular = Vec4(1, 1, 1, 1);
 	//materialFarola.brillo = Vec4(75, 75, 75, 1);
 	
@@ -453,6 +455,62 @@ void Escenario::cargarMeshFarola()
 		lamparasFarolas[i].spotExponent = 5;
 		lamparasFarolas[i].direccion = Vec3(0, -1, 0);
 	}
+
+	//Meta
+	materialMetaPilares.difuso = Vec4(0.1, 0.1, 0.1, 1);
+	materialMetaPilares.ambiente = Vec4(0.3, 0.3, 0.3, 1);
+	texturaMetaParteSuperior.cargarTextura(urlBanderaMeta);
+	texturaBlank.cargarTextura(urlBlank);
+	meshMeta = glGenLists(1);
+	glNewList(meshMeta, GL_COMPILE);
+	pushAtributosObjetos(); {
+		texturaBlank.actualizar();
+		glTranslatef(-s/2, 0, 0);
+		
+		//Pilares
+		static float despX = 15;
+		static float despZ = 10;
+		static float despY = 5;
+		for (auto n = -1; n < 2; n+=2) {
+			pushAtributosObjetos();
+			materialMetaPilares.actualizar();
+			glTranslatef(-despX, despY*2, despZ*n);
+			glScalef(1, 10, 1);
+			glRotatef(90, 1, 0, 0);
+			glutSolidCylinder(1, 1, 8, 8);
+			popAtributosObjetos();
+		}
+
+		//Bandera de meta
+		pushAtributosObjetos();
+		glDisable(GL_CULL_FACE);
+		materialMetaParteSuperior.actualizar();
+		texturaMetaParteSuperior.actualizar();
+		quadtex(
+			
+			Vec3(-despX, despY + 2, -despZ),
+			Vec3(-despX, despY + 2, despZ),
+			Vec3(-despX, despY + 5, despZ),
+			Vec3(-despX, despY + 5, -despZ),
+			/*
+			Vec3(0, 1, 0),
+			Vec3(0, 1, 10),
+			Vec3(10, 1, 10),
+			Vec3(10, 1, 0),*/
+			0, 1, 0, 1
+		);
+		glEnable(GL_CULL_FACE);
+		popAtributosObjetos();
+
+		//Linea de meta
+		glPushMatrix();
+			glTranslatef(-despX, 0, 0);
+			glScalef(1, 0.05, despZ*2);
+			glutSolidCube(1);
+		glPopMatrix();
+	}popAtributosObjetos();
+	glEndList();
+
 }
 
 void Escenario::parentarPosFondo(Vec3 * posObj)

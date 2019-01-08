@@ -18,6 +18,8 @@ constexpr auto FPS = 60;
 constexpr auto PROYECTO = "- Maestro del derrape -";
 
 //Texturas
+constexpr auto urlBlank = "Resources/blank.jpg";
+
 constexpr auto urlFondoDia = "Resources/fondoDia.jpg";
 constexpr auto urlFondoNoche = "Resources/fondoNoche.jpg";
 constexpr auto urlReflejoFondoDia = "Resources/fondoReflejoDia.jpg";
@@ -32,6 +34,7 @@ constexpr auto urlCircuitoMapa = "Resources/circuitoMapa.png";
 constexpr auto urlAutomovilPosicionMapa = "Resources/automovilPosicionMapa.png";
 constexpr auto urlVelocimetroInterior = "Resources/velocimetroInterior.png";
 constexpr auto urlVelocimetroExterior = "Resources/velocimetroExterior.png";
+constexpr auto urlBanderaMeta = "Resources/banderaMeta.jpg";
 
 constexpr auto urlVistaHelicoptero = "Resources/circuitoVistaHelicoptero.png";
 
@@ -55,6 +58,9 @@ public:
 	void parentarResolucionVentana(Vec2 *resolucion);
 	void dibujarInterfaz();
 	void dibujarPausa();
+
+	//Muestra el estado actual del automovil
+	void imprimirStats(bool inicio = true);
 };
 
 class Global {
@@ -169,7 +175,7 @@ private:
 	float aT = 1.5; //Ancho del terreno
 	float aC = 2.5; //Ancho de la colina/mar (se cuenta desde la orilla de la carretera)
 	float base = 0.1;
-	float altura = 10; //Altura de la colina/ profundidad de la costa
+	float altura = 20; //Altura de la colina/ profundidad de la costa
 
 	float defaultIter = 30.0; //Resolucion de la pista (mas es mejor, afecta la resolucion del terreno tambien)
 
@@ -222,11 +228,17 @@ public:
 
 class Escenario :public Pista{
 	Vec3 *parentPos = new Vec3;
-	GLint meshFarola;
 
+	GLint meshFarola;
 	Material materialFarola;
 	Lampara lamparasFarolas[3];
 	int numLamparasFarolas = 3;
+
+	GLint meshMeta;
+	Material materialMetaPilares;
+	Material materialMetaParteSuperior;
+	Textura texturaMetaParteSuperior;
+	Textura texturaBlank;
 public:
 	float cercaFi = 0; //Posicion del terreno más cercana al automovil (util para agilizar cálculos en colisiones)
 
@@ -240,7 +252,7 @@ public:
 
 	void asignarEstadoFarolas(int valor);
 
-	void cargarMeshFarola();
+	void cargarAssets();
 
 	//Recibe por referencia la posición del objeto al que el fondo siempre seguirá
 	void parentarPosFondo(Vec3 *posObj);
@@ -260,7 +272,7 @@ public:
 	void dibujarTerreno(bool detalleBajo = false, bool forzarDibujarTodo=false);
 
 	/*Dibujar las farolas en la escena tomando en cuenta la distancia e dibujado.*/
-	void dibujarFarolas(bool forzarDibujarTodo = false);
+	void dibujarAssets(bool forzarDibujarTodo = false);
 
 	void dibujarTexturaVistaHelicoptero();
 };
@@ -380,9 +392,6 @@ public:
 
 	//Actualizar estado del automovil
 	void actualizar();
-
-	//Muestra el estado actual del automovil
-	void imprimirStats(bool inicio = true);
 
 	//Dibuja el automovil en la escena
 	void dibujarAutomovil();

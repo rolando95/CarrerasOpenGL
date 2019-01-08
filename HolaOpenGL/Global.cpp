@@ -59,14 +59,16 @@ void Global::actualizarConfiguracionesGlobales() {
 
 	if (!flipTecla[modoSolido]) {
 		//Fijar color de borrado
-		glClearColor(0, 0, 0, 1);
 
 		//Modo solido activado
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		if (flipTecla[horario])
+		if (flipTecla[horario]){
+			glClearColor(0, 0.5, 0.8, 1);
 			glFogfv(GL_FOG_COLOR, GRISCLARO);
-		else
+		}else{
+			glClearColor(0, 0.05, 0.1, 1);
 			glFogfv(GL_FOG_COLOR, GRISOSCURO);
+		}
 		glFogf(GL_FOG_DENSITY, 0.01);
 	}
 	else {
@@ -196,6 +198,7 @@ void Global::cargarFondo()
 
 	//Mar
 	texturaOceano.cargarTextura(urlOceano);
+	materialOceano.difuso = Vec4(0.8, 0.8, 0.8, 0.3);
 }
 
 void Global::dibujarFondo()
@@ -206,7 +209,7 @@ void Global::dibujarFondo()
 	//Imagen de fondo
 	materialFondo.actualizar();
 	texturaFondo[flipTecla[horario]].actualizar();
-	glTranslatef(parentPos->x, parentPos->y, parentPos->z);
+	glTranslatef(parentPos->x, parentPos->y - 10, parentPos->z);
 	glCallList(meshFondo);
 	glPopMatrix();
 	glPopAttrib();
@@ -214,23 +217,25 @@ void Global::dibujarFondo()
 
 void Global::dibujarMar(bool detalleBajo)
 {
-
+	//Desplazamiento del mar con el paso del tiempo
+	float desp = tiempo/200;
 	glPushAttrib(GL_TEXTURE_BIT);
 	//Mar
 	materialOceano.actualizar();
 	texturaOceano.actualizar();
 	if (!detalleBajo)
-		quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0, 5, 0, 6, 100, 100);
+		quadtex(oceanoPts[0], oceanoPts[1], oceanoPts[2], oceanoPts[3], 0+desp, 5 + desp, 0 + desp, 6 + desp, 100, 100);
 	else{
-		quadtex(oceanoPts[0]*2, oceanoPts[1]*2, oceanoPts[2]*2, oceanoPts[3]*2, 0, 5, 0, 6, 1, 1);
+		quadtex(oceanoPts[0]*2, oceanoPts[1]*2, oceanoPts[2]*2, oceanoPts[3]*2, 0 + desp, 5 + desp, 0 + desp, 6 + desp, 1, 1);
 	}
 	glPopAttrib();
 }
 
 
 void Global::imprimirControles() {
+	cout << PROYECTO << " - Por: Rolando A. Rosales J." << endl << endl;
 	cout << "\nControles" << endl;
-	cout << "_________________________" << endl<< endl;
+	cout << "_________________________" << endl;
 	cout << "Acelerar           -> [W]" << endl;
 	cout << "Izquierda          -> [A]" << endl;
 	cout << "Freno              -> [S]" << endl;
