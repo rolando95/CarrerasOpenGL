@@ -1,4 +1,3 @@
-
 #pragma once
 #include "Tools.h"
 #include <iostream>
@@ -28,9 +27,8 @@ public:
 	//Muestra por pantalla el vector (x,y,z)
 	void imprimir(bool endLine = true);
 
+	// Sobrecarga de operadores
 	Vec3 operator/(float &obj);
-
-
 	Vec3 operator*(float &obj);
 	Vec3 operator*(const int &obj);
 	float operator*(Vec3 &obj);

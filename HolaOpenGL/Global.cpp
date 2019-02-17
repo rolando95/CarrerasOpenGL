@@ -171,12 +171,9 @@ void Global::cargarFondo()
 	
 
 	float nLados = 10;
-
 	float apotema = distanciaDibujado;
 	float lado = apotema * tan(PI / nLados);
-
 	float alto = 500;
-
 
 	meshFondo = glGenLists(1);
 	glNewList(meshFondo, GL_COMPILE);
@@ -234,6 +231,7 @@ void Global::dibujarMar(bool detalleBajo)
 
 void Global::imprimirControles() {
 	cout << PROYECTO << endl;
+	cout << "- Universidad Politecnica de Valencia -" << endl;
 	cout << "\nControles" << endl;
 	cout << "_________________________" << endl;
 	cout << "Acelerar           -> [W]" << endl;

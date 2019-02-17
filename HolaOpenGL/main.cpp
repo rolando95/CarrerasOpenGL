@@ -5,7 +5,7 @@
 
 	@author: Rolando A. Rosales J.
 	@version: v1.0 7/enero/2019
-	@require: freeglut
+	@require: freeglut, FreeImage
 
 */
 
@@ -22,11 +22,13 @@ Camara camara;
 Interfaz interfaz;
 Colisiones2D colision;
 
+bool isDrawing = false;
+
 void mostrarCarga(int porcentaje) {
 	if (porcentaje < 100)
-		cout << "-- Cargando "<<porcentaje<<"% --\r";
+		cout << "-- Cargando "<<porcentaje<<"% -- \r";
 	else{
-		cout << "-- Presione enter para empezar --\r";
+		cout << "-- Presione enter para empezar -- \r";
 		_getch();
 		cout << "								  \r";
 	}
@@ -88,6 +90,7 @@ void init() {
 }
 
 void display() {
+	isDrawing = true;
 	static int tipoCamara;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -109,12 +112,8 @@ void display() {
 			global.dibujarFondo();
 		}
 
-		//Colision
-		if (!global.obtenerPausa()) colision.colisionar(escenario.cercaFi); //Deberia acceder a estas variables utilizando funciones en vez de ser publicas
-
 		//Automovil
 		if (tipoCamara != 3)automovil.dibujarAutomovil();
-		if (!global.obtenerPausa())automovil.actualizar();
 
 		//Material base
 		baseMaterial.actualizar();
@@ -172,6 +171,7 @@ void display() {
 	
 	glutSwapBuffers();
 	if(!global.obtenerPausa())interfaz.imprimirStats();
+	isDrawing = false;
 }
 
 void reshape(int w, int h) {
@@ -180,7 +180,13 @@ void reshape(int w, int h) {
 }
 
 void update() {
-	glutPostRedisplay();
+	if (!global.obtenerPausa()) {
+		automovil.actualizar();
+		colision.colisionar(escenario.cercaFi); //Deberia acceder a estas variables utilizando funciones en vez de ser publicas
+	}
+	if(!isDrawing){
+		glutPostRedisplay();
+	}
 }
 
 void onTimer(int frame) {
